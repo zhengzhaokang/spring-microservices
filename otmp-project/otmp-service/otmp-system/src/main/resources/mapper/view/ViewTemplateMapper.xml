@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewTemplateMapper">
+
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewTemplateDO" id="ViewTemplateResult">
+        <result property="fieldJson" column="field_json"/>
+        <result property="id" column="id"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="name" column="name"/>
+        <result property="itCode" column="it_code"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+        <result property="pageKey" column="page_key"/>
+        <result property="viewType" column="view_type"/>
+        <result property="divKey" column="div_key"/>
+        <result property="type" column="type"/>
+        <result property="isDefault" column="is_default"/>
+
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewTemplateDO" id="ViewTemplateDOResult">
+        <result property="fieldJson" column="field_json"/>
+        <result property="id" column="id"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="name" column="name"/>
+        <result property="itCode" column="it_code"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDefault" column="is_default"/>
+
+    </resultMap>
+
+    <sql id="selectViewTemplateVo">
+        select field_json, id, field_id, name, it_code, status, create_by, create_time, update_by,
+        update_time ,is_default from view_template
+    </sql>
+
+    <select id="selectViewTemplateList" parameterType="com.lenovo.otmp.system.domain.ViewTemplate"
+            resultMap="ViewTemplateResult">
+        select vt.*,vf.page_key,vf.view_type,vf.div_key,vf.type from view_template vt INNER JOIN view_field vf on
+        vt.field_id = vf."id"
+        <where>
+            <if test="id != null ">and vt.id = #{id}</if>
+            <if test="fieldId != null ">and vt.field_id = #{fieldId}</if>
+            <if test="name != null  and name != ''">and vt.name = #{name}</if>
+            <if test="itCode != null  and itCode != ''">and vt.it_code = #{itCode}</if>
+            <if test="status != null ">and vt.status = #{status}</if>
+            <if test="isDefault != null ">and vt.is_default = #{isDefault}</if>
+        </where>
+    </select>
+
+    <select id="selectViewTemplateById" parameterType="Integer" resultMap="ViewTemplateDOResult">
+        <include refid="selectViewTemplateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertViewTemplate" parameterType="com.lenovo.otmp.system.domain.ViewTemplate" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into view_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fieldJson != null ">field_json,</if>
+            <if test="fieldId != null ">field_id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="itCode != null  and itCode != ''">it_code,</if>
+            <if test="status != null ">status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="isDefault != null">is_default,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fieldJson != null ">#{fieldJson},</if>
+            <if test="fieldId != null ">#{fieldId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="itCode != null  and itCode != ''">#{itCode},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="isDefault != null ">#{isDefault},</if>
+        </trim>
+    </insert>
+
+    <update id="updateViewTemplate" parameterType="com.lenovo.otmp.system.domain.ViewTemplate">
+        update view_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fieldJson != null ">field_json = #{fieldJson},</if>
+            <if test="fieldId != null ">field_id = #{fieldId},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="itCode != null  and itCode != ''">it_code = #{itCode},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteViewTemplateById" parameterType="Integer">
+        delete from view_template where id = #{id}
+    </delete>
+
+    <delete id="deleteViewTemplateByIds" parameterType="String">
+        delete from view_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="templateViewList" parameterType="Object" resultMap="ViewTemplateResult">
+        SELECT
+        vt.*,
+        vf.page_key,
+        vf.view_type,
+        vf.div_key,
+        vf.TYPE
+        FROM
+        view_template vt
+        INNER JOIN view_field vf ON vt.field_id = vf."id"
+        AND vf.status = 0
+        <where>
+            and vf.page_key = #{pageKey} and vf.div_key = #{divKey} and vf.type = #{type}
+            <foreach collection="viewType.split(',')" item="item" open="" close="" separator="">
+                <![CDATA[ and regexp_split_to_array(vf.view_type,',') @> regexp_split_to_array(#{item},',') ]]>
+            </foreach>
+            <if test="region != null and region != '' ">
+                <foreach collection="region.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(region,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="paymentMode != null and paymentMode != '' ">
+                <foreach collection="paymentMode.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(payment_mode,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="geoCode != null  and geoCode != ''">
+                <foreach collection="geoCode.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(geo_code,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="businessGroup != null and businessGroup != '' ">
+                <foreach collection="businessGroup.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(business_group,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="itCode != null  and itCode != ''">and vt.it_code = #{itCode}</if>
+            <if test="parentId != null">and vf.parent_id = #{parentId}</if>
+            <if test="status != null">and vt.status = #{status}</if>
+        </where>
+    </select>
+
+    <update id="fakeDeleteTemplateGroup" parameterType="com.lenovo.otmp.system.domain.ViewTemplate">
+        update view_template set status = 1 where field_id = #{fieldId}
+    </update>
+
+    <update id="deleteTemplateGroup" parameterType="com.lenovo.otmp.system.domain.ViewTemplate">
+        delete from view_template where field_id = #{fieldId}
+    </update>
+
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.InviteLinkMapper">
+    <resultMap id="linkMap" type="com.lenovo.otmp.financing.domain.entity.InviteLinkDo">
+        <result column="id" property="id"/>
+        <result column="invite_time" property="inviteTime"/>
+        <result column="link_unique_code" property="linkUniqueCode"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="on_shore_flag" property="onshore"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="linkSupplierMap" extends="linkMap"
+               type="com.lenovo.otmp.financing.domain.entity.InviteLinkSupplierDo">
+        <result column="contact_first_name" property="firstName"/>
+        <result column="contact_last_name" property="lastName"/>
+        <result column="contact_email" property="email"/>
+        <result column="phone_region" property="phoneRegion"/>
+        <result column="contact_phone" property="phone"/>
+        <result column="contact_destination" property="designation"/>
+    </resultMap>
+
+    <select id="companyName" resultMap="linkSupplierMap">
+        SELECT
+            il.id ,
+            il.invite_time ,
+            il.link_unique_code ,
+            s.supplier_name,
+            il.supplier_id ,
+            s.on_shore_flag,
+            s.contact_first_name ,
+            s.contact_last_name ,
+            s.contact_email,
+            s.contact_destination,
+            s.contact_phone,
+            s.phone_region
+        FROM invite_link il
+        INNER JOIN supplier s
+            ON il.supplier_id = s.id
+        WHERE
+            il.delete_flag = '0'
+            AND il.link_unique_code = #{code}
+        LIMIT 1
+    </select>
+
+</mapper>

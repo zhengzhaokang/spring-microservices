@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseDcDivisionMappingMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseDcDivisionMapping" id="BizBaseDcDivisionMappingResult">
+        <result property="id"    column="id"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOrgName"    column="sales_org_name"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="salesOfficeName"    column="sales_office_name"    />
+        <result property="dcCode"    column="dc_code"    />
+        <result property="dcName"    column="dc_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseDcDivisionMappingVo">
+        select id, sales_org_code, sales_org_name, sales_office_code, sales_office_name, dc_code, dc_name, status, remark, create_by, create_time, update_by, update_time from biz_base_dc_division_mapping
+    </sql>
+
+    <select id="selectBizBaseDcDivisionMappingList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDcDivisionMapping" resultMap="BizBaseDcDivisionMappingResult">
+        <include refid="selectBizBaseDcDivisionMappingVo"/>
+        <where>  
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name = #{salesOrgName}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name = #{salesOfficeName}</if>
+            <if test="dcCode != null  and dcCode != ''"> and dc_code = #{dcCode}</if>
+            <if test="dcName != null  and dcName != ''"> and dc_name ilike '%'||#{dcName}||'%'</if>
+            and status ='Y'
+            <if test="remark != null  and remark != ''"> and remark  Ilike '%'|| #{remark}||'%'  </if>
+            <if test="createBy != null  and createBy != ''"> and create_by  Ilike '%'|| #{createBy}||'%'  </if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+
+        </where>
+        order by id desc
+
+    </select>
+    
+    <select id="selectBizBaseDcDivisionMappingById" parameterType="Long" resultMap="BizBaseDcDivisionMappingResult">
+        <include refid="selectBizBaseDcDivisionMappingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseDcDivisionMapping" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDcDivisionMapping" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_dc_division_mapping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOrgName != null">sales_org_name,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="salesOfficeName != null">sales_office_name,</if>
+            <if test="dcCode != null">dc_code,</if>
+            <if test="dcName != null">dc_name,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOrgName != null">#{salesOrgName},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="salesOfficeName!= null">#{salesOfficeName},</if>
+            <if test="dcCode != null">#{dcCode},</if>
+            <if test="dcName != null">#{dcName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseDcDivisionMapping" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDcDivisionMapping">
+        update biz_base_dc_division_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOrgName != null">sales_org_name = #{salesOrgName},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">sales_office_name = #{salesOfficeName},</if>
+            <if test="dcCode != null">dc_code = #{dcCode},</if>
+            <if test="dcName != null">dc_name = #{dcName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseDcDivisionMappingById" parameterType="Long">
+        delete from biz_base_dc_division_mapping where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseDcDivisionMappingByIds" parameterType="String">
+        delete from biz_base_dc_division_mapping where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseProfitCenterListCheck" resultMap="BizBaseDcDivisionMappingResult">
+
+        <include refid="selectBizBaseDcDivisionMappingVo"/>
+        <where>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="dcCode != null  and dcCode != ''"> and dc_code = #{dcCode}</if>
+            and status ='Y'        </where>
+    </select>
+
+    <update id="updateBizBaseDcDivisionMappingByIds">
+        update  biz_base_dc_division_mapping set status='N',update_time=now()    where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

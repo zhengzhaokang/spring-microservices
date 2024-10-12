@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.SysUserDataScopeMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.SysUserDataScopeDO" id="SysUserDataScopeResult">
+        <result property="userDataScopeId"    column="user_data_scope_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userItcode"    column="user_itcode"    />
+        <result property="dataScopeKey"    column="data_scope_key"    />
+        <result property="dataScopeValue"    column="data_scope_value"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="selectAll" column="select_all"/>
+    </resultMap>
+
+    <sql id="selectSysUserDataScopeVo">
+        select user_data_scope_id, user_id, user_itcode, data_scope_key, data_scope_value, status, create_by, create_time, update_by, update_time, remark,select_all from sys_user_data_scope
+    </sql>
+
+    <select id="selectSysUserDataScopeList" parameterType="com.lenovo.otmp.system.domain.SysUserDataScope" resultMap="SysUserDataScopeResult">
+        <include refid="selectSysUserDataScopeVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userItcode != null  and userItcode != ''"> and user_itcode = #{userItcode}</if>
+            <if test="dataScopeKey != null  and dataScopeKey != ''"> and data_scope_key = #{dataScopeKey}</if>
+            <if test="dataScopeValue != null  and dataScopeValue != ''"> and data_scope_value = #{dataScopeValue}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysUserDataScopeByUserDataScopeId" parameterType="Long" resultMap="SysUserDataScopeResult">
+        <include refid="selectSysUserDataScopeVo"/>
+        where user_data_scope_id = #{userDataScopeId}
+    </select>
+    <select id="selectDataScopeByUserId" resultMap="SysUserDataScopeResult">
+        select string_agg(s.data_scope_value, ',') as data_scope_value,data_scope_key,max(s.create_by) as create_by,max(s.remark) as remark ,max(s.status) as status ,max(s.create_time) as create_time ,max(select_all) as select_all from sys_user_data_scope s where s.user_id = #{userId} group by s.data_scope_key
+    </select>
+    <insert id="insertSysUserDataScope" parameterType="com.lenovo.otmp.system.domain.entity.SysUserDataScopeDO" useGeneratedKeys="true" keyProperty="userDataScopeId">
+        insert into sys_user_data_scope
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userItcode != null">user_itcode,</if>
+            <if test="dataScopeKey != null">data_scope_key,</if>
+            <if test="dataScopeValue != null">data_scope_value,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="selectAll != null">select_all,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userItcode != null">#{userItcode},</if>
+            <if test="dataScopeKey != null">#{dataScopeKey},</if>
+            <if test="dataScopeValue != null">#{dataScopeValue},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="selectAll != null">#{selectAll},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUserDataScope" parameterType="com.lenovo.otmp.system.domain.entity.SysUserDataScopeDO">
+        update sys_user_data_scope
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userItcode != null">user_itcode = #{userItcode},</if>
+            <if test="dataScopeKey != null">data_scope_key = #{dataScopeKey},</if>
+            <if test="dataScopeValue != null">data_scope_value = #{dataScopeValue},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where user_data_scope_id = #{userDataScopeId}
+    </update>
+
+    <delete id="deleteSysUserDataScopeByUserDataScopeId" parameterType="Long">
+        delete from sys_user_data_scope where user_data_scope_id = #{userDataScopeId}
+    </delete>
+
+    <delete id="deleteSysUserDataScopeByUserId" >
+        delete from sys_user_data_scope where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysUserDataScopeByUserDataScopeIds" parameterType="String">
+        delete from sys_user_data_scope where user_data_scope_id in 
+        <foreach item="userDataScopeId" collection="array" open="(" separator="," close=")">
+            #{userDataScopeId}
+        </foreach>
+    </delete>
+
+    <resultMap type="GenTableColumnDO" id="GenTableColumnResult">
+        <id     property="columnId"       column="column_id"      />
+        <result property="tableId"        column="table_id"       />
+        <result property="tableName"     column="table_name"    />
+        <result property="columnName"     column="column_name"    />
+        <result property="columnComment"  column="column_comment" />
+        <result property="columnType"     column="column_type"    />
+        <result property="javaType"       column="java_type"      />
+        <result property="javaField"      column="java_field"     />
+        <result property="isPk"           column="is_pk"          />
+        <result property="isIncrement"    column="is_increment"   />
+        <result property="isRequired"     column="is_required"    />
+        <result property="isInsert"       column="is_insert"      />
+        <result property="isEdit"         column="is_edit"        />
+        <result property="isList"         column="is_list"        />
+        <result property="isQuery"        column="is_query"       />
+        <result property="queryType"      column="query_type"     />
+        <result property="htmlType"       column="html_type"      />
+        <result property="dictType"       column="dict_type"      />
+        <result property="sort"           column="sort"           />
+        <result property="createBy"       column="create_by"      />
+        <result property="createTime"     column="create_time"    />
+        <result property="updateBy"       column="update_by"      />
+        <result property="updateTime"     column="update_time"    />
+    </resultMap>
+
+    <select id="selectDbTableColumnsByName" parameterType="String" resultMap="GenTableColumnResult">
+		select
+            column_name,
+            table_name,
+            is_required,
+            is_pk,
+            sort,
+            column_comment,
+            is_increment,
+            column_type
+		from
+            view_self_table_columns
+        where
+            1  = 1
+            <if test="tableCatalogs == null ">
+                and table_catalog  = (select current_catalog)
+            </if>
+            <if test="tableCatalogs != null ">
+                and table_catalog in
+                <foreach collection="tableCatalogs" item="tableCatalog" open="(" separator="," close=")">
+                    #{tableCatalog}
+                </foreach>
+            </if>
+            <if test="tableSchemas == null ">
+                and table_schema = (select	current_schema())
+            </if>
+            <if test="tableSchemas != null ">
+                and table_schema in
+                <foreach collection="tableSchemas" item="tableSchema" open="(" separator="," close=")">
+                    #{tableSchema}
+                </foreach>
+            </if>
+            <if test="tableName != null  and tableName != ''">
+                and table_name = (#{tableName})
+            </if>
+
+        order by ordinal_position
+	</select>
+
+</mapper>

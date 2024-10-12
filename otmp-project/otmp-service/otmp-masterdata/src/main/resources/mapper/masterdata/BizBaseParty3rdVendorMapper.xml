@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseParty3rdVendorMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseParty3rdVendorDO" id="BizBaseParty3rdVendorResult">
+        <result property="id"    column="id"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="countryName"    column="country_name"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="vendorCountry"    column="vendor_country"    />
+        <result property="bankType"    column="bank_type"    />
+        <result property="bankAccount"    column="bank_account"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="swiftCode"    column="swift_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseParty3rdVendorVo">
+        select id, geo_code, country_code, country_name, vendor_code, vendor_name, vendor_country, bank_type, bank_account, bank_name, swift_code, create_by, create_time, update_by, update_time from biz_base_party_3rd_vendor
+    </sql>
+
+    <select id="selectBizBaseParty3rdVendorList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseParty3rdVendorDTO" resultMap="BizBaseParty3rdVendorResult">
+        <include refid="selectBizBaseParty3rdVendorVo"/>
+        <where>  
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code = #{countryCode}</if>
+            <if test="countryName != null  and countryName != ''"> and country_name = #{countryName}</if>
+            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name Ilike '%'||#{vendorName}||'%'</if>
+            <if test="vendorCountry != null  and vendorCountry != ''"> and vendor_country = #{vendorCountry}</if>
+            <if test="bankType != null  and bankType != ''"> and bank_type = #{bankType}</if>
+            <if test="bankAccount != null  and bankAccount != ''"> and bank_account = #{bankAccount}</if>
+            <if test="bankName != null  and bankName != ''"> and bank_name Ilike '%'||#{bankName}||'%'</if>
+            <if test="swiftCode != null  and swiftCode != ''"> and swift_code = #{swiftCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseParty3rdVendorById" parameterType="Long" resultMap="BizBaseParty3rdVendorResult">
+        <include refid="selectBizBaseParty3rdVendorVo"/>
+        where id = #{id}
+    </select>
+    <select id="getParty3rdVendorList"
+            resultType="com.lenovo.otmp.masterdata.domain.entity.vo.MsParty3rdVendorVo">
+        select
+            id,
+            geo_code as geo,
+            vendor_code as vendorCode,
+            vendor_name as vendorName,
+            country_code as countryCode,
+            country_name as countryName,
+            bank_type as bankType,
+            bank_account as bankAccount,
+            bank_name as bankName,
+            '0' as deleteFlag,
+            create_by as creator,
+            create_time as createTime,
+            update_by as modifier,
+            update_time as modifyTime
+        from biz_base_party_3rd_vendor
+        <where>
+            <if test="countryCodeList != null and countryCodeList.size()> 0">
+                and country_code in
+                <foreach item="id" collection="countryCodeList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="vendorInfo != null and vendorInfo != ''"> and (vendor_code = #{vendorInfo} or vendor_name like CONCAT('%',#{vendorInfo}::text,'%'))</if>
+        </where>
+    </select>
+
+    <insert id="insertBizBaseParty3rdVendor" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseParty3rdVendorDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_party_3rd_vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null">geo_code,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="vendorName != null">vendor_name,</if>
+            <if test="vendorCountry != null">vendor_country,</if>
+            <if test="bankType != null">bank_type,</if>
+            <if test="bankAccount != null">bank_account,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="swiftCode != null">swift_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="vendorName != null">#{vendorName},</if>
+            <if test="vendorCountry != null">#{vendorCountry},</if>
+            <if test="bankType != null">#{bankType},</if>
+            <if test="bankAccount != null">#{bankAccount},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="swiftCode != null">#{swiftCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseParty3rdVendor" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseParty3rdVendorDO">
+        update biz_base_party_3rd_vendor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="vendorName != null">vendor_name = #{vendorName},</if>
+            <if test="vendorCountry != null">vendor_country = #{vendorCountry},</if>
+            <if test="bankType != null">bank_type = #{bankType},</if>
+            <if test="bankAccount != null">bank_account = #{bankAccount},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="swiftCode != null">swift_code = #{swiftCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseParty3rdVendorById" parameterType="Long">
+        delete from biz_base_party_3rd_vendor where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseParty3rdVendorByIds" parameterType="String">
+        delete from biz_base_party_3rd_vendor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

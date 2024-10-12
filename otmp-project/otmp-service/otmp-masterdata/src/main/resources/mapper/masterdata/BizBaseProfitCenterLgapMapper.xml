@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseProfitCenterLgapMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseProfitCenterLgapDO" id="BizBaseProfitCenterLgapResult">
+        <result property="id"    column="id"    />
+        <result property="profitCenterCode"    column="profit_center_code"    />
+        <result property="profitCenterName"    column="profit_center_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseProfitCenterLgapVo">
+        select id, profit_center_code, profit_center_name, status, remark, create_by, create_time, update_by, update_time from biz_base_profit_center_lgap
+    </sql>
+
+    <select id="selectBizBaseProfitCenterLgapList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseProfitCenterLgapDTO" resultMap="BizBaseProfitCenterLgapResult">
+        <include refid="selectBizBaseProfitCenterLgapVo"/>
+        <where>  
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode}</if>
+            <if test="profitCenterName != null  and profitCenterName != ''"> and profit_center_name Ilike '%'||#{profitCenterName}||'%'</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseProfitCenterLgapById" parameterType="Long" resultMap="BizBaseProfitCenterLgapResult">
+        <include refid="selectBizBaseProfitCenterLgapVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseProfitCenterLgap" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseProfitCenterLgapDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_profit_center_lgap
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="profitCenterCode != null">profit_center_code,</if>
+            <if test="profitCenterName != null">profit_center_name,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="profitCenterCode != null">#{profitCenterCode},</if>
+            <if test="profitCenterName != null">#{profitCenterName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseProfitCenterLgap" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseProfitCenterLgapDO">
+        update biz_base_profit_center_lgap
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="profitCenterName != null">profit_center_name = #{profitCenterName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseProfitCenterLgapById" parameterType="Long">
+        delete from biz_base_profit_center_lgap where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseProfitCenterLgapByIds" parameterType="String">
+        delete from biz_base_profit_center_lgap where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

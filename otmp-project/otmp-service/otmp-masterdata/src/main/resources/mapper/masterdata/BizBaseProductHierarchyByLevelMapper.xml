@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseProductHierarchyByLevelMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseProductHierarchyByLevel" id="BizBaseProductHierarchyByLevelResult">
+        <result property="id"    column="id"    />
+        <result property="phLevel"    column="ph_level"    />
+        <result property="productHierarchyCode"    column="product_hierarchy_code"    />
+        <result property="productHierarchyName"    column="product_hierarchy_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseProductHierarchyByLevelVo">
+        select id, ph_level, product_hierarchy_code, product_hierarchy_name, status, remark, create_by, create_time, update_by, update_time from biz_base_product_hierarchy_by_level
+    </sql>
+
+    <select id="selectBizBaseProductHierarchyByLevelList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProductHierarchyByLevel" resultMap="BizBaseProductHierarchyByLevelResult">
+        <include refid="selectBizBaseProductHierarchyByLevelVo"/>
+        <where>  
+            <if test="phLevel != null "> and ph_level = #{phLevel} </if>
+            <if test="productHierarchyCode != null  and productHierarchyCode != ''"> and product_hierarchy_code Ilike '%'|| #{productHierarchyCode}||'%'</if>
+            <if test="productHierarchyName != null  and productHierarchyName != ''"> and product_hierarchy_name like '%'||#{productHierarchyName}||'%'</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseProductHierarchyByLevelById" parameterType="Long" resultMap="BizBaseProductHierarchyByLevelResult">
+        <include refid="selectBizBaseProductHierarchyByLevelVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseProductHierarchyByLevel" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProductHierarchyByLevel" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_product_hierarchy_by_level
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phLevel != null">ph_level,</if>
+            <if test="productHierarchyCode != null">product_hierarchy_code,</if>
+            <if test="productHierarchyName != null">product_hierarchy_name,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phLevel != null">#{phLevel},</if>
+            <if test="productHierarchyCode != null">#{productHierarchyCode},</if>
+            <if test="productHierarchyName != null">#{productHierarchyName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseProductHierarchyByLevel" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProductHierarchyByLevel">
+        update biz_base_product_hierarchy_by_level
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phLevel != null">ph_level = #{phLevel},</if>
+            <if test="productHierarchyCode != null">product_hierarchy_code = #{productHierarchyCode},</if>
+            <if test="productHierarchyName != null">product_hierarchy_name = #{productHierarchyName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseProductHierarchyByLevelById" parameterType="Long">
+        delete from biz_base_product_hierarchy_by_level where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseProductHierarchyByLevelByIds" parameterType="String">
+        delete from biz_base_product_hierarchy_by_level where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

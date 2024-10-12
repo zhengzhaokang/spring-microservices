@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseMbgCustomerDrmTomsTofiMapper">
+    
+    <resultMap type="com.microservices.otmp.masterdata.domain.entity.BizBaseMbgCustomerDrmTomsTofiDO" id="BizBaseMbgCustomerDrmTomsTofiResult">
+        <result property="id"    column="id"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="regionMarketCode"    column="region_market_code"    />
+        <result property="regionMarketName"    column="region_market_name"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOrgName"    column="sales_org_name"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="salesOfficeName"    column="sales_office_name"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="countryName"    column="country_name"    />
+        <result property="customerNumber"    column="customer_number"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="keyAccount"    column="key_account"    />
+        <result property="keyAccountDesc"    column="key_account_desc"    />
+        <result property="customerGroup"    column="customer_group"    />
+        <result property="customerGroupDesc"    column="customer_group_desc"    />
+        <result property="activeStatus"    column="active_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseMbgCustomerDrmTomsTofiVo">
+        select id, business_group, geo_code, region_market_code, region_market_name, sales_org_code, sales_org_name, sales_office_code, sales_office_name, country_code, country_name, customer_number, customer_name, key_account, key_account_desc, customer_group, customer_group_desc, active_status, remark, create_by, create_time, update_by, update_time from biz_base_mbg_customer_drm_toms_tofi
+    </sql>
+
+    <select id="selectBizBaseMbgCustomerDrmTomsTofiList" parameterType="com.microservices.otmp.masterdata.domain.dto.BizBaseMbgCustomerDrmTomsTofiDTO" resultMap="BizBaseMbgCustomerDrmTomsTofiResult">
+        <include refid="selectBizBaseMbgCustomerDrmTomsTofiVo"/>
+        <where>  
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code = #{regionMarketCode}</if>
+            <if test="regionMarketName != null  and regionMarketName != ''"> and region_market_name Ilike '%'||#{regionMarketName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name Ilike '%'||#{salesOrgName}||'%'</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name Ilike '%'||#{salesOfficeName}||'%'</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code = #{countryCode}</if>
+            <if test="countryName != null  and countryName != ''"> and country_name Ilike '%'||#{countryName}||'%'</if>
+            <if test="customerNumber != null  and customerNumber != ''"> and customer_number = #{customerNumber}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name Ilike '%'||#{customerName}||'%'</if>
+            <if test="keyAccount != null  and keyAccount != ''"> and key_account = #{keyAccount}</if>
+            <if test="keyAccountDesc != null  and keyAccountDesc != ''"> and key_account_desc = #{keyAccountDesc}</if>
+            <if test="customerGroup != null  and customerGroup != ''"> and customer_group = #{customerGroup}</if>
+            <if test="customerGroupDesc != null  and customerGroupDesc != ''"> and customer_group_desc = #{customerGroupDesc}</if>
+            <if test="activeStatus != null  and activeStatus != ''"> and active_status = #{activeStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseMbgCustomerDrmTomsTofiById" parameterType="Long" resultMap="BizBaseMbgCustomerDrmTomsTofiResult">
+        <include refid="selectBizBaseMbgCustomerDrmTomsTofiVo"/>
+        where id = #{id}
+    </select>
+    <select id="getByCustomerNumber"
+            resultMap="BizBaseMbgCustomerDrmTomsTofiResult">
+        <include refid="selectBizBaseMbgCustomerDrmTomsTofiVo"/>
+        where customer_number = #{customerNumber} and business_group = #{businessGroup}
+    </select>
+    <select id="getDropDownListByKeyAccount"
+            resultMap="BizBaseMbgCustomerDrmTomsTofiResult">
+        select distinct key_account from  biz_base_mbg_customer_drm_toms_tofi
+        <where>
+            <if test="customerNumber != null  and customerNumber != ''">
+                <choose>
+                    <when test=" 1 == customerNumber.split(',').length">
+                        and customer_number = #{customerNumber}
+                    </when>
+                    <otherwise>
+                        and customer_number in
+                        <foreach collection="customerNumber.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="keyAccount != null and keyAccount != ''">and key_account Ilike '%'||#{keyAccount}||'%'</if>
+            and key_account is not null
+        </where>
+    </select>
+
+    <select id="getDropDownListByCustomerGroup"
+            resultMap="BizBaseMbgCustomerDrmTomsTofiResult">
+        select distinct customer_group from  biz_base_mbg_customer_drm_toms_tofi
+        <where>
+            <if test="customerNumber != null  and customerNumber != ''">
+                <choose>
+                    <when test=" 1 == customerNumber.split(',').length">
+                        and customer_number = #{customerNumber}
+                    </when>
+                    <otherwise>
+                        and customer_number in
+                        <foreach collection="customerNumber.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="customerGroup != null and customerGroup != ''">and customer_group Ilike '%'||#{customerGroup}||'%'</if>
+            and customer_group is not null
+        </where>
+    </select>
+
+    <insert id="insertBizBaseMbgCustomerDrmTomsTofi" parameterType="com.microservices.otmp.masterdata.domain.entity.BizBaseMbgCustomerDrmTomsTofiDO">
+        insert into biz_base_mbg_customer_drm_toms_tofi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="regionMarketCode != null">region_market_code,</if>
+            <if test="regionMarketName != null">region_market_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOrgName != null">sales_org_name,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="salesOfficeName != null">sales_office_name,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="customerNumber != null">customer_number,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="keyAccount != null">key_account,</if>
+            <if test="keyAccountDesc != null">key_account_desc,</if>
+            <if test="customerGroup != null">customer_group,</if>
+            <if test="customerGroupDesc != null">customer_group_desc,</if>
+            <if test="activeStatus != null">active_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="regionMarketCode != null">#{regionMarketCode},</if>
+            <if test="regionMarketName != null">#{regionMarketName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOrgName != null">#{salesOrgName},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">#{salesOfficeName},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="customerNumber != null">#{customerNumber},</if>
+            <if test="customerName != null">#{customerName},</if>
+            <if test="keyAccount != null">#{keyAccount},</if>
+            <if test="keyAccountDesc != null">#{keyAccountDesc},</if>
+            <if test="customerGroup != null">#{customerGroup},</if>
+            <if test="customerGroupDesc != null">#{customerGroupDesc},</if>
+            <if test="activeStatus != null">#{activeStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseMbgCustomerDrmTomsTofi" parameterType="com.microservices.otmp.masterdata.domain.entity.BizBaseMbgCustomerDrmTomsTofiDO">
+        update biz_base_mbg_customer_drm_toms_tofi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="regionMarketCode != null">region_market_code = #{regionMarketCode},</if>
+            <if test="regionMarketName != null">region_market_name = #{regionMarketName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOrgName != null">sales_org_name = #{salesOrgName},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">sales_office_name = #{salesOfficeName},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="customerNumber != null">customer_number = #{customerNumber},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="keyAccount != null">key_account = #{keyAccount},</if>
+            <if test="keyAccountDesc != null">key_account_desc = #{keyAccountDesc},</if>
+            <if test="customerGroup != null">customer_group = #{customerGroup},</if>
+            <if test="customerGroupDesc != null">customer_group_desc = #{customerGroupDesc},</if>
+            <if test="activeStatus != null">active_status = #{activeStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseMbgCustomerDrmTomsTofiById" parameterType="Long">
+        delete from biz_base_mbg_customer_drm_toms_tofi where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseMbgCustomerDrmTomsTofiByIds" parameterType="String">
+        delete from biz_base_mbg_customer_drm_toms_tofi where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.analysis.mapper.FinanceBatchAnalysisMapper">
+    <resultMap id="financeBatchMap" type="com.lenovo.otmp.analysis.domain.entity.FinanceBatchAnalysisDo">
+        <id column="id" property="id"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="submission_date" property="submissionDate"/>
+        <result column="discount_date" property="discountDate"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="status" property="status"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="maturity_date" property="maturityDate"/>
+        <result column="submit_currency" property="submitCurrency"/>
+        <result column="submit_amount" property="submitAmount"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="interest_rate" property="interestRate"/>
+        <result column="tenor" property="tenor"/>
+        <result column="discount" property="discount"/>
+    </resultMap>
+    <select id="selectBatchNumByParam" resultType="java.lang.String">
+        SELECT batch_number
+        FROM otfp_financing.finance_batch fb
+        INNER JOIN otfp_financing.supplier s ON fb.supplier_id = s.id
+        INNER JOIN otfp_financing.entity e ON fb.entity_id  = e.id
+        <where>
+            <if test="startTime != null">
+                AND fb.discount_date >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND fb.discount_date &lt;= #{endTime}
+            </if>
+            <if test="bankId != null and bankId.length != 0">
+                AND fb.bank_id = #{bankId}
+            </if>
+            <if test="supplierId != null">
+                AND fb.supplier_id = #{supplierId}
+            </if>
+            <if test="entityId != null">
+                AND fb.entity_id = #{entityId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

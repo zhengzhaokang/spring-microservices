@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.BankMapper">
+    <resultMap id="bankMap" type="com.lenovo.otmp.financing.domain.entity.BankDo">
+        <id column="id" property="id"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_account" property="bankAccount"/>
+        <result column="region" property="region"/>
+        <result column="currency" property="currency"/>
+        <result column="bank_iban" property="bankIban"/>
+        <result column="swift_code" property="swiftCode"/>
+        <result column="contact_focal" property="contactFocal"/>
+        <result column="contact_email" property="contactEmail"/>
+        <result column="bank_integration_chain" property="bankIntegrationChain"/>
+        <result column="erp_vendor_id" property="erpVendorId"/>
+        <result column="bank_address" property="bankAddress"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="icon_path" property="iconPath"/>
+    </resultMap>
+
+    <resultMap id="bankEntityIdMap" extends="bankMap"
+               type="com.lenovo.otmp.financing.domain.entity.BankWithEntityIdDo">
+        <result column="entity_id" property="entityId"/>
+    </resultMap>
+
+    <resultMap id="bankWithMarginMap" extends="bankMap"
+               type="com.lenovo.otmp.financing.domain.entity.BankWithMarginDo">
+        <result column="margin" property="margin"/>
+        <result column="bank_limit" property="bankLimit"/>
+        <result column="adhoc_limit" property="adhocLimit"/>
+        <result column="adhoc_expiry_date" property="adhocExpiryDate"/>
+        <result column="entity_id" property="entityId"/>
+    </resultMap>
+
+    <select id="banksByEntityId" resultMap="bankEntityIdMap">
+        SELECT ebs.entity_id,b.id,b.bank_name,b.bank_account,b.region,b.currency,b.bank_iban,b.swift_code,
+        b.contact_focal,b.contact_email,b.bank_integration_chain,b.erp_vendor_id,b.bank_address
+        FROM entity_bank_setting ebs
+        INNER JOIN bank b
+        ON ebs.bank_id = b.id
+        WHERE ebs.entity_id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        <if test="status != null">
+            AND ebs.delete_flag = #{status}
+        </if>
+    </select>
+
+    <select id="banksBySingleEntityId" resultMap="bankEntityIdMap">
+        SELECT ebs.entity_id,b.id,b.bank_name,b.bank_account,b.region,b.currency,b.bank_iban,b.swift_code,
+        b.contact_focal,b.contact_email,b.bank_integration_chain,b.erp_vendor_id,b.bank_address
+        FROM entity_bank_setting ebs
+        INNER JOIN bank b
+        ON ebs.bank_id = b.id
+        WHERE ebs.delete_flag = '0'
+        AND b.delete_flag = '0'
+        AND ebs.entity_id = #{entityId}
+    </select>
+    <select id="rankList" resultMap="bankWithMarginMap">
+        SELECT b.id ,b.bank_name ,b."rank" ,sbs.margin ,ebs.bank_limit ,icon_path,
+            ebs.adhoc_limit ,ebs.adhoc_expiry_date ,sbs.supplier_id ,ebs.entity_id
+        FROM supplier_bank_setting sbs
+        INNER JOIN entity_bank_setting ebs
+        ON sbs.entity_id = ebs.entity_id
+        AND sbs.bank_id = ebs.bank_id
+        INNER JOIN bank b
+        ON b.id = ebs.bank_id
+        WHERE supplier_id = #{supplierId}
+        AND b.delete_flag ='0'
+        AND sbs.delete_flag = '0'
+        AND ebs.delete_flag = '0'
+    </select>
+    <select id="bankList" resultMap="bankMap">
+        SELECT id,bank_name,bank_account,region,currency,bank_iban,swift_code,
+            contact_focal,contact_email,bank_integration_chain,erp_vendor_id, bank_address,
+            delete_flag,create_time,create_by,update_time,update_by,icon_path,rank
+        FROM bank
+        WHERE delete_flag =#{status}
+        <if test="supplierId != null">
+            AND id IN
+            (
+                SELECT bank_id
+                FROM supplier_bank_setting sbs
+                WHERE delete_flag = #{status}
+                AND supplier_id  = #{supplierId}
+            )
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <select id="selectByIdsAndStatus" resultMap="bankMap">
+        SELECT id,bank_name,bank_account,region,currency,bank_iban,swift_code,
+            contact_focal,contact_email,bank_integration_chain,erp_vendor_id, bank_address,
+            delete_flag,create_time,create_by,update_time,update_by,icon_path,rank
+        FROM bank
+        WHERE delete_flag =#{delete}
+        <if test="bankIds != null and bankIds.size != 0">
+            AND id IN
+            <foreach collection="bankIds" separator="," close=")" open="(" item="item">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.SysKafkaLogMapper">
+
+	<resultMap type="com.lenovo.otmp.system.domain.entity.SysKafkaLogDO" id="SysKafkaLogResult">
+		<id     property="operId"         column="oper_id"        />
+		<result property="topic"          column="topic"          />
+		<result property="businessType"   column="business_type"  />
+		<result property="operatorType"   column="operator_type"  />
+		<result property="receiveIp"         column="receive_ip"        />
+		<result property="sendIp"   column="send_ip"  />
+		<result property="isSend"      column="is_send"     />
+		<result property="kafkaMsg"      column="kafka_msg"     />
+		<result property="errorMsg"       column="error_msg"      />
+		<result property="operTime"       column="oper_time"      />
+		<result property="isError"       column="is_error"      />
+		<result property="partition"       column="partition"      />
+		<result property="key"       column="key"      />
+		<result property="offset"       column="offset"      />
+		<result property="redisLogKey"       column="redis_log_key"      />
+	</resultMap>
+
+	<sql id="selectKafkaLogVo">
+		select oper_id, topic, business_type, partition,key,"offset", receive_ip,send_ip,is_send,  kafka_msg,  error_msg,redis_log_key, oper_time
+		from sys_kafka_log
+	</sql>
+
+	<insert id="insertKafkalog" parameterType="com.lenovo.otmp.system.domain.entity.SysKafkaLogDO">
+		insert into sys_kafka_log(topic, business_type, partition,key,"offset",  receive_ip,send_ip,is_send,  kafka_msg, is_error, redis_log_key,error_msg, oper_time)
+		values (
+		#{topic},
+		#{businessType},
+		#{partition},
+		#{key},
+		#{offset},
+		#{receiveIp},
+		#{sendIp},
+		#{isSend},
+		#{kafkaMsg},
+		#{isError},
+		#{redisLogKey},
+		#{errorMsg}, now())
+	</insert>
+
+	<select id="selectKafkaLogList" parameterType="com.lenovo.otmp.system.domain.SysKafkaLog" resultMap="SysKafkaLogResult">
+		<include refid="selectKafkaLogVo"/>
+		<where>
+			<if test="topic != null and topic != ''">
+				AND topic like  '%'||#{topic}||'%'
+			</if>
+			<if test="businessType != null">
+				AND business_type = #{businessType}
+			</if>
+			<if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
+				and to_char(oper_time,'yyyy-mm-dd') &gt;= #{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and to_char(oper_time,'yyyy-mm-dd') &lt;= #{endTime}
+			</if>
+			<if test="operIds != null and operIds.size>0">
+				and oper_id in
+				<foreach collection="operIds" item="tableId" open="(" separator="," close=")">
+					#{tableId}
+				</foreach>
+
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteKafkaLogByIds" parameterType="String">
+		delete from sys_kafka_log where oper_id in
+		<foreach collection="array" item="operId" open="(" separator="," close=")">
+			#{operId}
+		</foreach>
+	</delete>
+
+	<select id="selectKafkaLogById" parameterType="Long" resultMap="SysKafkaLogResult">
+		<include refid="selectKafkaLogVo"/>
+		where oper_id = #{operId}
+	</select>
+
+	<update id="cleanKafkaLog">
+		truncate table sys_kafka_log
+	</update>
+
+</mapper> 

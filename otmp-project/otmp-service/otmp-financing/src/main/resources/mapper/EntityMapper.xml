@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.EntityMapper">
+    <resultMap id="entityMap" type="com.lenovo.otmp.financing.domain.entity.EntityDo">
+        <id column="id" property="id"/>
+        <result column="entity_name" property="entityName"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="currency" property="currency"/>
+        <result column="region" property="region"/>
+        <result column="register_address" property="registerAddress"/>
+        <result column="type" property="type"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="file_ids" property="fileIds"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="entityWithCompanyCodeMap" extends="entityMap"
+               type="com.lenovo.otmp.financing.domain.entity.EntityWithCompanyCodeDo">
+        <result column="company_code" property="companyCode"/>
+    </resultMap>
+
+    <resultMap id="entityWithSupplierId" extends="entityMap"
+               type="com.lenovo.otmp.financing.domain.entity.EntityWithSupplierId">
+        <result column="supplier_id" property="supplierId"/>
+    </resultMap>
+    <select id="selectEntityByCompanyCodeList" resultMap="entityWithCompanyCodeMap">
+        SELECT e.id,e.entity_name,e.company_code,e.currency,ecc.company_code
+        FROM entity e
+        INNER JOIN entity_company_code ecc
+        ON e.id = ecc.entity_id
+        WHERE e.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        AND ecc.company_code IN
+        <foreach collection="codes" open="(" close=")" separator="," item="code">
+            #{code}
+        </foreach>
+    </select>
+    <select id="selectEnitiesBySupplierId" resultMap="entityMap">
+        SELECT e.id,e.entity_name,e.company_code,e.currency,
+            e.region, e.register_address, e.type,e.file_ids
+        FROM entity e
+        WHERE e.delete_flag = #{status}
+        AND e.id IN
+        (
+            SELECT entity_id
+            FROM supplier_bank_setting sbs
+            WHERE sbs.delete_flag =#{status}
+            AND sbs.supplier_id =#{supplierId}
+        )
+    </select>
+    <select id="selectByIdsAndStatus" resultMap="entityMap">
+        SELECT e.id,e.entity_name,e.company_code,e.currency,
+        e.region, e.register_address, e.type,e.file_ids
+        FROM entity e
+        WHERE e.delete_flag = #{delete}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND e.id IN
+            <foreach collection="entityIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectEnitiesBySupplierIds" resultMap="entityWithSupplierId">
+        SELECT e.id,e.entity_name,e.company_code,e.currency,
+        e.region, e.register_address, e.type,e.file_ids,sbs.supplier_id
+        FROM entity e
+        INNER JOIN supplier_bank_setting sbs
+        ON e.id = sbs.entity_id
+        WHERE sbs.delete_flag = '0'
+        <if test="supplierIds != null and supplierIds.size != 0">
+            AND sbs.supplier_id IN
+            <foreach collection="supplierIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

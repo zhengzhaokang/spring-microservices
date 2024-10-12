@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseCurrencyMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseCurrency" id="BizBaseCurrencyResult">
+        <result property="id"    column="id"    />
+        <result property="currencyCode"    column="currency_code"    />
+        <result property="currencyDesc"    column="currency_desc"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="decimals"    column="decimals"    />
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseCurrencyDO" id="BizBaseCurrencyDOResult">
+        <result property="id"    column="id"    />
+        <result property="currencyCode"    column="currency_code"    />
+        <result property="currencyDesc"    column="currency_desc"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="decimals"    column="decimals"    />
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseDropDownList" id="BizBaseDropDownList">
+        <result property="value"    column="value"    />
+        <result property="label"    column="label"    />
+    </resultMap>
+
+    <sql id="selectBizBaseCurrencyVo">
+        select id, currency_code, currency_desc, status, remark,decimals, create_by, create_time, update_by, update_time from biz_base_currency
+    </sql>
+
+    <select id="selectBizBaseCurrencyList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCurrency" resultMap="BizBaseCurrencyResult">
+        <include refid="selectBizBaseCurrencyVo"/>
+        <where>
+            <if test="currencyCode != null  and currencyCode != ''">  and <foreach item="item" collection="currencyCodeList" open="(" separator=" or " close=")"> currency_code ilike  ('%'||#{item}||'%') </foreach></if>
+            <if test="currencyDesc != null  and currencyDesc != ''"> and currency_desc  ilike  ('%'||#{currencyDesc}||'%') </if>
+            and status ='Y'
+            <if test="decimals != null"> and decimals =  #{decimals} </if>
+
+            <if test="remark != null  and remark != ''"> and remark  Ilike '%'|| #{remark}||'%'  </if>
+            <if test="createBy != null  and createBy != ''"> and create_by  Ilike '%'|| #{createBy}||'%'  </if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+        </where>
+        order by id desc
+    </select>
+    
+    <select id="selectBizBaseCurrencyById" parameterType="String" resultMap="BizBaseCurrencyResult">
+        <include refid="selectBizBaseCurrencyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseCurrency" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCurrency" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_currency
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currencyCode != null">currency_code,</if>
+            <if test="currencyDesc != null">currency_desc,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="decimals != null">decimals,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="currencyCode != null">#{currencyCode},</if>
+            <if test="currencyDesc != null">#{currencyDesc},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="decimals != null">#{decimals},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseCurrency" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCurrency">
+        update biz_base_currency
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currencyCode != null">currency_code = #{currencyCode},</if>
+            <if test="currencyDesc != null">currency_desc = #{currencyDesc},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="decimals != null">decimals = #{decimals},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseCurrencyById" parameterType="String">
+        delete from biz_base_currency where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseCurrencyByIds" parameterType="String">
+       update biz_base_currency set status='N',update_time=now()  where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="getAllCurrency" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDropDownCondition" resultMap="BizBaseDropDownList">
+        select distinct currency_code as label ,currency_desc as value from biz_base_currency
+        <where>
+            status = 'Y' and currency_code is not null
+        </where>
+    </select>
+
+    <select id="getPoolCurrencyBySalesOrg" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDropDownCondition" resultMap="BizBaseDropDownList">
+        select distinct local_currency_code as label ,local_currency_code as value from biz_base_org_office
+        <where>
+            status = 'Y' and local_currency_code is not null
+            <choose>
+                <when test=" 1 == salesOrgCode.split(',').length">
+                    and sales_org_code = #{salesOrgCode}
+                </when>
+                <otherwise>
+                    and sales_org_code in
+                    <foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=",">
+                        #{item}
+                    </foreach>
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectBaseCurrencyListCheck" resultType="com.lenovo.otmp.masterdata.domain.BizBaseCustomer">
+
+        <include refid="selectBizBaseCurrencyVo"/>
+        <where>
+            <if test="currencyCode != null  and currencyCode != ''">  and  currency_code = #{currencyCode}</if>
+
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+
+        </where>
+    </select>
+
+
+    <select id="selectBizBaseCurrencyByCode" parameterType="String" resultMap="BizBaseCurrencyDOResult">
+        <include refid="selectBizBaseCurrencyVo"/>
+        where currency_code = #{currencyCode}
+    </select>
+
+    <select id="selectBizBaseCurrencyByCodeList" parameterType="java.util.List" resultMap="BizBaseCurrencyDOResult">
+        <include refid="selectBizBaseCurrencyVo"/>
+        <if test="currencyCodeList != null and currencyCodeList.size > 0">
+            where currency_code in
+            <foreach item="currencyCode" collection="currencyCodeList" open="(" separator="," close=")">
+                #{currencyCode}
+            </foreach>
+        </if>
+    </select>
+</mapper>

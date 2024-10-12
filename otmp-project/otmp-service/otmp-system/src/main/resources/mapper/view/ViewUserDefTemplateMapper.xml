@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewUserDefTemplateMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewUserDefTemplateDO" id="ViewUserDefTemplateResult">
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="itCode"    column="it_code"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectViewUserDefTemplateVo">
+        select update_by, update_time, it_code, template_id, create_by, create_time from view_user_def_template
+    </sql>
+
+    <select id="selectViewUserDefTemplateList" parameterType="com.lenovo.otmp.system.domain.ViewUserDefTemplate" resultMap="ViewUserDefTemplateResult">
+        <include refid="selectViewUserDefTemplateVo"/>
+        <where>  
+            <if test="itCode != null  and itCode != ''"> and it_code = #{itCode}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+        </where>
+    </select>
+    
+    <select id="selectViewUserDefTemplateById" parameterType="String" resultMap="ViewUserDefTemplateResult">
+        <include refid="selectViewUserDefTemplateVo"/>
+        where update_by = #{updateBy}
+    </select>
+        
+    <insert id="insertViewUserDefTemplate" parameterType="com.lenovo.otmp.system.domain.entity.ViewUserDefTemplateDO">
+        insert into view_user_def_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="itCode != null  and itCode != ''">it_code,</if>
+            <if test="templateId != null ">template_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="itCode != null  and itCode != ''">#{itCode},</if>
+            <if test="templateId != null ">#{templateId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateViewUserDefTemplate" parameterType="com.lenovo.otmp.system.domain.entity.ViewUserDefTemplateDO">
+        update view_user_def_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="itCode != null  and itCode != ''">it_code = #{itCode},</if>
+            <if test="templateId != null ">template_id = #{templateId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where update_by = #{updateBy}
+    </update>
+
+    <delete id="deleteViewUserDefTemplateById" parameterType="String">
+        delete from view_user_def_template where update_by = #{updateBy}
+    </delete>
+
+    <delete id="deleteViewUserDefTemplateByIds" parameterType="String">
+        delete from view_user_def_template where update_by in 
+        <foreach item="updateBy" collection="array" open="(" separator="," close=")">
+            #{updateBy}
+        </foreach>
+    </delete>
+    
+</mapper>

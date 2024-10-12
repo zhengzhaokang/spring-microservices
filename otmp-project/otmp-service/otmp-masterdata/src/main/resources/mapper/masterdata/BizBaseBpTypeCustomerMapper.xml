@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseBpTypeCustomerMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseBpTypeCustomer" id="BizBaseBpTypeCustomerResult">
+        <result property="id"    column="id"    />
+        <result property="bpType"    column="bp_type"    />
+        <result property="customerNumber"    column="customer_number"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="customerGroup"    column="customer_group"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseBpTypeCustomerVo">
+        select id, bp_type, customer_number, customer_name, sales_org_code, sales_office_code, customer_group, status, remark, create_by, create_time, update_by, update_time from biz_base_bp_type_customer
+    </sql>
+
+    <select id="selectBizBaseBpTypeCustomerList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseBpTypeCustomer" resultMap="BizBaseBpTypeCustomerResult">
+        <include refid="selectBizBaseBpTypeCustomerVo"/>
+        <where>  
+            <if test="bpType != null  and bpType != ''"> and bp_type Ilike '%'|| #{bpType}||'%' </if>
+            <if test="customerNumber != null  and customerNumber != ''"> and customer_number = #{customerNumber}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name Ilike '%'||#{customerName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="customerGroup != null  and customerGroup != ''"> and customer_group = #{customerGroup}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseBpTypeCustomerById" parameterType="Long" resultMap="BizBaseBpTypeCustomerResult">
+        <include refid="selectBizBaseBpTypeCustomerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseBpTypeCustomer" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseBpTypeCustomer" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_bp_type_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bpType != null">bp_type,</if>
+            <if test="customerNumber != null">customer_number,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="customerGroup != null">customer_group,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bpType != null">#{bpType},</if>
+            <if test="customerNumber != null">#{customerNumber},</if>
+            <if test="customerName != null">#{customerName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="customerGroup != null">#{customerGroup},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseBpTypeCustomer" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseBpTypeCustomer">
+        update biz_base_bp_type_customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bpType != null">bp_type = #{bpType},</if>
+            <if test="customerNumber != null">customer_number = #{customerNumber},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="customerGroup != null">customer_group = #{customerGroup},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseBpTypeCustomerById" parameterType="Long">
+        delete from biz_base_bp_type_customer where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseBpTypeCustomerByIds" parameterType="String">
+        delete from biz_base_bp_type_customer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

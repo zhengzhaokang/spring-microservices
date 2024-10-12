@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseTosMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseTos" id="BizBaseTosResult">
+        <result property="id"    column="id"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="evDescription"    column="ev_description"    />
+        <result property="parentH1"    column="parent_h1"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseTosVo">
+        select id, member_id, ev_description, parent_h1, status, remark, create_by, create_time, update_by, update_time from biz_base_tos
+    </sql>
+
+    <select id="selectBizBaseTosList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTos" resultMap="BizBaseTosResult">
+        <include refid="selectBizBaseTosVo"/>
+        <where>  
+            <if test="memberId != null  and memberId != ''"> and member_id Ilike '%'|| #{memberId}||'%' </if>
+            <if test="evDescription != null  and evDescription != ''"> and ev_description = #{evDescription}</if>
+            <if test="parentH1 != null  and parentH1 != ''"> and parent_h1 = #{parentH1}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseTosById" parameterType="Long" resultMap="BizBaseTosResult">
+        <include refid="selectBizBaseTosVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseTos" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTos" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_tos
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">member_id,</if>
+            <if test="evDescription != null">ev_description,</if>
+            <if test="parentH1 != null">parent_h1,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">#{memberId},</if>
+            <if test="evDescription != null">#{evDescription},</if>
+            <if test="parentH1 != null">#{parentH1},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseTos" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTos">
+        update biz_base_tos
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberId != null">member_id = #{memberId},</if>
+            <if test="evDescription != null">ev_description = #{evDescription},</if>
+            <if test="parentH1 != null">parent_h1 = #{parentH1},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseTosById" parameterType="Long">
+        delete from biz_base_tos where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseTosByIds" parameterType="String">
+        delete from biz_base_tos where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

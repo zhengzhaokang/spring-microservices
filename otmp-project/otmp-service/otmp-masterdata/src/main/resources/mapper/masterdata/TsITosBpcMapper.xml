@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.TsITosBpcMapper">
+    
+    <resultMap type="com.microservices.otmp.masterdata.domain.entity.TsITosBpcDO" id="TsITosBpcResult">
+        <result property="id"    column="id"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="evDescription"    column="ev_description"    />
+        <result property="parentH1"    column="parent_h1"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTsITosBpcVo">
+        select id, member_id, ev_description, parent_h1, status, remark, create_by, create_time, update_by, update_time from ts_i_tos_bpc
+    </sql>
+
+    <select id="selectTsITosBpcList" parameterType="com.microservices.otmp.masterdata.domain.dto.TsITosBpcDTO" resultMap="TsITosBpcResult">
+        <include refid="selectTsITosBpcVo"/>
+        <where>  
+            <if test="memberId != null  and memberId != ''"> and member_id = #{memberId}</if>
+            <if test="evDescription != null  and evDescription != ''"> and ev_description = #{evDescription}</if>
+            <if test="parentH1 != null  and parentH1 != ''"> and parent_h1 = #{parentH1}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+             <if test="createTime != null">
+                 and   to_char(create_time,'yyyy-MM-dd')= SUBSTR(#{createTime}, 0,11)
+             </if>
+        </where>
+    </select>
+    
+    <select id="selectTsITosBpcById" parameterType="Long" resultMap="TsITosBpcResult">
+        <include refid="selectTsITosBpcVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTsITosBpc" parameterType="com.microservices.otmp.masterdata.domain.entity.TsITosBpcDO" useGeneratedKeys="true" keyProperty="id">
+        insert into ts_i_tos_bpc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">member_id,</if>
+            <if test="evDescription != null">ev_description,</if>
+            <if test="parentH1 != null">parent_h1,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberId != null">#{memberId},</if>
+            <if test="evDescription != null">#{evDescription},</if>
+            <if test="parentH1 != null">#{parentH1},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTsITosBpc" parameterType="com.microservices.otmp.masterdata.domain.entity.TsITosBpcDO">
+        update ts_i_tos_bpc
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberId != null">member_id = #{memberId},</if>
+            <if test="evDescription != null">ev_description = #{evDescription},</if>
+            <if test="parentH1 != null">parent_h1 = #{parentH1},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTsITosBpcById" parameterType="Long">
+        delete from ts_i_tos_bpc where id = #{id}
+    </delete>
+
+    <delete id="deleteTsITosBpcByIds" parameterType="String">
+        delete from ts_i_tos_bpc where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

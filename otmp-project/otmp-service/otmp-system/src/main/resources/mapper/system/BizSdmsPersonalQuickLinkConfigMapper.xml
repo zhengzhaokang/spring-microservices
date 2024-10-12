@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.system.mapper.BizSdmsPersonalQuickLinkConfigMapper">
+    
+    <resultMap type="com.microservices.otmp.system.domain.entity.BizSdmsPersonalQuickLinkConfigDO" id="BizSdmsPersonalQuickLinkConfigResult">
+        <result property="quickLinkConfigId"    column="quick_link_config_id"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="quickLinkTitle"    column="quick_link_title"    />
+        <result property="quickLinkName"    column="quick_link_name"    />
+        <result property="quickLinkDsc"    column="quick_link_dsc"    />
+        <result property="icon"    column="icon"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="path"    column="path"    />
+    </resultMap>
+
+    <sql id="selectBizSdmsPersonalQuickLinkConfigVo">
+        select quick_link_config_id, user_code, quick_link_title, quick_link_name, quick_link_dsc, icon, status, remark, create_by, create_time, update_by, update_time, path from biz_sdms_personal_quick_link_config
+    </sql>
+
+    <select id="selectBizSdmsPersonalQuickLinkConfigList" parameterType="com.microservices.otmp.system.domain.entity.BizSdmsPersonalQuickLinkConfigDO" resultMap="BizSdmsPersonalQuickLinkConfigResult">
+        <include refid="selectBizSdmsPersonalQuickLinkConfigVo"/>
+        <where>  
+            <if test="quickLinkConfigId != null "> and quick_link_config_id = #{quickLinkConfigId}</if>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="quickLinkTitle != null  and quickLinkTitle != ''"> and quick_link_title = #{quickLinkTitle}</if>
+            <if test="quickLinkName != null  and quickLinkName != ''"> and quick_link_name like '%'||#{quickLinkName}||'%'</if>
+            <if test="quickLinkDsc != null  and quickLinkDsc != ''"> and quick_link_dsc = #{quickLinkDsc}</if>
+            <if test="icon != null  and icon != ''"> and icon = #{icon}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="path != null  and path != ''"> and path = #{path}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizSdmsPersonalQuickLinkConfigByQuickLinkConfigId" parameterType="Long" resultMap="BizSdmsPersonalQuickLinkConfigResult">
+        <include refid="selectBizSdmsPersonalQuickLinkConfigVo"/>
+        where quick_link_config_id = #{quickLinkConfigId}
+    </select>
+        
+    <insert id="insertBizSdmsPersonalQuickLinkConfig" parameterType="com.microservices.otmp.system.domain.entity.BizSdmsPersonalQuickLinkConfigDO">
+        insert into biz_sdms_personal_quick_link_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="quickLinkConfigId != null">quick_link_config_id,</if>
+            <if test="userCode != null">user_code,</if>
+            <if test="quickLinkTitle != null">quick_link_title,</if>
+            <if test="quickLinkName != null">quick_link_name,</if>
+            <if test="quickLinkDsc != null">quick_link_dsc,</if>
+            <if test="icon != null">icon,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="path != null">path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="quickLinkConfigId != null">#{quickLinkConfigId},</if>
+            <if test="userCode != null">#{userCode},</if>
+            <if test="quickLinkTitle != null">#{quickLinkTitle},</if>
+            <if test="quickLinkName != null">#{quickLinkName},</if>
+            <if test="quickLinkDsc != null">#{quickLinkDsc},</if>
+            <if test="icon != null">#{icon},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="path != null">#{path},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSdmsPersonalQuickLinkConfig" parameterType="com.microservices.otmp.system.domain.entity.BizSdmsPersonalQuickLinkConfigDO">
+        update biz_sdms_personal_quick_link_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userCode != null">user_code = #{userCode},</if>
+            <if test="quickLinkTitle != null">quick_link_title = #{quickLinkTitle},</if>
+            <if test="quickLinkName != null">quick_link_name = #{quickLinkName},</if>
+            <if test="quickLinkDsc != null">quick_link_dsc = #{quickLinkDsc},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="path != null">path = #{path},</if>
+        </trim>
+        where quick_link_config_id = #{quickLinkConfigId}
+    </update>
+
+    <delete id="deleteBizSdmsPersonalQuickLinkConfigByQuickLinkConfigId" parameterType="Long">
+        delete from biz_sdms_personal_quick_link_config where quick_link_config_id = #{quickLinkConfigId}
+    </delete>
+
+    <delete id="deleteBizSdmsPersonalQuickLinkConfigByQuickLinkConfigIds" parameterType="String">
+        delete from biz_sdms_personal_quick_link_config where quick_link_config_id in 
+        <foreach item="quickLinkConfigId" collection="array" open="(" separator="," close=")">
+            #{quickLinkConfigId}
+        </foreach>
+    </delete>
+</mapper>

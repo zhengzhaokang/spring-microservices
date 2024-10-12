@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.SupplierBankSettingMapper">
+
+    <resultMap id="bankSetting" type="com.lenovo.otmp.financing.domain.entity.SupplierBankSettingDo">
+        <id column="id" property="id"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="buyer_org" property="buyerOrg"/>
+        <result column="buyer_org_id" property="buyerOrgId"/>
+        <result column="currency" property="currency"/>
+        <result column="maximum_invoice_tenor" property="maximumInvoiceTenor"/>
+        <result column="days_from_posting_date" property="daysFromPostingDate"/>
+        <result column="invoice_percentage" property="invoicePercentage"/>
+        <result column="margin" property="margin"/>
+        <result column="maximum_finance_tenor" property="maximumFinanceTenor"/>
+        <result column="bench_mark" property="benchMark"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="entity_bank_rel_id" property="entityBankRelId"/>
+    </resultMap>
+
+    <resultMap id="entityAndBankName" type="com.lenovo.otmp.financing.domain.entity.BankNameDo">
+        <id column="id" property="id"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="bank_name" property="bankName"/>
+    </resultMap>
+
+    <resultMap id="onboardingByBankMap" type="com.lenovo.otmp.financing.domain.entity.OnBoardingSupplierByBankDo">
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="activation_date" property="activationDate"/>
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO supplier_bank_setting
+        ( id,supplier_id,bank_id,entity_id,buyer_org,buyer_org_id,currency,
+        maximum_invoice_tenor,days_from_posting_date,invoice_percentage,
+        margin,maximum_finance_tenor,bench_mark,company_code,delete_flag,
+        create_time,create_by,update_time,update_by,entity_bank_rel_id )
+        VALUES
+        <foreach collection="records" item="item" separator=",">
+            (#{item.id},#{item.supplierId},#{item.bankId},#{item.entityId},#{item.buyerOrg}, #{item.buyerOrgId},
+            #{item.currency},#{item.maximumInvoiceTenor},#{item.daysFromPostingDate},#{item.invoicePercentage},
+            #{item.margin},#{item.maximumFinanceTenor},#{item.benchMark},#{item.companyCode},
+            #{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy},#{item.entityBankRelId})
+        </foreach>
+    </insert>
+    <update id="deleteBySupplierId">
+        UPDATE supplier_bank_setting
+        SET delete_flag = '1'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '0'
+    </update>
+    <delete id="removeBySupplierId">
+        DELETE FROM supplier_bank_setting
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </delete>
+    <update id="activeBySupplierId">
+        UPDATE supplier_bank_setting
+        SET delete_flag = '0'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </update>
+
+    <select id="selectEntityAndBankName" resultMap="entityAndBankName">
+        SELECT
+        b.bank_name,
+        sbs.id,
+        sbs.supplier_id,
+        sbs.bank_id
+        FROM supplier_bank_setting sbs
+        INNER JOIN bank b
+        ON sbs.bank_id = b.id
+        WHERE sbs.supplier_id IN
+        <foreach collection="supplierIds" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+        AND sbs.delete_flag = #{deleteFlag}
+    </select>
+
+    <select id="onboardingByBank" resultMap="onboardingByBankMap">
+        SELECT sbs.bank_id ,sbs.entity_id ,sbs.supplier_id,s.supplier_name ,s.activation_date
+        FROM supplier_bank_setting sbs
+        INNER JOIN supplier s
+        ON sbs.supplier_id = s.id
+        WHERE sbs.delete_flag = '0'
+        AND s.delete_flag = '0'
+        <!--AND s.status IN (2,3,5)-->
+        AND s.status = 2
+        AND sbs.bank_id IN
+        <foreach collection="bankIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        GROUP BY sbs.bank_id ,sbs.entity_id ,sbs.supplier_id,s.supplier_name ,s.activation_date
+    </select>
+
+    <update id="removeSettingRelation">
+        UPDATE supplier_bank_setting
+        SET delete_flag = '1'
+        WHERE id IN
+        <foreach collection="settingIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="selectBankCompanyCodes" resultType="java.lang.String">
+        SELECT ecc.company_code
+        FROM supplier_bank_setting sbs
+        INNER JOIN entity_company_code ecc
+        ON sbs.entity_id = ecc.entity_id
+        WHERE sbs.supplier_id = #{supplierId}
+        AND sbs.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        <if test="bankId != null and bankId.length !=  0">
+            AND sbs.bank_id = #{bankId}
+        </if>
+    </select>
+
+    <select id="selectOneByEntityId" resultMap="bankSetting">
+        SELECT id,supplier_id,bank_id,entity_id
+        FROM supplier_bank_setting sbs
+        WHERE sbs.entity_id = #{entityId}
+        AND sbs.delete_flag = '0'
+        ORDER BY id ASC
+        LIMIT 1
+    </select>
+    <select id="selectBySupplierIdAndBankId" resultMap="bankSetting">
+        SELECT id,supplier_id,bank_id,entity_id,buyer_org,buyer_org_id,currency,
+            maximum_invoice_tenor,days_from_posting_date,invoice_percentage,
+            margin,maximum_finance_tenor,bench_mark,company_code
+        FROM supplier_bank_setting
+        WHERE delete_flag = '0'
+        AND supplier_id = #{supplierId}
+        AND bank_id = #{bankId}
+    </select>
+    <select id="selectBySupplierBankEntityIds" resultMap="bankSetting">
+        SELECT id,supplier_id,bank_id,entity_id,buyer_org,buyer_org_id,currency,
+        maximum_invoice_tenor,days_from_posting_date,invoice_percentage,
+        margin,maximum_finance_tenor,bench_mark,company_code
+        FROM supplier_bank_setting
+        WHERE delete_flag = '0'
+        AND supplier_id = #{supplierId}
+        AND bank_id = #{bankId}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" separator="," item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectBySupplierId" resultMap="bankSetting">
+        SELECT id,supplier_id,bank_id,entity_id
+        FROM supplier_bank_setting
+        WHERE delete_flag = #{delete}
+        AND supplier_id = #{supplierId}
+    </select>
+</mapper>

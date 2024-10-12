@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" class="el_dark"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/logo.png"><title>GAMS 2.0</title><style>.first-loading-wrp {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 420px;
+            height: 100%
+        }
+        
+        .first-loading-wrp>h1 {
+            font-size: 128px
+        }
+        
+        .first-loading-wrp .loading-wrp {
+            padding: 98px;
+            display: flex;
+            justify-content: center;
+            align-items: center
+        }
+        
+        .dot {
+            animation: antRotate 1.2s infinite linear;
+            transform: rotate(45deg);
+            position: relative;
+            display: inline-block;
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+            box-sizing: border-box
+        }
+        
+        .dot i {
+            width: 14px;
+            height: 14px;
+            position: absolute;
+            display: block;
+            background-color: #1890ff;
+            border-radius: 100%;
+            transform: scale(.75);
+            transform-origin: 50% 50%;
+            opacity: .3;
+            animation: antSpinMove 1s infinite linear alternate
+        }
+        
+        .dot i:nth-child(1) {
+            top: 0;
+            left: 0
+        }
+        
+        .dot i:nth-child(2) {
+            top: 0;
+            right: 0;
+            -webkit-animation-delay: .4s;
+            animation-delay: .4s
+        }
+        
+        .dot i:nth-child(3) {
+            right: 0;
+            bottom: 0;
+            -webkit-animation-delay: .8s;
+            animation-delay: .8s
+        }
+        
+        .dot i:nth-child(4) {
+            bottom: 0;
+            left: 0;
+            -webkit-animation-delay: 1.2s;
+            animation-delay: 1.2s
+        }
+        
+        @keyframes antRotate {
+            to {
+                -webkit-transform: rotate(405deg);
+                transform: rotate(405deg)
+            }
+        }
+        
+        @-webkit-keyframes antRotate {
+            to {
+                -webkit-transform: rotate(405deg);
+                transform: rotate(405deg)
+            }
+        }
+        
+        @keyframes antSpinMove {
+            to {
+                opacity: 1
+            }
+        }
+        
+        @-webkit-keyframes antSpinMove {
+            to {
+                opacity: 1
+            }
+        }</style><link href="/css/chunk-03d10822.d4a19441.css" rel="prefetch"><link href="/css/chunk-0a8eb3cd.ed9ab5a1.css" rel="prefetch"><link href="/css/chunk-0d1437f0.932d0c36.css" rel="prefetch"><link href="/css/chunk-11ff6df8.29295a8f.css" rel="prefetch"><link href="/css/chunk-1e9ae2e0.3426194a.css" rel="prefetch"><link href="/css/chunk-298fd5f4.ae3ed3d5.css" rel="prefetch"><link href="/css/chunk-2d87514c.10aa8baa.css" rel="prefetch"><link href="/css/chunk-347c7802.ec787fa5.css" rel="prefetch"><link href="/css/chunk-3ee1cd7e.61ac8e63.css" rel="prefetch"><link href="/css/chunk-44373e1a.6a9af944.css" rel="prefetch"><link href="/css/chunk-4a5bea6f.1259e7a3.css" rel="prefetch"><link href="/css/chunk-51a655d6.06c504dc.css" rel="prefetch"><link href="/css/chunk-556ea065.77f8490a.css" rel="prefetch"><link href="/css/chunk-5e758f24.55da7422.css" rel="prefetch"><link href="/css/chunk-666c1458.cc07b68e.css" rel="prefetch"><link href="/css/chunk-6c6e8230.bff7557b.css" rel="prefetch"><link href="/css/chunk-6d568a68.2ffd308b.css" rel="prefetch"><link href="/css/chunk-70c7a28c.1ea2cfbe.css" rel="prefetch"><link href="/css/chunk-7563ff60.5abe56ac.css" rel="prefetch"><link href="/css/chunk-93bcfaea.2594a713.css" rel="prefetch"><link href="/css/chunk-9f294d6c.0e5a5344.css" rel="prefetch"><link href="/css/chunk-d4d9b59c.85502499.css" rel="prefetch"><link href="/css/chunk-e7635762.afcd3805.css" rel="prefetch"><link href="/css/chunk-fbe83d20.88bab52d.css" rel="prefetch"><link href="/css/user.c3674bc1.css" rel="prefetch"><link href="/js/chunk-03d10822.8b0fa203.js" rel="prefetch"><link href="/js/chunk-0a8eb3cd.1f9ac1fb.js" rel="prefetch"><link href="/js/chunk-0d1437f0.a1b1a6f5.js" rel="prefetch"><link href="/js/chunk-11ff6df8.8b8820d4.js" rel="prefetch"><link href="/js/chunk-1e9ae2e0.6710aa54.js" rel="prefetch"><link href="/js/chunk-1f46076c.5a32e44f.js" rel="prefetch"><link href="/js/chunk-298fd5f4.75db9440.js" rel="prefetch"><link href="/js/chunk-2d0ae949.52dad6dd.js" rel="prefetch"><link href="/js/chunk-2d0aecfc.fee69af3.js" rel="prefetch"><link href="/js/chunk-2d0da6a8.e478af96.js" rel="prefetch"><link href="/js/chunk-2d0ded04.79270ab7.js" rel="prefetch"><link href="/js/chunk-2d0e4e51.49e1cbeb.js" rel="prefetch"><link href="/js/chunk-2d209ae6.3b718409.js" rel="prefetch"><link href="/js/chunk-2d2253ae.6b8f9c08.js" rel="prefetch"><link href="/js/chunk-2d87514c.eb6cfc5f.js" rel="prefetch"><link href="/js/chunk-347c7802.c580f48d.js" rel="prefetch"><link href="/js/chunk-3ee1cd7e.fae7433a.js" rel="prefetch"><link href="/js/chunk-44373e1a.944ed2b3.js" rel="prefetch"><link href="/js/chunk-4a5bea6f.c77549d9.js" rel="prefetch"><link href="/js/chunk-51a655d6.79209ed1.js" rel="prefetch"><link href="/js/chunk-556ea065.43602214.js" rel="prefetch"><link href="/js/chunk-5e758f24.0d2e4fea.js" rel="prefetch"><link href="/js/chunk-666c1458.c9064c8b.js" rel="prefetch"><link href="/js/chunk-6c6e8230.dceddc56.js" rel="prefetch"><link href="/js/chunk-6d568a68.57a4828f.js" rel="prefetch"><link href="/js/chunk-70c7a28c.f7314d66.js" rel="prefetch"><link href="/js/chunk-7563ff60.5fff926f.js" rel="prefetch"><link href="/js/chunk-93bcfaea.8d645627.js" rel="prefetch"><link href="/js/chunk-9f294d6c.7d0335d9.js" rel="prefetch"><link href="/js/chunk-b3623ce6.ec6be1e9.js" rel="prefetch"><link href="/js/chunk-c3fb3c98.674b45d6.js" rel="prefetch"><link href="/js/chunk-d4d9b59c.38b5d12b.js" rel="prefetch"><link href="/js/chunk-e7635762.046277f5.js" rel="prefetch"><link href="/js/chunk-fbe83d20.20cb56bf.js" rel="prefetch"><link href="/js/fail.c307ebe9.js" rel="prefetch"><link href="/js/lang-zh-TW.8d217670.js" rel="prefetch"><link href="/js/user.543bb2e7.js" rel="prefetch"><link href="/css/app.588948f9.css" rel="preload" as="style"><link href="/css/chunk-vendors.bb26fc71.css" rel="preload" as="style"><link href="/js/app.d257bd04.js" rel="preload" as="script"><link href="/js/chunk-vendors.1e949570.js" rel="preload" as="script"><link href="/css/chunk-vendors.bb26fc71.css" rel="stylesheet"><link href="/css/app.588948f9.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but vue-antd-pro doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"><div class="first-loading-wrp"><div class="loading-wrp"><span class="dot dot-spin"></span></div><div style="display: flex; justify-content: center; align-items: center;"></div></div></div><script src="https://cdn.staticfile.org/vue/2.6.10/vue.min.js"></script><script src="https://cdn.staticfile.org/axios/0.19.0/axios.min.js"></script><script src="https://cdn.staticfile.org/vue-router/3.1.2/vue-router.min.js"></script><script src="https://cdn.staticfile.org/vuex/3.1.1/vuex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/locale/zh-cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@antv/g2@3.5.7/dist/g2.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@antv/data-set@0.10.2/dist/data-set.min.js"></script><script src="https://cdn.staticfile.org/ant-design-vue/1.6.0/antd-with-locales.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/vue/2.6.10/vue.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/axios/0.19.0/axios.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/vue-router/3.1.2/vue-router.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/vuex/3.1.1/vuex.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/moment/2.24.0/moment.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/moment/2.24.0/locale/zh-cn.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/antv/g2/3.5.7/dist/g2.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/antv/data-set/0.10.2/dist/data-set.min.js"></script><script src="https://sdms-cdn-dev.t-sy-in.earth.xcloud.lenovo.com/ant-design-vue/1.6.0/antd-with-locales.js"></script><script src="/js/chunk-vendors.1e949570.js"></script><script src="/js/app.d257bd04.js"></script></body></html>

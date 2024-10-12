@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.InvoiceSubmitRecordMapper">
+
+    <resultMap id="invoiceSubmitRecordMap" type="com.lenovo.otmp.financing.domain.entity.InvoiceSubmitRecord">
+        <result column="id" property="id"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="batch_id" property="batchId"/>
+        <result column="batch_num" property="batchNum"/>
+        <result column="batch_invoice_id" property="batchInvoiceId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="amount" property="amount"/>
+        <result column="invoice_type" property="invoiceType"/>
+        <result column="maturity_date" property="maturityDate"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="discount_date" property="discountDate"/>
+        <result column="invoice_id" property="invoiceId"/>
+        <result column="invoice_reference" property="invoiceReference"/>
+        <result column="vendor_code" property="vendorCode"/>
+    </resultMap>
+
+    <resultMap id="extMap" extends="invoiceSubmitRecordMap"
+               type="com.lenovo.otmp.financing.domain.entity.InvoiceSubmitRecordExt">
+        <result column="invoice_currency" property="currency" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO invoice_submit_record
+        (id,supplier_id,supplier_name,batch_id,batch_num,batch_invoice_id,bank_id,entity_id,amount,
+        invoice_type,maturity_date,create_by,create_time,update_by,update_time,discount_date,
+        invoice_id,invoice_reference,vendor_code)
+        values
+        <foreach collection="records" item="item" separator="," >
+            (#{item.id},#{item.supplierId},#{item.supplierName},#{item.batchId},#{item.batchNum},#{item.batchInvoiceId}
+            ,#{item.bankId},#{item.entityId}, #{item.amount}, #{item.invoiceType},#{item.maturityDate},#{item.createBy},
+            #{item.createTime},#{item.updateBy},#{item.updateTime},#{item.discountDate},#{item.invoiceId},#{item.invoiceReference},#{item.vendorCode})
+        </foreach>
+    </insert>
+    <update id="updateExpireRecords">
+        UPDATE invoice_submit_record
+        SET delete_flag = '1',
+        update_by = #{updateBy},
+        update_time = #{updateTime}
+        WHERE id IN
+        <foreach collection="recordIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateStatus">
+        UPDATE invoice_submit_record
+        SET delete_flag = #{newStatus},
+        update_time = #{updateTime},
+        update_by = #{updateBy}
+        WHERE vendor_code = #{vendorCode}
+        AND invoice_reference IN
+        <foreach collection="invoiceReferences" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+        AND delete_flag = #{oldStatus}
+    </update>
+
+    <update id="updateStatusByBatch" >
+        UPDATE invoice_submit_record
+        SET delete_flag = #{newStatus},
+        update_time = #{updateTime},
+        update_by = #{updateBy}
+        WHERE batch_num = #{batchNum}
+        AND delete_flag = #{oldStatus}
+    </update>
+
+    <select id="selectRecordsBySupplierId" resultMap="invoiceSubmitRecordMap">
+        SELECT id,supplier_id,supplier_name,batch_id,batch_num,batch_invoice_id,bank_id,entity_id,amount,
+        invoice_type,maturity_date,create_by,create_time,update_by,update_time,discount_date,invoice_id,invoice_reference,vendor_code
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND supplier_id = #{supplierId}
+        AND bank_id = #{bankId}
+    </select>
+
+    <select id="selectExpiredRecordIds" resultType="java.lang.Long">
+        SELECT id FROM
+        (
+            SELECT isr.*
+            FROM invoice_submit_record isr
+            INNER JOIN finance_batch_invoice fbi
+            ON batch_invoice_id = fbi.id
+            INNER JOIN finance_invoice_ap fia
+            ON fbi.invoice_id = fia.id
+            WHERE isr.delete_flag = '0'
+            AND fbi.delete_flag = false
+            AND fia.delete_flag = false
+            AND fia.status = 'Reject'
+            UNION
+            SELECT isr.* from invoice_submit_record isr
+            INNER JOIN finance_batch_invoice fbi
+            ON batch_invoice_id = fbi.id
+            INNER JOIN finance_invoice_ap fia
+            ON fbi.invoice_id = fia.id
+            WHERE isr.delete_flag = '0'
+            AND fbi.delete_flag = false
+            AND fia.delete_flag = false
+            AND fia.status = 'Financing'
+            AND fia.maturity_date &lt; #{expiryTime}
+        ) t
+        LIMIT #{size}
+    </select>
+
+    <select id="selectRecordsBySupplierIdAndBankIds" resultMap="invoiceSubmitRecordMap">
+        SELECT id,supplier_id,supplier_name,batch_id,batch_num,batch_invoice_id,bank_id,entity_id,amount,
+        invoice_type,maturity_date,create_by,create_time,update_by,update_time,discount_date,invoice_id,invoice_reference,vendor_code
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND supplier_id = #{supplierId}
+        <if test="bankIds != null and bankIds.size != 0">
+            AND bank_id IN
+            <foreach collection="bankIds" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectRecordsByBankId" resultMap="invoiceSubmitRecordMap">
+        SELECT id,supplier_id,supplier_name,batch_id,batch_num,batch_invoice_id,bank_id,entity_id,amount,
+        invoice_type,maturity_date,create_by,create_time,update_by,update_time,discount_date,invoice_id,invoice_reference,vendor_code
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND bank_id = #{bankId}
+    </select>
+    <select id="selectBankOutstanding" resultType="com.lenovo.otmp.financing.domain.entity.BankOutstandingDo">
+        SELECT bank_id AS bankId,entity_id AS entityId,SUM(amount) AS outstanding
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND invoice_type = #{type}
+        AND bank_id IN
+        <foreach collection="bankIds" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+        AND entity_id IN
+        <foreach collection="entityIds" separator="," item="entityId" open="(" close=")">
+            #{entityId}
+        </foreach>
+        GROUP BY bank_id,entity_id
+    </select>
+    <select id="selectRecordsByBankIdAndEntityIds" resultMap="invoiceSubmitRecordMap">
+        SELECT id,supplier_id,supplier_name,batch_id,batch_num,batch_invoice_id,bank_id,entity_id,amount,
+        invoice_type,maturity_date,create_by,create_time,update_by,update_time,discount_date,invoice_id,invoice_reference,vendor_code
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND bank_id = #{bankId}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectRecordsGroups" resultType="com.lenovo.otmp.financing.domain.entity.InvoiceGroupAmount" >
+        SELECT entity_id AS entityId, invoice_type AS type, SUM(amount) AS amount
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND bank_id = #{bankId}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY entity_id,invoice_type
+    </select>
+
+    <select id="selectRecordGroupsByIds" resultType="com.lenovo.otmp.financing.domain.entity.InvoiceGroupAmount">
+        SELECT bank_id AS bankId,
+            entity_id AS entityId,
+            invoice_type AS type,
+            supplier_id AS supplierId,
+            supplier_name AS supplierName,
+            batch_num AS batchNumber,
+            maturity_date AS maturityDate,
+            SUM(amount) AS amount
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        <if test="bankIds != null and bankIds.size !=0">
+            AND bank_id IN
+            <foreach collection="bankIds" item="bankId" separator="," open="(" close=")">
+                #{bankId}
+            </foreach>
+        </if>
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY bank_id,entity_id,supplier_id,supplier_name,invoice_type,batch_num,maturity_date
+    </select>
+
+    <select id="selectAmountByType" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM invoice_submit_record
+        WHERE delete_flag = '0'
+        AND bank_id = #{bankId}
+        AND invoice_type = #{type}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

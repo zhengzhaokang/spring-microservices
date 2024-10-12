@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.bank.mapper.BankTransferMetadataInfoMapper">
+    
+    <resultMap type="com.lenovo.otmp.bank.domain.entity.BankTransferMetadataInfoDO" id="BankTransferMetadataInfoResult">
+        <result property="metadataInfoId"    column="metadata_info_id"    />
+        <result property="transferType"    column="transfer_type"    />
+        <result property="groupNumber"    column="group_number"    />
+        <result property="startLineNumber"    column="start_line_number"    />
+        <result property="includeHeader"    column="include_header"    />
+        <result property="tableName"    column="table_name"    />
+        <result property="columnName"    column="column_name"    />
+        <result property="columnComment"    column="column_comment"    />
+        <result property="columnType"    column="column_type"    />
+        <result property="javaType"    column="java_type"    />
+        <result property="javaField"    column="java_field"    />
+        <result property="bankType"    column="bank_type"    />
+        <result property="fieldFormat"    column="field_format"    />
+        <result property="logicComponent"    column="logic_component"    />
+        <result property="fieldType"    column="field_type"    />
+        <result property="isRequired"    column="is_required"    />
+        <result property="isPk"    column="is_pk"    />
+        <result property="sort"    column="sort"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBankTransferMetadataInfoVo">
+        select metadata_info_id, transfer_type,group_number,start_line_number,include_header, table_name, column_name, column_comment, column_type, java_type, java_field, bank_type, field_format, logic_component, field_type, is_required, is_pk, sort, status, create_by, create_time, update_by, update_time from otfp_financing.bank_transfer_metadata_info
+    </sql>
+
+    <select id="selectBankTransferMetadataInfoList" parameterType="com.lenovo.otmp.bank.domain.dto.BankTransferMetadataInfoDTO" resultMap="BankTransferMetadataInfoResult">
+        <include refid="selectBankTransferMetadataInfoVo"/>
+        <where>  
+            <if test="metadataInfoId != null "> and metadata_info_id = #{metadataInfoId}</if>
+            <if test="transferType != null  and transferType != ''"> and transfer_type = #{transferType}</if>
+            <if test="groupNumber != null  and groupNumber != ''"> and group_number = #{groupNumber}</if>
+            <if test="tableName != null  and tableName != ''"> and table_name Ilike '%'||#{tableName}||'%'</if>
+            <if test="columnName != null  and columnName != ''"> and column_name Ilike '%'||#{columnName}||'%'</if>
+            <if test="columnComment != null  and columnComment != ''"> and column_comment = #{columnComment}</if>
+            <if test="columnType != null  and columnType != ''"> and column_type = #{columnType}</if>
+            <if test="javaType != null  and javaType != ''"> and java_type = #{javaType}</if>
+            <if test="javaField != null  and javaField != ''"> and java_field = #{javaField}</if>
+            <if test="bankType != null  and bankType != ''"> and bank_type = #{bankType}</if>
+            <if test="fieldFormat != null  and fieldFormat != ''"> and field_format = #{fieldFormat}</if>
+            <if test="logicComponent != null  and logicComponent != ''"> and logic_component = #{logicComponent}</if>
+            <if test="fieldType != null  and fieldType != ''"> and field_type = #{fieldType}</if>
+            <if test="isRequired != null  and isRequired != ''"> and is_required = #{isRequired}</if>
+            <if test="isPk != null  and isPk != ''"> and is_pk = #{isPk}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectBankTransferMetadataInfoByMetadataInfoId" parameterType="Long" resultMap="BankTransferMetadataInfoResult">
+        <include refid="selectBankTransferMetadataInfoVo"/>
+        where metadata_info_id = #{metadataInfoId}
+    </select>
+        
+    <insert id="insertBankTransferMetadataInfo" parameterType="com.lenovo.otmp.bank.domain.entity.BankTransferMetadataInfoDO">
+        insert into otfp_financing.bank_transfer_metadata_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="metadataInfoId != null">metadata_info_id,</if>
+            <if test="transferType != null">transfer_type,</if>
+            <if test="tableName != null">table_name,</if>
+            <if test="columnName != null">column_name,</if>
+            <if test="columnComment != null">column_comment,</if>
+            <if test="columnType != null">column_type,</if>
+            <if test="javaType != null">java_type,</if>
+            <if test="javaField != null">java_field,</if>
+            <if test="bankType != null">bank_type,</if>
+            <if test="fieldFormat != null">field_format,</if>
+            <if test="logicComponent != null">logic_component,</if>
+            <if test="fieldType != null">field_type,</if>
+            <if test="isRequired != null">is_required,</if>
+            <if test="isPk != null">is_pk,</if>
+            <if test="sort != null">sort,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="metadataInfoId != null">#{metadataInfoId},</if>
+            <if test="transferType != null">#{transferType},</if>
+            <if test="tableName != null">#{tableName},</if>
+            <if test="columnName != null">#{columnName},</if>
+            <if test="columnComment != null">#{columnComment},</if>
+            <if test="columnType != null">#{columnType},</if>
+            <if test="javaType != null">#{javaType},</if>
+            <if test="javaField != null">#{javaField},</if>
+            <if test="bankType != null">#{bankType},</if>
+            <if test="fieldFormat != null">#{fieldFormat},</if>
+            <if test="logicComponent != null">#{logicComponent},</if>
+            <if test="fieldType != null">#{fieldType},</if>
+            <if test="isRequired != null">#{isRequired},</if>
+            <if test="isPk != null">#{isPk},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBankTransferMetadataInfo" parameterType="com.lenovo.otmp.bank.domain.entity.BankTransferMetadataInfoDO">
+        update otfp_financing.bank_transfer_metadata_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transferType != null">transfer_type = #{transferType},</if>
+            <if test="tableName != null">table_name = #{tableName},</if>
+            <if test="columnName != null">column_name = #{columnName},</if>
+            <if test="columnComment != null">column_comment = #{columnComment},</if>
+            <if test="columnType != null">column_type = #{columnType},</if>
+            <if test="javaType != null">java_type = #{javaType},</if>
+            <if test="javaField != null">java_field = #{javaField},</if>
+            <if test="bankType != null">bank_type = #{bankType},</if>
+            <if test="fieldFormat != null">field_format = #{fieldFormat},</if>
+            <if test="logicComponent != null">logic_component = #{logicComponent},</if>
+            <if test="fieldType != null">field_type = #{fieldType},</if>
+            <if test="isRequired != null">is_required = #{isRequired},</if>
+            <if test="isPk != null">is_pk = #{isPk},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where metadata_info_id = #{metadataInfoId}
+    </update>
+
+    <delete id="deleteBankTransferMetadataInfoByMetadataInfoId" parameterType="Long">
+        delete from otfp_financing.bank_transfer_metadata_info where metadata_info_id = #{metadataInfoId}
+    </delete>
+
+    <delete id="deleteBankTransferMetadataInfoByMetadataInfoIds" parameterType="String">
+        delete from otfp_financing.bank_transfer_metadata_info where metadata_info_id in
+        <foreach item="metadataInfoId" collection="array" open="(" separator="," close=")">
+            #{metadataInfoId}
+        </foreach>
+    </delete>
+</mapper>

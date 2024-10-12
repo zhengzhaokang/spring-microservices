@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.MsgRemindMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.MsgRemindDO" id="MsgRemindResult">
+        <result property="id"    column="id"    />
+        <result property="itCodes"    column="it_code"    />
+        <result property="msgTitle"    column="msg_title"    />
+        <result property="msgInfo"    column="msg_info"    />
+        <result property="hasRead"    column="has_read"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="module"    column="module"    />
+        <result property="sysCatalog"    column="sys_catalog"    />
+        <result property="msgTopic"    column="msg_topic"    />
+        <result property="msgType"    column="msg_type"    />
+    </resultMap>
+
+    <sql id="selectMsgRemindVo">
+        select id, it_code, msg_title, msg_info, has_read, create_by, create_time, update_by, update_time,module,sys_catalog ,msg_topic,msg_type from msg_remind
+    </sql>
+
+    <select id="selectMsgRemindList" parameterType="com.lenovo.otmp.system.domain.MsgRemindDTO" resultMap="MsgRemindResult">
+        <include refid="selectMsgRemindVo"/>
+        <where>  
+            <if test="itCodes != null  and itCodes != ''"> and it_code = #{itCodes}</if>
+            <if test="msgTitle != null  and msgTitle != ''"> and msg_title = #{msgTitle}</if>
+            <if test="msgInfo != null  and msgInfo != ''"> and msg_info = #{msgInfo}</if>
+            <if test="module != null  and module != ''"> and module = #{module}</if>
+            <if test="sysCatalog != null  and sysCatalog != ''"> and sys_catalog = #{sysCatalog}</if>
+            <if test="msgTopic != null  and msgTopic != ''"> and msg_topic = #{msgTopic}</if>
+            <if test="msgType != null  and msgType != ''"> and msg_type = #{msgType}</if>
+            <if test="hasRead != null and hasRead==0 "> and  has_read in  (0,2)</if>
+            <if test="hasRead != null and hasRead ==1 "> and  has_read = 1</if>
+<!--            <if test="hasRead == null "> and has_read in  (0,2)</if>-->
+            and create_time > (current_date - interval '30 day')
+        </where>
+        <!--0未读 1 已读 2 新消息 顺序应该是 2 0 1-->
+        order by case has_read
+                    when '2' then 1
+                    when '0' then 2
+                    when '1' then 3
+                    else 4
+                    end ,
+                 create_time desc
+    </select>
+
+    <select id="selectMsgRemindListForCount" parameterType="com.lenovo.otmp.system.domain.MsgRemindDTO" resultType="java.lang.Integer">
+        select count(1) from msg_remind
+        <where>
+            it_code = #{itCodes}
+            and has_read in (0,2)
+            and create_time > (current_date - interval '30 day')
+        </where>
+    </select>
+    
+    <select id="selectMsgRemindById" parameterType="Long" resultMap="MsgRemindResult">
+        <include refid="selectMsgRemindVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMsgRemind" parameterType="com.lenovo.otmp.system.domain.entity.MsgRemindDO" useGeneratedKeys="true" keyProperty="id">
+        <foreach collection="itCodes.split(',')" item="item"  separator=";">
+            insert into msg_remind
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="itCodes != null">it_code,</if>
+                <if test="msgTitle != null">msg_title,</if>
+                <if test="msgInfo != null">msg_info,</if>
+                <if test="hasRead != null">has_read,</if>
+                <if test="createBy != null">create_by,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateBy != null">update_by,</if>
+                <if test="updateTime != null">update_time,</if>
+                <if test="module != null">module,</if>
+                <if test="sysCatalog != null">sys_catalog,</if>
+                <if test="msgTopic != null">msg_topic,</if>
+                <if test="msgType != null">msg_type,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="itCodes != null">#{item},</if>
+                <if test="msgTitle != null">#{msgTitle},</if>
+                <if test="msgInfo != null">#{msgInfo},</if>
+                <if test="hasRead != null">#{hasRead},</if>
+                <if test="createBy != null">#{createBy},</if>
+                <if test="createTime != null">#{createTime},</if>
+                <if test="updateBy != null">#{updateBy},</if>
+                <if test="updateTime != null">#{updateTime},</if>
+                <if test="module != null">#{module},</if>
+                <if test="sysCatalog != null">#{sysCatalog},</if>
+                <if test="msgTopic != null">#{msgTopic},</if>
+                <if test="msgType != null">#{msgType},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateMsgRemind" parameterType="com.lenovo.otmp.system.domain.entity.MsgRemindDO">
+        update msg_remind
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hasRead != null">has_read = #{hasRead},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id} and it_code = #{itCodes}
+    </update>
+
+    <delete id="deleteMsgRemindById" parameterType="Long">
+        delete from msg_remind where id = #{id}
+    </delete>
+
+    <delete id="deleteMsgRemindByIds" parameterType="String">
+        delete from msg_remind where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <update id="batchUpdateMsgRemindRead">
+        <if test="ids!=null and ids.size()>0">
+            update msg_remind set has_read=#{hasRead},update_time=now() where id in
+            <foreach collection="ids" item="i" open="(" separator="," close=")">
+                #{i}
+            </foreach>
+        </if>
+
+    </update>
+</mapper>

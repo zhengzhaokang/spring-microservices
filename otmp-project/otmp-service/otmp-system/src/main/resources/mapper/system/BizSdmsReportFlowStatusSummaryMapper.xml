@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.BizSdmsReportFlowStatusSummaryMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.BizSdmsReportFlowStatusSummaryDO" id="BizSdmsReportFlowStatusSummaryResult">
+        <result property="statusSummaryId"    column="status_summary_id"    />
+        <result property="categoryCode"    column="category_code"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="statusType"    column="status_type"    />
+        <result property="value"    column="value"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizSdmsReportFlowStatusSummaryVo">
+        select status_summary_id, category_code, user_code, status_type, value, status, remark, create_by, create_time, update_by, update_time from biz_sdms_report_flow_status_summary
+    </sql>
+
+    <select id="selectBizSdmsReportFlowStatusSummaryList" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportFlowStatusSummaryDO" resultMap="BizSdmsReportFlowStatusSummaryResult">
+        <include refid="selectBizSdmsReportFlowStatusSummaryVo"/>
+        <where>  
+            <if test="statusSummaryId != null "> and status_summary_id = #{statusSummaryId}</if>
+            <if test="categoryCode != null  and categoryCode != ''"> and category_code = #{categoryCode}</if>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="statusType != null  and statusType != ''"> and status_type = #{statusType}</if>
+            <if test="value != null  and value != ''"> and value = #{value}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizSdmsReportFlowStatusSummaryByStatusSummaryId" parameterType="Long" resultMap="BizSdmsReportFlowStatusSummaryResult">
+        <include refid="selectBizSdmsReportFlowStatusSummaryVo"/>
+        where status_summary_id = #{statusSummaryId}
+    </select>
+        
+    <insert id="insertBizSdmsReportFlowStatusSummary" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportFlowStatusSummaryDO">
+        insert into biz_sdms_report_flow_status_summary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="statusSummaryId != null">status_summary_id,</if>
+            <if test="categoryCode != null">category_code,</if>
+            <if test="userCode != null">user_code,</if>
+            <if test="statusType != null">status_type,</if>
+            <if test="value != null">value,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="statusSummaryId != null">#{statusSummaryId},</if>
+            <if test="categoryCode != null">#{categoryCode},</if>
+            <if test="userCode != null">#{userCode},</if>
+            <if test="statusType != null">#{statusType},</if>
+            <if test="value != null">#{value},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSdmsReportFlowStatusSummary" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportFlowStatusSummaryDO">
+        update biz_sdms_report_flow_status_summary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryCode != null">category_code = #{categoryCode},</if>
+            <if test="userCode != null">user_code = #{userCode},</if>
+            <if test="statusType != null">status_type = #{statusType},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where status_summary_id = #{statusSummaryId}
+    </update>
+
+    <delete id="deleteBizSdmsReportFlowStatusSummaryByStatusSummaryId" parameterType="Long">
+        delete from biz_sdms_report_flow_status_summary where status_summary_id = #{statusSummaryId}
+    </delete>
+
+    <delete id="deleteBizSdmsReportFlowStatusSummaryByStatusSummaryIds" parameterType="String">
+        delete from biz_sdms_report_flow_status_summary where status_summary_id in 
+        <foreach item="statusSummaryId" collection="array" open="(" separator="," close=")">
+            #{statusSummaryId}
+        </foreach>
+    </delete>
+</mapper>

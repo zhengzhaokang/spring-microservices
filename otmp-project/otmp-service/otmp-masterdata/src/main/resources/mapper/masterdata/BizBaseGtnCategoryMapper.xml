@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseGtnCategoryMapper">
+    
+    <resultMap type="com.microservices.otmp.masterdata.domain.entity.BizBaseGtnCategoryDO" id="BizBaseGtnCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="gtnCategoryL0"    column="gtn_category_l0"    />
+        <result property="gtnCategoryL1"    column="gtn_category_l1"    />
+        <result property="orderReasonForCn"    column="order_reason_for_cn"    />
+        <result property="orderReasonDescriptionInSap"    column="order_reason_description_in_sap"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseGtnCategoryVo">
+        select id, gtn_category_l0, gtn_category_l1, order_reason_for_cn, order_reason_description_in_sap, is_active,delete_flag, remark, create_by, create_time, update_by, update_time from biz_base_gtn_category
+    </sql>
+
+    <select id="selectBizBaseGtnCategoryList" parameterType="com.microservices.otmp.masterdata.domain.dto.BizBaseGtnCategoryDTO" resultMap="BizBaseGtnCategoryResult">
+        <include refid="selectBizBaseGtnCategoryVo"/>
+        <where>
+
+
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+
+            <if test="gtnCategoryL0 != null  and gtnCategoryL0 != ''"> and gtn_category_l0 = #{gtnCategoryL0}</if>
+            <if test="gtnCategoryL1 != null  and gtnCategoryL1 != ''"> and gtn_category_l1 = #{gtnCategoryL1}</if>
+            <if test="orderReasonForCn != null  and orderReasonForCn != ''"> and order_reason_for_cn = #{orderReasonForCn}</if>
+            <if test="orderReasonDescriptionInSap != null  and orderReasonDescriptionInSap != ''"> and order_reason_description_in_sap = #{orderReasonDescriptionInSap}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+            <if test="deleteFlag != null  and deleteFlag != ''"> and delete_flag = #{deleteFlag}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseGtnCategoryById" parameterType="Long" resultMap="BizBaseGtnCategoryResult">
+        <include refid="selectBizBaseGtnCategoryVo"/>
+        where id = #{id}
+    </select>
+
+
+
+    <select id="getDropDownl1List" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition"
+            resultMap="BizBaseGtnCategoryResult">
+        select distinct gtn_category_l0, gtn_category_l1,order_reason_for_cn from biz_base_gtn_category
+        <where>
+            delete_flag = false and is_active = true
+            <if test="gtnCategoryCode != null  and  gtnCategoryCode != ''"> <choose>
+                <when test=" 1 == gtnCategoryCode.split(',').length"> and gtn_category_l0 = #{gtnCategoryCode} </when>
+                <otherwise> and gtn_category_l0 in <foreach collection="gtnCategoryCode.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise> </choose>  </if>
+
+        </where>
+    </select>
+
+    <select id="getDropDownOrderReasonList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition"
+            resultMap="BizBaseGtnCategoryResult">
+        select distinct gtn_category_l0, gtn_category_l1,order_reason_for_cn from biz_base_gtn_category
+        <where>
+            delete_flag = false and is_active = true
+            <if test="gtnCategoryCode != null  and  gtnCategoryCode != ''"> <choose>
+                <when test=" 1 == gtnCategoryCode.split(',').length"> and gtn_category_l1 = #{gtnCategoryCode} </when>
+                <otherwise> and gtn_category_l1 in <foreach collection="gtnCategoryCode.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise> </choose>  </if>
+
+        </where>
+    </select>
+</mapper>

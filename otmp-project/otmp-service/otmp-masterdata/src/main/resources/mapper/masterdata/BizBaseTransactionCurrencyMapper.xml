@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseTransactionCurrencyMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseTransactionCurrency" id="BizBaseTransactionCurrencyResult">
+        <result property="id"    column="id"    />
+        <result property="transactionCurrencyCode"    column="transaction_currency_code"    />
+        <result property="transactionCurrencyName"    column="transaction_currency_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseTransactionCurrencyVo">
+        select id, transaction_currency_code, transaction_currency_name, create_by, create_time, update_by, update_time from biz_base_transaction_currency
+    </sql>
+
+    <select id="selectBizBaseTransactionCurrencyList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTransactionCurrency" resultMap="BizBaseTransactionCurrencyResult">
+        <include refid="selectBizBaseTransactionCurrencyVo"/>
+        <where>  
+            <if test="transactionCurrencyCode != null  and transactionCurrencyCode != ''"> and transaction_currency_code = #{transactionCurrencyCode}</if>
+            <if test="transactionCurrencyName != null  and transactionCurrencyName != ''"> and transaction_currency_name like '%'||#{transactionCurrencyName||'%'</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseTransactionCurrencyById" parameterType="Long" resultMap="BizBaseTransactionCurrencyResult">
+        <include refid="selectBizBaseTransactionCurrencyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseTransactionCurrency" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTransactionCurrency">
+        insert into biz_base_transaction_currency
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="transactionCurrencyCode != null">transaction_currency_code,</if>
+            <if test="transactionCurrencyName != null">transaction_currency_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="transactionCurrencyCode != null">#{transactionCurrencyCode},</if>
+            <if test="transactionCurrencyName != null">#{transactionCurrencyName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseTransactionCurrency" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTransactionCurrency">
+        update biz_base_transaction_currency
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionCurrencyCode != null">transaction_currency_code = #{transactionCurrencyCode},</if>
+            <if test="transactionCurrencyName != null">transaction_currency_name = #{transactionCurrencyName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseTransactionCurrencyById" parameterType="Long">
+        delete from biz_base_transaction_currency where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseTransactionCurrencyByIds" parameterType="String">
+        delete from biz_base_transaction_currency where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

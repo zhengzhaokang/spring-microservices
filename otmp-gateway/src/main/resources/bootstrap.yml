@@ -1,0 +1,283 @@
+server: 
+  port: 9527
+
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:gateway}
+  # 切换配置
+  profiles:
+    active: prod
+  devtools:
+    restart:
+      enabled: true
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      label: master
+      discovery:
+        enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        # 认证中心
+        - id: otfp--auth
+          uri: lb://otfp--auth${uriSuffix}
+          predicates:
+            - Path=/auth/**
+          filters:
+            # 验证码处理
+            - CacheRequest
+            - ImgCodeFilter
+            - StripPrefix=1
+            # 限流配置
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                #允许用户每秒处理多少个请求
+                redis-rate-limiter.replenishRate: 200
+                #令牌桶的容量,允许在一秒钟内完成的最大请求
+                redis-rate-limiter.burstCapacity: 500
+              # 降级配置
+            - name: Hystrix
+              args:
+                name: fallbackcmd
+                fallbackUri: 'forward:/fallback'
+        # 代码生成
+        - id: otfp--gen
+          uri: lb://otfp--gen${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.gen.uri}
+          predicates:
+            - Path=/gen/**
+          filters:
+            - StripPrefix=1
+        # dfs
+        - id: otfp--dfs
+          uri: lb://otfp--dfs${uriSuffix}
+          predicates:
+            - Path=/dfs/**
+          filters:
+            - StripPrefix=1
+        # email
+        #- id: otfp--email
+        #  uri: lb://otfp--email${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.email.uri}
+        #  predicates:
+        #    - Path=/email/**,/emailModule/**,email/**,emailModule/**
+        #  filters:
+        #    - StripPrefix=1
+        #        # combine
+        #        - id: otfp--combine
+        #          uri: lb://otfp--combine
+        #          predicates:
+        #            - Path=/combineResult/**,/combineJob/**
+        #          filters:
+        #            - StripPrefix=1
+        # download
+        - id: otfp--download
+          uri: lb://otfp--download${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.download.uri}
+          predicates:
+            - Path=/downloadAsync/**
+          filters:
+            - StripPrefix=1
+          # word
+        - id: otfp--word
+          uri: lb://otfp--word${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.word.uri}
+          predicates:
+            - Path=/word/**
+          filters:
+            - StripPrefix=1
+        # documents
+        - id: otfp--documents
+          uri: lb://otfp--documents${uriSuffix}
+        # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.documents.uri}
+          predicates:
+            - Path=/documents/**
+          filters:
+            - StripPrefix=1
+        # masterdata
+        - id: otfp--masterdata
+          uri: lb://otfp--masterdata${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.masterdata.uri}
+          predicates:
+            - Path=/masterData/**
+          filters:
+            - StripPrefix=1
+        #system 模块
+        - id: otfp--system
+          uri: lb://otfp--system${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+#          uri: ${otfp.service.system.uri}
+          predicates:
+            - Path=/system/**,/download/**
+          filters:
+            # 限流配置
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 500
+              # 降级配置
+            - name: Hystrix
+              args:
+                name: fallbackcmd
+                fallbackUri: 'forward:/fallback'
+        # Payment
+        - id: otfp--analysis
+          uri: lb://otfp--analysis${uriSuffix}
+          # 因为LMP部署环境与SDMS部署环境不一致，所以只能配置域名
+          #          uri: ${otfp.service.report.uri}
+          predicates:
+            - Path=/analysis/**
+          filters:
+            - StripPrefix=1
+        # financing
+        - id: otfp--financing
+          uri: lb://otfp--financing${uriSuffix}
+          predicates:
+            - Path=/financing/**
+          filters:
+            - StripPrefix=1
+        # filestorage
+        - id: otfp--filestorage
+          uri: lb://otfp--filestorage${uriSuffix}
+          predicates:
+            - Path=/filestorage/**
+          filters:
+            - StripPrefix=1
+        - id: otfp--notice
+          uri: lb://otfp--notice${uriSuffix}
+          predicates:
+            - Path=/emailModule/**,/notice/**,/email/**
+          filters:
+            - StripPrefix=1
+        - id: otfp--erp-adapter
+          uri: lb://otfp--erp-adapter${uriSuffix}
+          predicates:
+              - Path=/erpadapter/**
+          filters:
+              - StripPrefix=1
+
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.int}
+    prefer-ip-address: true
+
+hystrix:
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 #断路器超时时间，默认1000ms
+          semaphore:
+            maxConcurrentRequests: 100 #最大并发请求数，默认10
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 # Hystrix 的 fallbackcmd 时间
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: "info,health"
+  endpoint:
+    prometheus:
+      enabled: false
+# 不同环境区分
+# 开发环境配置
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:gateway}
+  profiles: dev
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      uri: http://otmp-config-tst.appz1p-frain.earth.xcloud.lenovo.com
+      discovery:
+        enabled: false
+        service-id: otmp-config
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://otmp-eureka-tst.appz1p-frain.earth.xcloud.lenovo.com/eureka/
+uriSuffix: ''
+# 测试环境配置
+---
+spring:
+  profiles: tst
+  cloud:
+    config:
+      fail-fast: true
+      name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:gateway}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+lmp:
+  service:
+    key: ${LMP_SERVICE_KEY:82f44173278142d6a0376c33cb866c6a}
+    token: ${LMP_SERVICE_TOKEN:eyJhbGciOiJIUzI1NiJ9.eyJzZXJ2aWNlTmFtZSI6IjU0NzciLCJmdWxsU2VydmljZU5hbWUiOiJvdGZwLS1nYXRld2F5Iiwic2VydmljZUtleSI6IjgyZjQ0MTczMjc4MTQyZDZhMDM3NmMzM2NiODY2YzZhIiwic2VydmljZVR5cGUiOiIxIiwic2VydmljZUFwcCI6IjE3MzUiLCJzZXJ2aWNlQ2x1c3RlciI6IjIwIiwianRpIjoiMjJmMTM5MzkwZmM0NGM0Zjk1YzdhNDY3ZDk2Y2NhZTAiLCJpYXQiOjE2OTMzNjUxNDZ9.dnqfhidmPcVeM9Unl7mB_-zl7OVylSj8yXIB9-qcdmY}
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${lmp.service.key}:${lmp.service.token}@${EUREKA_URL:service-24819.svc.appz1p-frain.earth.xcloud.lenovo.com}/eureka
+uriSuffix: ''
+# PROD环境配置
+---
+spring:
+  profiles: prod
+  cloud:
+    config:
+      fail-fast: true
+      name:  ${APPLICATION_NAME:otfp}--${SERVICE_NAME:gateway-prod}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+lmp:
+  service:
+    # 是否开启LMP安全认证
+    enabled: true
+    key: ${LMP_SERVICE_KEY:4e2fa32deb85416d89c106d6354b7923}
+    token: ${LMP_SERVICE_TOKEN:eyJhbGciOiJIUzI1NiJ9.eyJzZXJ2aWNlTmFtZSI6IjU1ODciLCJmdWxsU2VydmljZU5hbWUiOiJvdGZwLS1nYXRld2F5LXByb2QiLCJzZXJ2aWNlS2V5IjoiNGUyZmEzMmRlYjg1NDE2ZDg5YzEwNmQ2MzU0Yjc5MjMiLCJzZXJ2aWNlVHlwZSI6IjEiLCJzZXJ2aWNlQXBwIjoiMTczNSIsInNlcnZpY2VDbHVzdGVyIjoiMjAiLCJqdGkiOiIzOGVmODRjNzU2OWM0NDViOTYzYzk5MjE3ZDZhMGJkMiIsImlhdCI6MTcwMTY3MjE4M30.to7uya3_1f06K-Jlte1jZSi0ZRL1fG-dBH8AajZzYuk}
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${lmp.service.key}:${lmp.service.token}@${EUREKA_URL:service-24819.svc.appz1p-frain.earth.xcloud.lenovo.com}/eureka
+uriSuffix: -prod
+
+

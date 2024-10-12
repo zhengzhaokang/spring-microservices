@@ -1,0 +1,132 @@
+server:
+  port: 8020
+# 日志配置
+logging:
+  level:
+    com.lenovo.otmp: debug
+    org.springframework: warn
+
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:masterdata}
+  # 切换配置
+  profiles:
+    active: tst
+  devtools:
+    restart:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: MM/dd/yyyy HH:mm:ss
+    time-zone: GMT+8
+  jpa:
+    #
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # 配置在日志中打印出执行的 SQL 语句信息。
+    show-sql: true
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      label: master
+      discovery:
+        enabled: true
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.int}
+    prefer-ip-address: true
+
+
+feign:
+  hystrix:
+    enabled: true
+
+# MyBatis
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.lenovo.otmp
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: mapper/*/*.xml
+  # 参数配置
+  configuration-properties:
+    # 配置流程引擎参数，详情可见 DatabaseConfiguration
+    blobType: CLOB
+    boolValue: TRUE
+    # 不要设置库名，否则会出现双库名 bug
+    prefix: ''
+
+mapper:
+  not-empty: true
+  identity: postgresql
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: postgresql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,info,health"
+  endpoint:
+    prometheus:
+      enabled: true
+
+
+# 不同环境区分
+# 开发环境配置
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:masterdata}
+  profiles: dev
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      uri: http://localhost:8888
+      discovery:
+        enabled: false
+        service-id: otmp-config
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://localhost:eureka/
+
+# 测试环境配置
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:masterdata-SIT}
+  profiles: tst
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: lmp-sy-tst
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+
+
+
+
+
+
+
+

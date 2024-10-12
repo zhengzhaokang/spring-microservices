@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewFieldMapper">
+
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewFieldDO" id="ViewFieldResult">
+        <result property="id" column="id"/>
+        <result property="pageKey" column="page_key"/>
+        <result property="viewType" column="view_type"/>
+        <result property="divKey" column="div_key"/>
+        <result property="status" column="status"/>
+        <result property="fieldJson" column="field_json"/>
+        <result property="type" column="type"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tableName" column="table_name"/>
+        <result property="sort" column="sort"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="viewFieldDimensions" column="view_field_dimensions"/>
+        <result property="popoverBoundField" column="popover_bound_field"/>
+        <result property="viewFieldCode" column="view_field_code"/>
+
+        <result property="paymentMode" column="payment_mode"/>
+        <result property="region" column="region"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="businessGroup" column="business_group"/>
+        <result property="geoCode" column="geo_code"/>
+        <result property="templateFieldJson" column="template_field_json"/>
+        <result property="templateName" column="template_name"/>
+        <result property="templateId" column="template_id"/>
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.system.domain.ViewFieldInfo" id="ViewFieldInfoResult">
+        <result property="attnum" column="attnum"/>
+        <result property="relname" column="relname"/>
+        <result property="field" column="field"/>
+        <result property="fieldType" column="field_type"/>
+        <result property="fieldLabel" column="field_label"/>
+    </resultMap>
+
+    <sql id="selectViewFieldVo">
+        select id, page_key, view_type, div_key, status, field_json, type, remark, create_by, create_time, update_by,
+        update_time, table_name, sort, parent_id,view_field_dimensions,
+        popover_bound_field,geo_code,region,payment_mode,business_group,view_field_code from view_field
+    </sql>
+
+    <select id="selectViewFieldList" parameterType="com.lenovo.otmp.system.domain.ViewField" resultMap="ViewFieldResult">
+        select vf.*,vt.id template_id,vt.field_json template_field_json,vt.name template_name from view_field vf LEFT
+        JOIN view_template vt on vf.id = vt.field_id and vt.it_code = 'SYS_TEMPLATE'
+        <where>
+            <if test="id != null">and vf.id = #{id}</if>
+            <if test="viewFieldCode != null and viewFieldCode!= ''">and vf.view_field_code = #{viewFieldCode}</if>
+            <if test="pageKey != null  and pageKey != ''">and vf.page_key = #{pageKey}</if>
+            <if test="viewType != null  and viewType != ''">
+                <![CDATA[ and regexp_split_to_array(view_type,',') @> regexp_split_to_array(#{viewType},',') ]]>
+            </if>
+            <if test="divKey != null  and divKey != ''">and vf.div_key = #{divKey}</if>
+            <if test="status != null ">and vf.status = #{status}</if>
+            <if test="type != null ">and vf.type = #{type}</if>
+            <if test="tableName != null ">and vf.table_name = #{tableName}</if>
+            <if test="parentId != null ">and vf.parent_id = #{parentId}</if>
+            <if test="region != null and region != '' ">
+                <![CDATA[ and regexp_split_to_array(region,',') @> regexp_split_to_array(#{region},',') ]]>
+            </if>
+            <if test="paymentMode != null and paymentMode != '' ">
+                <![CDATA[ and regexp_split_to_array(payment_mode,',') @> regexp_split_to_array(#{paymentMode},',') ]]>
+            </if>
+            <if test="geoCode != null  and geoCode != ''">
+                <![CDATA[ and regexp_split_to_array(geo_code,',') @> regexp_split_to_array(#{geoCode},',') ]]>
+            </if>
+            <if test="businessGroup != null and businessGroup != '' ">
+                <![CDATA[ and regexp_split_to_array(business_group,',') @> regexp_split_to_array(#{businessGroup},',') ]]>
+            </if>
+            <if test="viewFieldDimensions != null and viewFieldDimensions != '' ">
+                <![CDATA[ and regexp_split_to_array(view_field_dimensions,',') @> regexp_split_to_array(#{viewFieldDimensions},',') ]]>
+            </if>
+            <if test="popoverBoundField != null and popoverBoundField != '' ">
+                <![CDATA[ and regexp_split_to_array(popover_bound_field,',') @> regexp_split_to_array(#{popoverBoundField},',') ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectViewFieldListSort" parameterType="com.lenovo.otmp.system.domain.ViewField"
+            resultMap="ViewFieldResult">
+        select vf.* from view_field vf INNER JOIN view_template vt on vf.id = vt.field_id and vt.it_code =
+        'SYS_TEMPLATE'
+        <where>
+            <if test="pageKey != null  and pageKey != ''">and vf.page_key = #{pageKey}</if>
+            <if test="viewType != null  and viewType != ''">
+                <foreach collection="viewType.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(view_type,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="divKey != null  and divKey != ''">and vf.div_key = #{divKey}</if>
+            <if test="status != null ">and vf.status = #{status}</if>
+            <if test="type != null ">and vf.type = #{type}</if>
+            <if test="tableName != null ">and vf.table_name = #{tableName}</if>
+            <if test="parentId != null ">and vf.parent_id = #{parentId}</if>
+            <if test="region != null and region != '' ">
+                <foreach collection="region.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(region,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="paymentMode != null and paymentMode != '' ">
+                <foreach collection="paymentMode.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(payment_mode,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="geoCode != null  and geoCode != ''">
+                <foreach collection="geoCode.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(geo_code,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="businessGroup != null and businessGroup != '' ">
+                <foreach collection="businessGroup.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(business_group,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="popoverBoundField != null and popoverBoundField != '' ">
+                <foreach collection="popoverBoundField.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(popover_bound_field,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="viewFieldDimensions != null and viewFieldDimensions != '' ">
+                <foreach collection="viewFieldDimensions.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(view_field_dimensions,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+        </where>
+        order by sort
+    </select>
+
+    <select id="selectViewFieldById" parameterType="Integer" resultMap="ViewFieldResult">
+        <include refid="selectViewFieldVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertViewField" parameterType="com.lenovo.otmp.system.domain.ViewField"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into view_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">page_key,</if>
+            <if test="viewType != null  and viewType != ''">view_type,</if>
+            <if test="divKey != null  and divKey != ''">div_key,</if>
+            <if test="status != null ">status,</if>
+            <if test="fieldJson != null ">field_json,</if>
+            <if test="type != null ">type,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="tableName != null ">table_name,</if>
+            <if test="sort != null ">sort,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="viewFieldDimensions != null ">view_field_dimensions,</if>
+            <if test="popoverBoundField != null ">popover_bound_field,</if>
+            <if test="geoCode != null  and geoCode != ''">geo_code,</if>
+            <if test="region != null  and region != ''">region,</if>
+            <if test="paymentMode != null  and paymentMode != ''">payment_mode,</if>
+            <if test="businessGroup != null  and businessGroup != ''">business_group,</if>
+            <if test="viewFieldCode != null  and viewFieldCode != ''">view_field_code,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">#{pageKey},</if>
+            <if test="viewType != null  and viewType != ''">#{viewType},</if>
+            <if test="divKey != null  and divKey != ''">#{divKey},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="fieldJson != null ">#{fieldJson},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="tableName != null ">#{tableName},</if>
+            <if test="sort != null ">#{sort},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="viewFieldDimensions != null ">#{viewFieldDimensions},</if>
+            <if test="popoverBoundField != null ">#{popoverBoundField},</if>
+            <if test="geoCode != null  and geoCode != '' ">#{geoCode},</if>
+            <if test="region != null  and region != ''">#{region},</if>
+            <if test="paymentMode != null  and paymentMode != ''">#{paymentMode},</if>
+            <if test="businessGroup != null  and businessGroup != '' ">#{businessGroup},</if>
+            <if test="viewFieldCode != null  and viewFieldCode != '' ">#{viewFieldCode},</if>
+        </trim>
+    </insert>
+
+    <update id="updateViewField" parameterType="com.lenovo.otmp.system.domain.ViewField">
+        update view_field
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">page_key = #{pageKey},</if>
+            <if test="viewType != null  and viewType != ''">view_type = #{viewType},</if>
+            <if test="divKey != null  and divKey != ''">div_key = #{divKey},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="fieldJson != null ">field_json = #{fieldJson},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="tableName != null ">table_name = #{tableName},</if>
+            <if test="sort != null ">sort = #{sort},</if>
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="viewFieldDimensions != null ">view_field_dimensions = #{viewFieldDimensions},</if>
+            <if test="popoverBoundField != null ">popover_bound_field = #{popoverBoundField},</if>
+            <if test="geoCode != null  and geoCode != '' ">geo_code = #{geoCode},</if>
+            <if test="region != null  and region != ''">region = #{region},</if>
+            <if test="paymentMode != null  and paymentMode != ''">payment_mode = #{paymentMode},</if>
+            <if test="businessGroup != null  and businessGroup != '' ">business_group = #{businessGroup},</if>
+        </trim>
+        where
+        <choose>
+            <when test="id !=null "> id = #{id}</when>
+            <otherwise>view_field_code = #{viewFieldCode}</otherwise>
+        </choose>
+    </update>
+
+    <delete id="deleteViewFieldById" parameterType="Integer">
+        delete from view_field where id = #{id}
+    </delete>
+
+    <delete id="deleteViewFieldByIds" parameterType="String">
+        delete from view_field where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectViewFieldInfoList" parameterType="com.lenovo.otmp.system.domain.ViewFieldInfo"
+            resultMap="ViewFieldInfoResult">
+        select attnum, relname, field, field_type, field_label from view_Field_info
+        <where>
+            <if test="attnum != null ">and attnum = #{attnum}</if>
+            <if test="relname != null and relname != ''">and relname = #{relname}</if>
+            <if test="field != null and field != ''">and field = #{field}</if>
+            <if test="fieldType != null and fieldType != ''">and field_type = #{fieldType}</if>
+            <if test="fieldLabel != null and fieldLabel != ''">and field_label = #{fieldLabel}</if>
+        </where>
+    </select>
+
+    <select id="selectPageKeyList" parameterType="com.lenovo.otmp.system.domain.ViewField" resultMap="ViewFieldResult">
+        select page_key,max(sm.menu_name) menu_name,max(table_name) table_name from view_field vf left JOIN sys_menu sm
+        on vf.page_key::int8 = sm.menu_id
+        <where>
+            <if test="pageKey != null  and pageKey != ''">and vf.page_key = #{pageKey}</if>
+            <if test="viewType != null  and viewType != ''">
+                <foreach collection="viewType.split(',')" item="item" open="" close="" separator="">
+                    <![CDATA[ and regexp_split_to_array(view_type,',') @> regexp_split_to_array(#{item},',') ]]>
+                </foreach>
+            </if>
+            <if test="divKey != null  and divKey != ''">and vf.div_key = #{divKey}</if>
+            <if test="status != null ">and vf.status = #{status}</if>
+            <if test="type != null ">and vf.type = #{type}</if>
+            <if test="parentId != null ">and vf.parent_id = #{parentId}</if>
+        </where>
+        GROUP BY page_key
+    </select>
+
+    <select id="getViewFieldDimensions" parameterType="String" resultMap="ViewFieldResult">
+        select geo_code,region,business_group,payment_mode from view_field WHERE page_key = #{pageKey} and view_type !=
+        'list' and status = 0 GROUP BY geo_code,region,business_group,payment_mode LIMIT 1;
+    </select>
+
+    <select id="getTableNames" parameterType="String" resultType="String">
+        SELECT table_name as tableName FROM INFORMATION_SCHEMA.TABLES WHERE table_catalog = 'sdmsdb' and table_schema =
+        'sdms_base';
+    </select>
+
+    <insert id="insertViewFieldMap" parameterType="Map" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into view_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">page_key,</if>
+            <if test="viewType != null  and viewType != ''">view_type,</if>
+            <if test="divKey != null  and divKey != ''">div_key,</if>
+            <if test="status != null ">status,</if>
+            <if test="fieldJson != null ">field_json,</if>
+            <if test="type != null ">type,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="tableName != null ">table_name,</if>
+            <if test="sort != null ">sort,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="viewFieldDimensions != null ">view_field_dimensions,</if>
+            <if test="popoverBoundField != null ">popover_bound_field,</if>
+            <if test="geoCode != null  and geoCode != ''">geo_code,</if>
+            <if test="region != null  and region != ''">region,</if>
+            <if test="paymentMode != null  and paymentMode != ''">payment_mode,</if>
+            <if test="businessGroup != null  and businessGroup != ''">business_group,</if>
+            <if test="viewFieldCode != null  and viewFieldCode != ''">view_field_code,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">#{pageKey},</if>
+            <if test="viewType != null  and viewType != ''">#{viewType},</if>
+            <if test="divKey != null  and divKey != ''">#{divKey},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="fieldJson != null ">#{fieldJson},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="tableName != null ">#{tableName},</if>
+            <if test="sort != null ">#{sort},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="viewFieldDimensions != null ">#{viewFieldDimensions},</if>
+            <if test="popoverBoundField != null ">#{popoverBoundField},</if>
+            <if test="geoCode != null  and geoCode != '' ">#{geoCode},</if>
+            <if test="region != null  and region != ''">#{region},</if>
+            <if test="paymentMode != null  and paymentMode != ''">#{paymentMode},</if>
+            <if test="businessGroup != null  and businessGroup != '' ">#{businessGroup},</if>
+            <if test="viewFieldCode != null  and viewFieldCode != '' ">#{viewFieldCode},</if>
+        </trim>
+    </insert>
+
+    <update id="updateViewFieldMap" parameterType="Map">
+        update view_field
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pageKey != null  and pageKey != ''">page_key = #{pageKey},</if>
+            <if test="viewType != null  and viewType != ''">view_type = #{viewType},</if>
+            <if test="divKey != null  and divKey != ''">div_key = #{divKey},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="fieldJson != null ">field_json = #{fieldJson},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="tableName != null ">table_name = #{tableName},</if>
+            <if test="sort != null ">sort = #{sort},</if>
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="viewFieldDimensions != null ">view_field_dimensions = #{viewFieldDimensions},</if>
+            <if test="popoverBoundField != null ">popover_bound_field = #{popoverBoundField},</if>
+            <if test="geoCode != null  and geoCode != '' ">geo_code = #{geoCode},</if>
+            <if test="region != null  and region != ''">region = #{region},</if>
+            <if test="paymentMode != null  and paymentMode != ''">payment_mode = #{paymentMode},</if>
+            <if test="businessGroup != null  and businessGroup != '' ">business_group = #{businessGroup},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="selectViewFieldAndCondition" resultType="java.util.Map" parameterType="Map">
+        select "pageKey",
+        max("menuName") as "menuName" ,
+        max("tableName") as "tableName"
+        from (SELECT
+        MAX( f.id ) "id",
+        MAX( f.page_key ) "pageKey",
+        MAX( f.view_type ) AS "viewType",
+        MAX( f.div_key ) AS "divKey",
+        MAX( f.status ) AS "status",
+        MAX( f.field_json ) AS "fieldJson",
+        MAX( f.type ) AS "type",
+        MAX(f.sort) as "sort",
+        MAX(f.parent_id) as "parentId",
+        MAX(f.view_field_dimensions) as "viewFieldDimensions",
+        MAX(f.popover_bound_field) as "popoverBoundField",
+        <if test="dimensions != null and dimensions.size()>0">
+            <foreach collection="dimensions" item="dimension" open="" close="" separator="">
+                MAX(CASE WHEN v.condition= #{dimension} THEN v.condition_value end) "${dimension}",
+            </foreach>
+        </if>
+        MAX(f.create_time) "createTime",
+        max(sm.menu_name) as "menuName",
+        max(f.table_name) as "tableName"
+        FROM
+        view_field f
+        LEFT JOIN view_condition_value v ON f.id = v.field_id left JOIN sys_menu sm
+        on f.page_key::int8 = sm.menu_id
+        GROUP BY
+        f.id) field
+        where "status" = 0
+        <!-- 对查询条件进行遍历，value=all查询所有       -->
+        <if test="conditionObjList != null and conditionObjList.size() > 0">
+            and
+            <foreach collection="conditionObjList" item="dimension" open="" close="" separator="and">
+                <if test="dimension.value != null">
+                    <choose>
+                        <when test="dimension.value instanceof String and dimension.value != '' and 'All' == dimension.value" />
+                        <when test="dimension.key == 'pageKey' and dimension.value!=null and dimension.value instanceof Integer ">"${dimension.key}" = #{dimension.value}</when>
+                        <when test="dimension.value instanceof Integer ">"${dimension.key}" = #{dimension.value}</when>
+                        <otherwise>
+                            <if test="dimension.value instanceof String and dimension.value !=''">
+                                <!-- 对字符串进行排序 -->
+                                array_to_string(array(select unnest(string_to_array("${dimension.key}", null)) order by 1), '') =
+                                array_to_string(array(select unnest(string_to_array(#{dimension.value}, null)) order by 1), '')
+                            </if>
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>
+        group by "pageKey"
+    </select>
+
+    <select id="selectViewFieldAndTemplateAndCondition" parameterType="java.util.Map"
+            resultType="java.util.Map">
+        select * from (SELECT
+        MAX( f.id ) "id",
+        MAX( f.id ) "fieldId",
+        MAX( f.page_key ) "pageKey",
+        MAX( f.view_type ) AS "viewType",
+        MAX( f.div_key ) AS "divKey",
+        MAX( f.status ) AS "status",
+        MAX( t.status ) AS "templateStatus",
+        MAX( f.field_json ) AS "fieldJson",
+        MAX( f.type ) AS "type",
+        MAX(f.sort) as "sort",
+        MAX(f.parent_id) as "parentId",
+        MAX(f.view_field_dimensions) as "viewFieldDimensions",
+        MAX(f.popover_bound_field) as "popoverBoundField",
+        <if test="dimensions != null and dimensions.size()>0">
+            <foreach collection="dimensions" item="dimension" open="" close="" separator="">
+                MAX(CASE WHEN v.condition= #{dimension} THEN v.condition_value end) "${dimension}",
+            </foreach>
+        </if>
+        MAX(f.create_time) "createTime",
+        MAX( t.id ) "templateId",
+        MAX( t.field_json ) "templateFieldJson",
+        MAX( t.name ) "templateName",
+        MAX( t.it_code ) "itCode",
+        MAX( t.is_default ) "isDefault",
+        max(f.table_name) as "tableName"
+        FROM
+        view_field f
+        LEFT JOIN view_condition_value v ON f.id = v.field_id left join view_template t on f.id = t.field_id and t.status = 0
+
+        <if test="isDefault != null">
+            where t.is_default = #{isDefault}
+        </if>
+        GROUP BY
+        f.id) field
+        where "status" = 0
+        <!-- 对查询条件进行遍历，value=all查询所有       -->
+        <if test="conditionObjList != null and conditionObjList.size() > 0">
+            and
+            <foreach collection="conditionObjList" item="dimension" open="" close="" separator="and">
+                <if test="dimension.value != null and dimension.key != 'sortField' and dimension.key != 'isDefault' ">
+                    <choose>
+                        <when test="dimension.value instanceof String and dimension.value != '' and 'All' == dimension.value"></when>
+                        <when test="dimension.value instanceof Integer ">"${dimension.key}" = #{dimension.value}</when>
+                        <otherwise>
+                            <if test="dimension.value instanceof String and dimension.value != ''">
+                                regexp_split_to_array("${dimension.key}",',') @>
+                                regexp_split_to_array(#{dimension.value},',')
+                            </if>
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>
+        <if test="sortField != null">
+            order by "${sortField}"::integer
+        </if>
+    </select>
+    <select id="selectViewFieldListPrecise" parameterType="Map"
+            resultType="Map">
+        select * from (SELECT
+        MAX( f.id ) "id",
+        MAX( f.page_key ) "pageKey",
+        MAX( f.view_type ) AS "viewType",
+        MAX( f.div_key ) AS "divKey",
+        MAX( f.status ) AS "status",
+        MAX( t.status ) AS "templateStatus",
+        MAX( f.field_json ) AS "fieldJson",
+        MAX( f.type ) AS "type",
+        MAX(f.sort) as "sort",
+        MAX(f.parent_id) as "parentId",
+        MAX(f.view_field_dimensions) as "viewFieldDimensions",
+        MAX(f.popover_bound_field) as "popoverBoundField",
+        MAX(f.view_field_code) as "viewFieldCode",
+        <if test="dimensions != null and dimensions.size()>0">
+            <foreach collection="dimensions" item="dimension" open="" close="" separator="">
+                MAX(CASE WHEN v.condition= #{dimension} THEN v.condition_value end) "${dimension}",
+            </foreach>
+        </if>
+        MAX(f.create_time) "createTime",
+        MAX( t.id ) "templateId",
+        MAX( t.field_json ) "templateFieldJson",
+        MAX( t.name ) "templateName",
+        MAX( t.it_code ) "itCode",
+        MAX( t.is_default ) "isDefault",
+        max(f.table_name) as "tableName"
+        FROM
+        view_field f
+        LEFT JOIN view_condition_value v ON f.id = v.field_id left join view_template t on f.id = t.field_id and t.status = 0
+        GROUP BY
+        f.id) field
+        where "status" = 0
+        <!-- 对查询条件进行遍历，value=all查询所有       -->
+        <if test="conditionObjList != null and conditionObjList.size() > 0">
+            and
+            <foreach collection="conditionObjList" item="dimension" open="" close="" separator="and">
+                <if test="dimension.key != 'sortField'">
+                    <choose>
+                        <when test="dimension.value!=null and dimension.value instanceof String and dimension.value != '' and 'All' == dimension.value"/>
+                        <when test="'pageKey' == dimension.key and dimension.value!=null and dimension.value instanceof String and dimension.value != '' ">"${dimension.key}" = #{dimension.value}</when>
+                        <when test="dimension.value!=null and dimension.value instanceof Integer ">"${dimension.key}" = #{dimension.value}</when>
+                        <otherwise>
+                                array_to_string(array(select unnest(string_to_array("${dimension.key}", null)) order by 1 ASC ), '') =
+                                array_to_string(array(select unnest(string_to_array(#{dimension.value}, null)) order by 1 ASC ), '')
+
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>
+        <if test="sortField != null">
+            order by "${sortField}"::integer
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.bank.mapper.BankCommonResponseItemInfoMapper">
+    
+    <resultMap type="com.lenovo.otmp.bank.domain.entity.BankCommonResponseItemInfoDO" id="BankCommonResponseItemInfoResult">
+        <result property="id"    column="id"    />
+        <result property="headerId"    column="header_id"    />
+        <result property="msgId"    column="msg_id"    />
+        <result property="responseType"    column="response_type"    />
+        <result property="financeReqNo"    column="finance_req_no"    />
+        <result property="txnDealRefNo"    column="txn_deal_ref_no"    />
+        <result property="txnRefNo"    column="txn_ref_no"    />
+        <result property="txnStatus"    column="txn_status"    />
+        <result property="txnRejectCode"    column="txn_reject_code "    />
+        <result property="txnStatusDescription"    column="txn_status_description "    />
+        <result property="partnerCode"    column="partner_code"    />
+        <result property="anchorOrgId"    column="anchor_org_id"    />
+        <result property="anchorName"    column="anchor_name"    />
+        <result property="spokeOrgId"    column="spoke_org_id"    />
+        <result property="spokeName"    column="spoke_name"    />
+        <result property="spokeErpId"    column="spoke_erp_id"    />
+        <result property="financeDate"    column="finance_date"    />
+        <result property="txnDate"    column="txn_date"    />
+        <result property="updateDate"    column="update_date "    />
+        <result property="dueDate"    column="due_date"    />
+        <result property="financeFee"    column="finance_fee"    />
+        <result property="loanAccount"    column="loan_account"    />
+        <result property="tenor"    column="tenor"    />
+        <result property="financeAmount"    column="finance_amount"    />
+        <result property="rateType"    column="rate_type"    />
+        <result property="currency"    column="currency"    />
+        <result property="paymentAmt"    column="payment_amt "    />
+        <result property="repaymentAmt"    column="repayment_amt"    />
+        <result property="loanorinterestRate"    column="loanorinterest_rate"    />
+        <result property="interestAmt"    column="interest_amt"    />
+        <result property="overdueInterest"    column="overdue_interest"    />
+        <result property="remark"    column="remark"    />
+        <result property="externalRefNo"    column="external_ref_no"    />
+        <result property="instrumentType"    column="instrument_type"    />
+        <result property="originalInstrumentAmt"    column="original_instrument_amt"    />
+        <result property="originalFinanceAmt"    column="original_finance_amt"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectBankCommonResponseItemInfoVo">
+        select id, header_id, msg_id, response_type, finance_req_no, txn_deal_ref_no, txn_ref_no, txn_status, txn_reject_code , txn_status_description , partner_code, anchor_org_id, anchor_name, spoke_org_id, spoke_name, spoke_erp_id, finance_date, txn_date, update_date , due_date, finance_fee, loan_account, tenor, finance_amount, rate_type, currency, payment_amt , repayment_amt, loanorinterest_rate, interest_amt, overdue_interest, remark, external_ref_no, instrument_type, original_instrument_amt, original_finance_amt, create_time, create_by from otfp_financing.bank_common_response_item_info
+    </sql>
+
+    <select id="selectBankCommonResponseItemInfoList" parameterType="com.lenovo.otmp.bank.domain.dto.BankCommonResponseItemInfoDTO" resultMap="BankCommonResponseItemInfoResult">
+        <include refid="selectBankCommonResponseItemInfoVo"/>
+        <where>  
+            <if test="headerId != null "> and header_id = #{headerId}</if>
+            <if test="msgId != null  and msgId != ''"> and msg_id = #{msgId}</if>
+            <if test="responseType != null  and responseType != ''"> and response_type = #{responseType}</if>
+            <if test="financeReqNo != null  and financeReqNo != ''"> and finance_req_no = #{financeReqNo}</if>
+            <if test="txnDealRefNo != null  and txnDealRefNo != ''"> and txn_deal_ref_no = #{txnDealRefNo}</if>
+            <if test="txnRefNo != null  and txnRefNo != ''"> and txn_ref_no = #{txnRefNo}</if>
+            <if test="txnStatus != null  and txnStatus != ''"> and txn_status = #{txnStatus}</if>
+            <if test="txnRejectCode  != null  and txnRejectCode != ''"> and txn_reject_code  = #{txnRejectCode}</if>
+            <if test="txnStatusDescription  != null  and txnStatusDescription != ''"> and txn_status_description  = #{txnStatusDescription}</if>
+            <if test="partnerCode != null  and partnerCode != ''"> and partner_code = #{partnerCode}</if>
+            <if test="anchorOrgId != null  and anchorOrgId != ''"> and anchor_org_id = #{anchorOrgId}</if>
+            <if test="anchorName != null  and anchorName != ''"> and anchor_name Ilike '%'||#{anchorName}||'%'</if>
+            <if test="spokeOrgId != null  and spokeOrgId != ''"> and spoke_org_id = #{spokeOrgId}</if>
+            <if test="spokeName != null  and spokeName != ''"> and spoke_name Ilike '%'||#{spokeName}||'%'</if>
+            <if test="spokeErpId != null  and spokeErpId != ''"> and spoke_erp_id = #{spokeErpId}</if>
+            <if test="financeDate != null "> and finance_date = #{financeDate}</if>
+            <if test="txnDate != null "> and txn_date = #{txnDate}</if>
+            <if test="updateDate  != null "> and update_date  = #{updateDate}</if>
+            <if test="dueDate != null "> and due_date = #{dueDate}</if>
+            <if test="financeFee != null  and financeFee != ''"> and finance_fee = #{financeFee}</if>
+            <if test="loanAccount != null  and loanAccount != ''"> and loan_account = #{loanAccount}</if>
+            <if test="tenor != null  and tenor != ''"> and tenor = #{tenor}</if>
+            <if test="financeAmount != null  and financeAmount != ''"> and finance_amount = #{financeAmount}</if>
+            <if test="rateType != null  and rateType != ''"> and rate_type = #{rateType}</if>
+            <if test="currency != null  and currency != ''"> and currency = #{currency}</if>
+            <if test="paymentAmt  != null  and paymentAmt != ''"> and payment_amt  = #{paymentAmt}</if>
+            <if test="repaymentAmt != null  and repaymentAmt != ''"> and repayment_amt = #{repaymentAmt}</if>
+            <if test="loanorinterestRate != null  and loanorinterestRate != ''"> and loanorinterest_rate = #{loanorinterestRate}</if>
+            <if test="interestAmt != null  and interestAmt != ''"> and interest_amt = #{interestAmt}</if>
+            <if test="overdueInterest != null  and overdueInterest != ''"> and overdue_interest = #{overdueInterest}</if>
+            <if test="externalRefNo != null  and externalRefNo != ''"> and external_ref_no = #{externalRefNo}</if>
+            <if test="instrumentType != null  and instrumentType != ''"> and instrument_type = #{instrumentType}</if>
+            <if test="originalInstrumentAmt != null  and originalInstrumentAmt != ''"> and original_instrument_amt = #{originalInstrumentAmt}</if>
+            <if test="originalFinanceAmt != null  and originalFinanceAmt != ''"> and original_finance_amt = #{originalFinanceAmt}</if>
+        </where>
+    </select>
+    
+    <select id="selectBankCommonResponseItemInfoById" parameterType="Long" resultMap="BankCommonResponseItemInfoResult">
+        <include refid="selectBankCommonResponseItemInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBankCommonResponseItemInfo" parameterType="com.lenovo.otmp.bank.domain.entity.BankCommonResponseItemInfoDO">
+        insert into otfp_financing.bank_common_response_item_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="headerId != null">header_id,</if>
+            <if test="msgId != null">msg_id,</if>
+            <if test="responseType != null">response_type,</if>
+            <if test="financeReqNo != null">finance_req_no,</if>
+            <if test="txnDealRefNo != null">txn_deal_ref_no,</if>
+            <if test="txnRefNo != null">txn_ref_no,</if>
+            <if test="txnStatus != null">txn_status,</if>
+            <if test="txnRejectCode  != null">txn_reject_code ,</if>
+            <if test="txnStatusDescription  != null">txn_status_description ,</if>
+            <if test="partnerCode != null">partner_code,</if>
+            <if test="anchorOrgId != null">anchor_org_id,</if>
+            <if test="anchorName != null">anchor_name,</if>
+            <if test="spokeOrgId != null">spoke_org_id,</if>
+            <if test="spokeName != null">spoke_name,</if>
+            <if test="spokeErpId != null">spoke_erp_id,</if>
+            <if test="financeDate != null">finance_date,</if>
+            <if test="txnDate != null">txn_date,</if>
+            <if test="updateDate  != null">update_date ,</if>
+            <if test="dueDate != null">due_date,</if>
+            <if test="financeFee != null">finance_fee,</if>
+            <if test="loanAccount != null">loan_account,</if>
+            <if test="tenor != null">tenor,</if>
+            <if test="financeAmount != null">finance_amount,</if>
+            <if test="rateType != null">rate_type,</if>
+            <if test="currency != null">currency,</if>
+            <if test="paymentAmt  != null">payment_amt ,</if>
+            <if test="repaymentAmt != null">repayment_amt,</if>
+            <if test="loanorinterestRate != null">loanorinterest_rate,</if>
+            <if test="interestAmt != null">interest_amt,</if>
+            <if test="overdueInterest != null">overdue_interest,</if>
+            <if test="remark != null">remark,</if>
+            <if test="externalRefNo != null">external_ref_no,</if>
+            <if test="instrumentType != null">instrument_type,</if>
+            <if test="originalInstrumentAmt != null">original_instrument_amt,</if>
+            <if test="originalFinanceAmt != null">original_finance_amt,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="headerId != null">#{headerId},</if>
+            <if test="msgId != null">#{msgId},</if>
+            <if test="responseType != null">#{responseType},</if>
+            <if test="financeReqNo != null">#{financeReqNo},</if>
+            <if test="txnDealRefNo != null">#{txnDealRefNo},</if>
+            <if test="txnRefNo != null">#{txnRefNo},</if>
+            <if test="txnStatus != null">#{txnStatus},</if>
+            <if test="txnRejectCode  != null">#{txnRejectCode },</if>
+            <if test="txnStatusDescription  != null">#{txnStatusDescription },</if>
+            <if test="partnerCode != null">#{partnerCode},</if>
+            <if test="anchorOrgId != null">#{anchorOrgId},</if>
+            <if test="anchorName != null">#{anchorName},</if>
+            <if test="spokeOrgId != null">#{spokeOrgId},</if>
+            <if test="spokeName != null">#{spokeName},</if>
+            <if test="spokeErpId != null">#{spokeErpId},</if>
+            <if test="financeDate != null">#{financeDate},</if>
+            <if test="txnDate != null">#{txnDate},</if>
+            <if test="updateDate  != null">#{updateDate },</if>
+            <if test="dueDate != null">#{dueDate},</if>
+            <if test="financeFee != null">#{financeFee},</if>
+            <if test="loanAccount != null">#{loanAccount},</if>
+            <if test="tenor != null">#{tenor},</if>
+            <if test="financeAmount != null">#{financeAmount},</if>
+            <if test="rateType != null">#{rateType},</if>
+            <if test="currency != null">#{currency},</if>
+            <if test="paymentAmt  != null">#{paymentAmt },</if>
+            <if test="repaymentAmt != null">#{repaymentAmt},</if>
+            <if test="loanorinterestRate != null">#{loanorinterestRate},</if>
+            <if test="interestAmt != null">#{interestAmt},</if>
+            <if test="overdueInterest != null">#{overdueInterest},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="externalRefNo != null">#{externalRefNo},</if>
+            <if test="instrumentType != null">#{instrumentType},</if>
+            <if test="originalInstrumentAmt != null">#{originalInstrumentAmt},</if>
+            <if test="originalFinanceAmt != null">#{originalFinanceAmt},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBankCommonResponseItemInfo" parameterType="com.lenovo.otmp.bank.domain.entity.BankCommonResponseItemInfoDO">
+        update otfp_financing.bank_common_response_item_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="headerId != null">header_id = #{headerId},</if>
+            <if test="msgId != null">msg_id = #{msgId},</if>
+            <if test="responseType != null">response_type = #{responseType},</if>
+            <if test="financeReqNo != null">finance_req_no = #{financeReqNo},</if>
+            <if test="txnDealRefNo != null">txn_deal_ref_no = #{txnDealRefNo},</if>
+            <if test="txnRefNo != null">txn_ref_no = #{txnRefNo},</if>
+            <if test="txnStatus != null">txn_status = #{txnStatus},</if>
+            <if test="txnRejectCode  != null">txn_reject_code  = #{txnRejectCode },</if>
+            <if test="txnStatusDescription  != null">txn_status_description  = #{txnStatusDescription },</if>
+            <if test="partnerCode != null">partner_code = #{partnerCode},</if>
+            <if test="anchorOrgId != null">anchor_org_id = #{anchorOrgId},</if>
+            <if test="anchorName != null">anchor_name = #{anchorName},</if>
+            <if test="spokeOrgId != null">spoke_org_id = #{spokeOrgId},</if>
+            <if test="spokeName != null">spoke_name = #{spokeName},</if>
+            <if test="spokeErpId != null">spoke_erp_id = #{spokeErpId},</if>
+            <if test="financeDate != null">finance_date = #{financeDate},</if>
+            <if test="txnDate != null">txn_date = #{txnDate},</if>
+            <if test="updateDate  != null">update_date  = #{updateDate },</if>
+            <if test="dueDate != null">due_date = #{dueDate},</if>
+            <if test="financeFee != null">finance_fee = #{financeFee},</if>
+            <if test="loanAccount != null">loan_account = #{loanAccount},</if>
+            <if test="tenor != null">tenor = #{tenor},</if>
+            <if test="financeAmount != null">finance_amount = #{financeAmount},</if>
+            <if test="rateType != null">rate_type = #{rateType},</if>
+            <if test="currency != null">currency = #{currency},</if>
+            <if test="paymentAmt  != null">payment_amt  = #{paymentAmt },</if>
+            <if test="repaymentAmt != null">repayment_amt = #{repaymentAmt},</if>
+            <if test="loanorinterestRate != null">loanorinterest_rate = #{loanorinterestRate},</if>
+            <if test="interestAmt != null">interest_amt = #{interestAmt},</if>
+            <if test="overdueInterest != null">overdue_interest = #{overdueInterest},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="externalRefNo != null">external_ref_no = #{externalRefNo},</if>
+            <if test="instrumentType != null">instrument_type = #{instrumentType},</if>
+            <if test="originalInstrumentAmt != null">original_instrument_amt = #{originalInstrumentAmt},</if>
+            <if test="originalFinanceAmt != null">original_finance_amt = #{originalFinanceAmt},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBankCommonResponseItemInfoById" parameterType="Long">
+        delete from otfp_financing.bank_common_response_item_info where id = #{id}
+    </delete>
+
+    <delete id="deleteBankCommonResponseItemInfoByIds" parameterType="String">
+        delete from otfp_financing.bank_common_response_item_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

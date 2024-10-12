@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.download.mapper.ReportExportTaskMapper">
+    
+    <resultMap type="com.lenovo.otmp.download.domain.ReportExportTask" id="ReportExportTaskResult">
+        <result property="id"    column="id"    />
+        <result property="reportingId"    column="reporting_id"    />
+        <result property="itCode"    column="it_code"    />
+        <result property="reportName"    column="report_name"    />
+        <result property="objectType"    column="object_type"    />
+        <result property="objectName"    column="object_name"    />
+        <result property="condition"    column="condition"    />
+        <result property="parameters"    column="parameters"    />
+        <result property="rules"    column="rules"    />
+        <result property="requestTime"    column="request_time"    />
+        <result property="reserve"    column="reserve"    />
+        <result property="status"    column="status"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="interrupt"    column="interrupt"    />
+    </resultMap>
+
+    <sql id="selectReportExportTaskVo">
+        select id, reporting_id, it_code, report_name, object_type, object_name, condition, parameters, rules, request_time, reserve, status, start_time, finish_time, file_path, interrupt from report_export_task
+    </sql>
+
+    <select id="selectReportExportTaskList" parameterType="com.lenovo.otmp.download.domain.ReportExportTask" resultMap="ReportExportTaskResult">
+        <include refid="selectReportExportTaskVo"/>
+        <where>  
+            <if test="itCode != null  and itCode != ''"> and it_code = #{itCode}</if>
+            <if test="reportName != null  and reportName != ''"> and report_name like concat('%', #{reportName}, '%')</if>
+            <if test="objectType != null  and objectType != ''"> and object_type = #{objectType}</if>
+            <if test="objectName != null  and objectName != ''"> and object_name like concat('%', #{objectName}, '%')</if>
+            <if test="condition != null  and condition != ''"> and condition = #{condition}</if>
+            <if test="parameters != null  and parameters != ''"> and parameters = #{parameters}</if>
+            <if test="rules != null  and rules != ''"> and rules = #{rules}</if>
+            <if test="requestTime != null "> and request_time = #{requestTime}</if>
+            <if test="reserve != null  and reserve != ''"> and reserve = #{reserve}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="interrupt != null  and interrupt != ''"> and interrupt = #{interrupt}</if>
+        </where>
+    </select>
+    
+    <select id="selectReportExportTaskById" parameterType="Integer" resultMap="ReportExportTaskResult">
+        <include refid="selectReportExportTaskVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertReportExportTask" parameterType="com.lenovo.otmp.download.domain.ReportExportTask">
+        insert into report_export_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="reportingId != null  and reportingId != ''">reporting_id,</if>
+            <if test="itCode != null  and itCode != ''">it_code,</if>
+            <if test="reportName != null  and reportName != ''">report_name,</if>
+            <if test="objectType != null  and objectType != ''">object_type,</if>
+            <if test="objectName != null  and objectName != ''">object_name,</if>
+            <if test="condition != null  and condition != ''">condition,</if>
+            <if test="parameters != null  and parameters != ''">parameters,</if>
+            <if test="rules != null  and rules != ''">rules,</if>
+            <if test="requestTime != null ">request_time,</if>
+            <if test="reserve != null  and reserve != ''">reserve,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="startTime != null ">start_time,</if>
+            <if test="finishTime != null ">finish_time,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="interrupt != null  and interrupt != ''">interrupt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="reportingId != null  and reportingId != ''">#{reportingId},</if>
+            <if test="itCode != null  and itCode != ''">#{itCode},</if>
+            <if test="reportName != null  and reportName != ''">#{reportName},</if>
+            <if test="objectType != null  and objectType != ''">#{objectType},</if>
+            <if test="objectName != null  and objectName != ''">#{objectName},</if>
+            <if test="condition != null  and condition != ''">#{condition},</if>
+            <if test="parameters != null  and parameters != ''">#{parameters},</if>
+            <if test="rules != null  and rules != ''">#{rules},</if>
+            <if test="requestTime != null ">#{requestTime},</if>
+            <if test="reserve != null  and reserve != ''">#{reserve},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="startTime != null ">#{startTime},</if>
+            <if test="finishTime != null ">#{finishTime},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="interrupt != null  and interrupt != ''">#{interrupt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateReportExportTask" parameterType="com.lenovo.otmp.download.domain.ReportExportTask">
+        update report_export_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reportingId != null  and reportingId != ''">reporting_id = #{reportingId},</if>
+            <if test="itCode != null  and itCode != ''">it_code = #{itCode},</if>
+            <if test="reportName != null  and reportName != ''">report_name = #{reportName},</if>
+            <if test="objectType != null  and objectType != ''">object_type = #{objectType},</if>
+            <if test="objectName != null  and objectName != ''">object_name = #{objectName},</if>
+            <if test="condition != null  and condition != ''">condition = #{condition},</if>
+            <if test="parameters != null  and parameters != ''">parameters = #{parameters},</if>
+            <if test="rules != null  and rules != ''">rules = #{rules},</if>
+            <if test="requestTime != null ">request_time = #{requestTime},</if>
+            <if test="reserve != null  and reserve != ''">reserve = #{reserve},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="startTime != null ">start_time = #{startTime},</if>
+            <if test="finishTime != null ">finish_time = #{finishTime},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="interrupt != null  and interrupt != ''">interrupt = #{interrupt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteReportExportTaskById" parameterType="Integer">
+        delete from report_export_task where id = #{id}
+    </delete>
+
+    <delete id="deleteReportExportTaskByIds" parameterType="String">
+        delete from report_export_task where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

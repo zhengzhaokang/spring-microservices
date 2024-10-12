@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lenovo.otmp.bank.mapper.SupplierBankSettingMapper">
+    <resultMap id="BaseResultMap" type="com.lenovo.otmp.bank.domain.entity.SupplierBankSetting">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="financing_model" property="financingModel" jdbcType="INTEGER"/>
+        <result column="minimum_net_financing_amount" property="minimumNetFinancingAmount" jdbcType="NUMERIC"/>
+        <result column="currency" property="currency" jdbcType="INTEGER"/>
+        <result column="to_up_pricing" property="toUpPricing" jdbcType="INTEGER"/>
+        <result column="invalid_days_before_manurity_date" property="invalidDaysBeforeManurityDate" jdbcType="INTEGER"/>
+        <result column="supplier_model" property="supplierModel" jdbcType="INTEGER"/>
+        <result column="bank_code" property="bankCode" jdbcType="VARCHAR"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="supplier_unique_id" property="supplierUniqueId" jdbcType="VARCHAR"/>
+        <result column="buyer_org" property="buyerOrg" jdbcType="VARCHAR"/>
+        <result column="buyer_org_id" property="buyerOrgId" jdbcType="VARCHAR"/>
+        <result column="maximum_invoice_tendor" property="maximumInvoiceTendor" jdbcType="VARCHAR"/>
+        <result column="days_from_posting_date" property="daysFromPostingDate" jdbcType="VARCHAR"/>
+        <result column="invoice_percentage" property="invoicePercentage" jdbcType="INTEGER"/>
+        <result column="margin" property="margin" jdbcType="VARCHAR"/>
+        <result column="maximum_finance_tendor" property="maximumFinanceTendor" jdbcType="VARCHAR"/>
+        <result column="bench_mark" property="benchMark" jdbcType="VARCHAR"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="company_code" property="companyCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, financing_model, minimum_net_financing_amount, currency, to_up_pricing, invalid_days_before_manurity_date,
+        supplier_model, bank_code, supplier_code, supplier_unique_id, buyer_org,
+        buyer_org_id, maximum_invoice_tendor, days_from_posting_date, invoice_percentage,
+        margin, maximum_finance_tendor, bench_mark, delete_flag, create_time, create_by,
+        update_time, update_by, company_code
+    </sql>
+    <select id="getSupplierBankSettingMapper" resultType="java.lang.String">
+        SELECT DISTINCT
+            buyer_org_id
+        FROM
+            otfp_financing.supplier_bank_setting
+            T LEFT JOIN otfp_financing.supplier_company_code P ON T.supplier_id = P.supplier_id
+        WHERE
+        T.delete_flag = '0'
+	    and P.delete_flag = '0'
+        and T.bank_id = #{bankId}
+        and P.supplier_code = #{supplierCode}
+        and T.entity_id=#{entityId}
+    </select>
+</mapper>

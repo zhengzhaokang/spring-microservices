@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseBpcbuBpcSeriesMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO" id="BizBaseBpcbuBpcSeriesResult">
+        <result property="id"    column="id"    />
+        <result property="bpcBuCode"    column="bpc_bu_code"    />
+        <result property="bpcSeriesCode"    column="bpc_series_code"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="bpcBuDescription"    column="bpc_bu_description"    />
+        <result property="bpcSeriesDescription"    column="bpc_series_description"    />
+        <result property="endMonth"    column="end_month"    />
+    </resultMap>
+
+    <sql id="selectBizBaseBpcbuBpcSeriesVo">
+        select id, bpc_bu_code, bpc_series_code, status, remark, create_by, create_time, update_by, update_time, business_group, bpc_bu_description, bpc_series_description, end_month from biz_base_bpcbu_bpc_series
+    </sql>
+
+    <select id="selectBizBaseBpcbuBpcSeriesList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseBpcbuBpcSeriesDTO" resultMap="BizBaseBpcbuBpcSeriesResult">
+        <include refid="selectBizBaseBpcbuBpcSeriesVo"/>
+        <where>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+
+            <if test="bpcBuCode != null  and bpcBuCode != ''"> and bpc_bu_code Ilike '%'||#{bpcBuCode}||'%'</if>
+            <if test="bpcSeriesCode != null  and bpcSeriesCode != ''"> and bpc_series_code Ilike '%'||#{bpcSeriesCode}||'%'</if>
+            and status = 'Y'
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 ==
+            businessGroup.split(',').length">and
+                        business_group = #{businessGroup}
+                    </when>
+                    <otherwise>and
+                        business_group in <foreach collection="
+            businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="bpcBuDescription != null  and bpcBuDescription != ''"> and bpc_bu_description Ilike   '%'||#{bpcBuDescription}||'%'</if>
+            <if test="bpcSeriesDescription != null  and bpcSeriesDescription != ''"> and bpc_series_description Ilike '%'|| #{bpcSeriesDescription}||'%'</if>
+            <if test="endMonth != null  and endMonth != ''"> and end_month = #{endMonth}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectBizBaseBpcbuBpcSeriesById" parameterType="Long" resultMap="BizBaseBpcbuBpcSeriesResult">
+        <include refid="selectBizBaseBpcbuBpcSeriesVo"/>
+        where id = #{id}
+    </select>
+    <select id="getBpcList" resultType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO">
+
+        select distinct (bpc_bu_code)as bpcBuCode   from biz_base_bpcbu_bpc_series
+        <where>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+
+            <if test="bpcBuCode != null  and bpcBuCode != ''"> and bpc_bu_code Ilike '%'||#{bpcBuCode}||'%'</if>
+            <if test="bpcSeriesCode != null  and bpcSeriesCode != ''"> and bpc_series_code Ilike '%'||#{bpcSeriesCode}||'%'</if>
+            and status = 'Y'
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 ==
+            businessGroup.split(',').length">and
+                        business_group = #{businessGroup}
+                    </when>
+                    <otherwise>and
+                        business_group in <foreach collection="
+            businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="bpcBuDescription != null  and bpcBuDescription != ''"> and bpc_bu_description Ilike   '%'||#{bpcBuDescription}||'%'</if>
+            <if test="bpcSeriesDescription != null  and bpcSeriesDescription != ''"> and bpc_series_description Ilike '%'|| #{bpcSeriesDescription}||'%'</if>
+            <if test="endMonth != null  and endMonth != ''"> and end_month = #{endMonth}</if>
+        </where>
+
+
+    </select>
+    <select id="getBpcSeriesList"
+            resultType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO">
+
+        select distinct (bpc_series_code)as bpcSeriesCode   from biz_base_bpcbu_bpc_series
+        <where>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+
+            <if test="bpcBuCode != null  and bpcBuCode != ''"> and bpc_bu_code Ilike '%'||#{bpcBuCode}||'%'</if>
+            <if test="bpcSeriesCode != null  and bpcSeriesCode != ''"> and bpc_series_code Ilike '%'||#{bpcSeriesCode}||'%'</if>
+            and status = 'Y'
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 ==
+            businessGroup.split(',').length">and
+                        business_group = #{businessGroup}
+                    </when>
+                    <otherwise>and
+                        business_group in <foreach collection="
+            businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="bpcBuDescription != null  and bpcBuDescription != ''"> and bpc_bu_description Ilike   '%'||#{bpcBuDescription}||'%'</if>
+            <if test="bpcSeriesDescription != null  and bpcSeriesDescription != ''"> and bpc_series_description Ilike '%'|| #{bpcSeriesDescription}||'%'</if>
+            <if test="endMonth != null  and endMonth != ''"> and end_month = #{endMonth}</if>
+        </where>
+
+    </select>
+    <select id="selectBizBaseBpcbuBpcSeriesListCheck"
+            resultType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO">
+        <include refid="selectBizBaseBpcbuBpcSeriesVo"/>
+        where bpc_bu_code = #{bpcBuCode} and bpc_series_code = #{bpcSeriesCode}
+    </select>
+
+    <insert id="insertBizBaseBpcbuBpcSeries" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_bpcbu_bpc_series
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="bpcBuCode != null">bpc_bu_code,</if>
+            <if test="bpcSeriesCode != null">bpc_series_code,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="bpcBuDescription != null">bpc_bu_description,</if>
+            <if test="bpcSeriesDescription != null">bpc_series_description,</if>
+            <if test="endMonth != null">end_month,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="bpcBuCode != null">#{bpcBuCode},</if>
+            <if test="bpcSeriesCode != null">#{bpcSeriesCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="bpcBuDescription != null">#{bpcBuDescription},</if>
+            <if test="bpcSeriesDescription != null">#{bpcSeriesDescription},</if>
+            <if test="endMonth != null">#{endMonth},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseBpcbuBpcSeries" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBpcbuBpcSeriesDO">
+        update biz_base_bpcbu_bpc_series
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="bpcBuCode != null">bpc_bu_code = #{bpcBuCode},</if>
+
+            <if test="bpcSeriesCode != null">bpc_series_code = #{bpcSeriesCode},</if>
+
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="bpcBuDescription != null">bpc_bu_description = #{bpcBuDescription},</if>
+            <if test="bpcSeriesDescription != null">bpc_series_description = #{bpcSeriesDescription},</if>
+            <if test="endMonth != null">end_month = #{endMonth},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseBpcbuBpcSeriesById" parameterType="Long">
+        delete from biz_base_bpcbu_bpc_series where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseBpcbuBpcSeriesByIds" parameterType="String">
+        delete from biz_base_bpcbu_bpc_series where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

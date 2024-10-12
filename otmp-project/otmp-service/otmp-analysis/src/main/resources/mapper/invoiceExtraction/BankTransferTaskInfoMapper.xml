@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.analysis.mapper.BankTransferTaskInfoMapper">
+    
+    <resultMap type="com.lenovo.otmp.analysis.domain.entity.BankTransferTaskInfoDO" id="BankTransferTaskInfoResult">
+        <result property="bankTransferId"    column="bank_transfer_id"    />
+        <result property="operType"    column="oper_type"    />
+        <result property="bankCode"    column="bank_code"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="requestFileName"    column="request_file_name"    />
+        <result property="responseFileName"    column="response_file_name"    />
+        <result property="lenovoBatchNumber"    column="lenovo_batch_number"    />
+        <result property="fileMd5"    column="file_md5"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="status"    column="status"    />
+        <result property="paramData"    column="param_data"    />
+        <result property="responseStatus" column="response_status"/>
+        <result property="responseStatusDescription" column="response_status_description"/>
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.analysis.domain.dto.BankInterestRateTrendDTO" id="BankInterestRateTrendResult">
+        <result property="bankId"    column="bank_id"    />
+        <result property="interestRate"    column="interest_rate"    />
+        <result property="interestAmount"    column="interest_amount"    />
+        <result property="lastUpdateTime"    column="last_update_time"    />
+    </resultMap>
+    <resultMap type="com.lenovo.otmp.analysis.domain.dto.BankInterestRateTrendVO" id="BankInterestRateTrendVOResult">
+        <result property="id"    column="id"    />
+        <result property="bankId"    column="bankId"    />
+        <result property="supplierId"    column="supplierId"    />
+        <result property="entityId"    column="entityId"    />
+        <result property="currency"    column="currency"    />
+        <result property="discountAmount"    column="discountAmount"    />
+        <result property="discountDate"    column="discountDate"    />
+        <result property="adjustedDueDate"    column="adjustedDueDate"    />
+        <result property="noOfTenorDays"    column="noOfTenorDays"    />
+        <result property="confirmedInterestRate"    column="confirmedInterestRate"    />
+        <result property="confirmedDiscount"    column="confirmedDiscount"    />
+        <result property="batchNumber"    column="batchNumber"    />
+    </resultMap>
+
+
+
+
+    <sql id="selectBankTransferTaskInfoVo">
+        select bank_transfer_id, oper_type, bank_code, supplier_code, request_file_name, response_file_name, lenovo_batch_number, file_md5, create_time, create_by, update_by, update_time, status,param_data,response_status,response_status_description from otfp_financing.bank_transfer_task_info
+    </sql>
+
+    <select id="selectBankTransferTaskInfoList" parameterType="com.lenovo.otmp.analysis.domain.dto.BankTransferTaskInfoDTO" resultMap="BankTransferTaskInfoResult">
+        <include refid="selectBankTransferTaskInfoVo"/>
+        <where>  
+            <if test="bankTransferId != null "> and bank_transfer_id = #{bankTransferId}</if>
+            <if test="operType != null "> and oper_type = #{operType}</if>
+            <if test="bankCode != null  and bankCode != ''"> and bank_code = #{bankCode}</if>
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="requestFileName != null  and requestFileName != ''"> and request_file_name Ilike '%'||#{requestFileName}||'%'</if>
+            <if test="responseFileName != null  and responseFileName != ''"> and response_file_name Ilike '%'||#{responseFileName}||'%'</if>
+            <if test="lenovoBatchNumber != null  and lenovoBatchNumber != ''"> and lenovo_batch_number = #{lenovoBatchNumber}</if>
+            <if test="fileMd5 != null  and fileMd5 != ''"> and file_md5 = #{fileMd5}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="responseStatus != null  and responseStatus != ''">and response_status = #{responseStatus}</if>
+            <if test="responseStatusDescription != null  and responseStatusDescription != ''">and response_status_description = #{responseStatusDescription}</if>
+        </where>
+        order by create_time asc
+    </select>
+
+    <select id="findBankInvoiceBatchCount"
+            parameterType="com.lenovo.otmp.analysis.domain.dto.BankInvoiceBatchStatisticsNumDTO"
+            resultType="java.util.Map">
+                select
+                fb.bank_id ,
+                fb.entity_id ,
+                fb.supplier_id ,
+                fb.status,
+                to_char(fb.submission_date,
+                'yyyy-mm-dd') update_time,
+                count(1) batch_count
+                from
+                otfp_financing.finance_batch fb
+                <where>
+                    fb.submission_date>=#{startDateTime} and #{endDateTime}>= fb.submission_date
+                    <if test="supplierId != null and supplierId != ''">and fb.supplier_id = #{supplierId}</if>
+                    <if test="bankId != null and bankId != ''">and fb.bank_id =CAST(#{bankId} as varchar)</if>
+                    <if test="entityId != null and entityId != ''">and fb.entity_id = #{entityId}</if>
+                </where>
+                group by
+                fb.bank_id ,
+                fb.entity_id ,
+                fb.supplier_id ,
+                fb.status,
+                to_char(fb.submission_date,
+                'yyyy-mm-dd')
+    </select>
+
+
+    <select id="findBankInvoiceBatchList"
+            parameterType="com.lenovo.otmp.analysis.domain.dto.BankInterestRateTrendDTO"
+            resultMap="BankInterestRateTrendResult">
+            select
+            to_char(fb.update_time ,
+            'yyyy-mm') last_update_time ,
+            avg(fb.interest_rate) interest_rate,
+            sum(fb.discount) interest_amount
+            from
+            otfp_financing.finance_batch fb
+            <where>
+                fb.update_time>=#{startDateTime} and #{endDateTime}>= fb.update_time
+                and fb.status ='Financed'
+                <if test="bankId != null and bankId != ''">and fb.bank_id =CAST(#{bankId} as varchar)</if>
+            </where>
+            group by
+            to_char(fb.update_time ,
+            'yyyy-mm');
+    </select>
+
+    <select id="findBankInvoiceBatchPageList"
+            parameterType="com.lenovo.otmp.analysis.domain.dto.BankInterestRateTrendVO"
+            resultMap="BankInterestRateTrendVOResult">
+                select
+                id,
+                batch_number batchNumber,
+                status,
+                discount_date discountDate,
+                discount_amount discountAmount,
+                maturity_date adjustedDueDate,
+                submit_currency currency,
+                supplier_id supplierId,
+                bank_id bankId,
+                entity_id entityId,
+                interest_rate confirmedInterestRate,
+                tenor noOfTenorDays,
+                discount confirmedDiscount
+                from
+                otfp_financing.finance_batch
+                <where>
+                    status ='Financed'
+                    <if test="beginTime != null and beginTime != ''">and update_time>=#{beginTime} </if>
+                    <if test="endTime != null and endTime != ''">and #{endTime}>= update_time </if>
+                    <if test="bankId != null and bankId != ''">and bank_id =CAST(#{bankId} as varchar)</if>
+                    <if test="batchNumberList != null and batchNumberList != ''">
+                        and  batch_number in
+                        <foreach collection="batchNumberList.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                </where>
+
+    </select>
+
+
+    <select id="selectBankTransferTaskInfoByBankTransferId" parameterType="Long" resultMap="BankTransferTaskInfoResult">
+        <include refid="selectBankTransferTaskInfoVo"/>
+        where bank_transfer_id = #{bankTransferId}
+    </select>
+        
+    <insert id="insertBankTransferTaskInfo" parameterType="com.lenovo.otmp.analysis.domain.entity.BankTransferTaskInfoDO">
+        insert into otfp_financing.bank_transfer_task_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bankTransferId != null">bank_transfer_id,</if>
+            <if test="operType != null">oper_type,</if>
+            <if test="bankCode != null">bank_code,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="requestFileName != null">request_file_name,</if>
+            <if test="responseFileName != null">response_file_name,</if>
+            <if test="lenovoBatchNumber != null">lenovo_batch_number,</if>
+            <if test="fileMd5 != null">file_md5,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="status != null">status,</if>
+            <if test="paramData != null">param_data,</if>
+            <if test="responseStatus != null">response_status,</if>
+            <if test="responseStatusDescription != null">response_status_description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bankTransferId != null">#{bankTransferId},</if>
+            <if test="operType != null">#{operType},</if>
+            <if test="bankCode != null">#{bankCode},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="requestFileName != null">#{requestFileName},</if>
+            <if test="responseFileName != null">#{responseFileName},</if>
+            <if test="lenovoBatchNumber != null">#{lenovoBatchNumber},</if>
+            <if test="fileMd5 != null">#{fileMd5},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="paramData != null">#{paramData},</if>
+            <if test="responseStatus != null">#{responseStatus},</if>
+            <if test="responseStatusDescription != null">#{responseStatusDescription},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBankTransferTaskInfo" parameterType="com.lenovo.otmp.analysis.domain.entity.BankTransferTaskInfoDO">
+        update otfp_financing.bank_transfer_task_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operType != null">oper_type = #{operType},</if>
+            <if test="bankCode != null">bank_code = #{bankCode},</if>
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="requestFileName != null">request_file_name = #{requestFileName},</if>
+            <if test="responseFileName != null">response_file_name = #{responseFileName},</if>
+            <if test="lenovoBatchNumber != null">lenovo_batch_number = #{lenovoBatchNumber},</if>
+            <if test="fileMd5 != null">file_md5 = #{fileMd5},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="paramData != null">param_data = #{paramData},</if>
+            <if test="responseStatus != null">response_status = #{responseStatus},</if>
+            <if test="responseStatusDescription != null">response_status_description = #{responseStatusDescription},</if>
+        </trim>
+        where bank_transfer_id = #{bankTransferId}
+    </update>
+
+    <delete id="deleteBankTransferTaskInfoByBankTransferId" parameterType="Long">
+        delete from otfp_financing.bank_transfer_task_info where bank_transfer_id = #{bankTransferId}
+    </delete>
+
+    <delete id="deleteBankTransferTaskInfoByBankTransferIds" parameterType="String">
+        delete from otfp_financing.bank_transfer_task_info where bank_transfer_id in
+        <foreach item="bankTransferId" collection="array" open="(" separator="," close=")">
+            #{bankTransferId}
+        </foreach>
+    </delete>
+</mapper>

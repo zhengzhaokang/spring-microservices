@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewTestMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewTestDO" id="ViewTestResult">
+        <result property="name"    column="name"    />
+        <result property="age"    column="age"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="sex"    column="sex"    />
+        <result property="school"    column="school"    />
+        <result property="class_"    column="class_"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="area"    column="area"    />
+    </resultMap>
+
+    <sql id="selectViewTestVo">
+        select name, age, birthday, create_time, sex, school, class_, province, city, area from view_test
+    </sql>
+
+    <select id="selectViewTestList" parameterType="com.lenovo.otmp.system.domain.ViewTest" resultMap="ViewTestResult">
+        <include refid="selectViewTestVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}::varchar, '%')</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="school != null  and school != ''"> and school = #{school}</if>
+            <if test="class_ != null  and class_!= ''"> and class_ = #{class_}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="area != null  and area != ''"> and area = #{area}</if>
+        </where>
+    </select>
+    
+    <select id="selectViewTestById" parameterType="String" resultMap="ViewTestResult">
+        <include refid="selectViewTestVo"/>
+        where name = #{name}
+    </select>
+        
+    <insert id="insertViewTest" parameterType="com.lenovo.otmp.system.domain.entity.ViewTestDO">
+        insert into view_test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="age != null ">age,</if>
+            <if test="birthday != null ">birthday,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="sex != null ">sex,</if>
+            <if test="school != null  and school != ''">school,</if>
+            <if test="class_!= null  and class_!= ''">class_,</if>
+            <if test="province != null  and province != ''">province,</if>
+            <if test="city != null  and city != ''">city,</if>
+            <if test="area != null  and area != ''">area,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="age != null ">#{age},</if>
+            <if test="birthday != null ">#{birthday},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="sex != null ">#{sex},</if>
+            <if test="school != null  and school != ''">#{school},</if>
+            <if test="class_!= null  and class_!= ''">#{class_},</if>
+            <if test="province != null  and province != ''">#{province},</if>
+            <if test="city != null  and city != ''">#{city},</if>
+            <if test="area != null  and area != ''">#{area},</if>
+         </trim>
+    </insert>
+
+    <update id="updateViewTest" parameterType="com.lenovo.otmp.system.domain.entity.ViewTestDO">
+        update view_test
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="age != null ">age = #{age},</if>
+            <if test="birthday != null ">birthday = #{birthday},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="sex != null ">sex = #{sex},</if>
+            <if test="school != null  and school != ''">school = #{school},</if>
+            <if test="class_!= null  and class_!= ''">class_ = #{class_},</if>
+            <if test="province != null  and province != ''">province = #{province},</if>
+            <if test="city != null  and city != ''">city = #{city},</if>
+            <if test="area != null  and area != ''">area = #{area},</if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <delete id="deleteViewTestById" parameterType="String">
+        delete from view_test where name = #{name}
+    </delete>
+
+    <delete id="deleteViewTestByIds" parameterType="String">
+        delete from view_test where name in 
+        <foreach item="name" collection="array" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </delete>
+    
+</mapper>

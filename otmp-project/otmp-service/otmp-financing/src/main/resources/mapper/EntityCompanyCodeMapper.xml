@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.EntityCompanyCodeMapper">
+    <resultMap id="entityMap" type="com.lenovo.otmp.financing.domain.entity.EntityCompanyCodeDo">
+        <id column="id" property="id"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="entityNameCompanyCode" extends="entityMap"
+               type="com.lenovo.otmp.financing.domain.entity.EntityNameCompanyCodeDo">
+        <result column="entity_name" property="entityName" />
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO entity_company_code
+        (id,entity_id,company_code,delete_flag,create_time,create_by,update_time,update_by)
+        VALUES
+        <foreach collection="records" item="item" separator=",">
+            (#{item.id},#{item.entityId},#{item.companyCode},#{item.deleteFlag},
+            #{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+    <update id="removeEntityCompanyCodeRelation">
+        UPDATE entity_company_code
+        SET delete_flag = '1'
+        WHERE entity_id = #{entityId}
+    </update>
+    <delete id="removeByEntityId">
+        DELETE FROM entity_company_code
+        WHERE entity_id = #{entityId}
+        AND delete_flag = '1'
+    </delete>
+
+    <update id="deleteByEntityId">
+        UPDATE entity_company_code
+        SET delete_flag = '1'
+        WHERE delete_flag = '0'
+        AND entity_id = #{entityId}
+    </update>
+
+    <update id="activeByEntityId">
+        UPDATE entity_company_code
+        SET delete_flag = '0'
+        WHERE delete_flag = '1'
+        AND entity_id = #{entityId}
+    </update>
+
+    <select id="entityNameCompanyCodes" resultMap="entityNameCompanyCode">
+        SELECT e.entity_name ,ecc.company_code,ecc.entity_id
+        FROM entity e
+        INNER JOIN entity_company_code ecc
+        ON e.id = ecc.entity_id
+        WHERE e.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        <if test="codes != null and codes.size !=0">
+            AND ecc.company_code IN
+            <foreach collection="codes" separator="," open="(" close=")" item="code" >
+                #{code}
+            </foreach>
+        </if>
+    </select>
+    <select id="checkRelation" resultMap="entityMap">
+        SELECT ecc.id,ecc.entity_id,ecc.company_code,ecc.delete_flag,ecc.create_time,ecc.create_by,ecc.update_time,ecc.update_by
+        FROM entity_company_code ecc
+        INNER JOIN entity e
+        ON e.id = ecc.entity_id
+        WHERE e.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        <if test="companyCodes != null and companyCodes.size !=0">
+            AND ecc.company_code IN
+            <foreach collection="companyCodes" item="code" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </if>
+        <if test="entityId != null">
+            AND entity_id &lt;> #{entityId}
+        </if>
+        LIMIT 1
+    </select>
+    <select id="getEntityCompanyCode" resultMap="entityMap">
+        SELECT
+            ecc.id,
+            ecc.entity_id,
+            ecc.company_code,
+            ecc.delete_flag,
+            ecc.create_time,
+            ecc.create_by,
+            ecc.update_time,
+            ecc.update_by
+        FROM entity_company_code ecc
+        INNER JOIN entity e
+        ON ecc.entity_id = e.id
+        WHERE e.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        <if test="companyCodes != null and companyCodes.size != 0">
+            AND ecc.company_code IN
+            <foreach collection="companyCodes" separator="," open="(" close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectOneForReactive" resultMap="entityMap">
+        SELECT id,entity_id,company_code
+        FROM entity_company_code ecc
+        WHERE entity_id &lt;&gt; #{entityId}
+        AND delete_flag ='0'
+        AND company_code IN (
+            SELECT company_code
+            FROM entity_company_code ecc2
+            WHERE entity_id = #{entityId}
+            AND delete_flag = '1'
+        )
+    </select>
+    <select id="selectByEntityIds" resultMap="entityMap">
+        select id,entity_id,company_code,delete_flag,create_time,create_by,update_time,update_by
+        from entity_company_code
+        where delete_flag = '0'
+        <if test="entityIds != null and entityIds.size != 0">
+            and entity_id in
+            <foreach collection="entityIds" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

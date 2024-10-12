@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.notice.mapper.EmailAttachMapper">
+
+    <resultMap id="entityResultMap" type="com.lenovo.otmp.notice.domain.FinancingRate">
+        <result column="id" property="id" />
+        <result column="rate_type" property="rateType" />
+        <result column="rate_date" property="rateDate" />
+        <result column="rate_period" property="ratePeriod" />
+        <result column="rate"  property="rate" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="create_by"  property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_by"  property="updateBy" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+
+
+    <!--根据传递的数据插入数据 -->
+    <insert id="insert" parameterType="com.lenovo.otmp.notice.domain.FinancingRate">
+        insert into otfp_financing.financing_rate(
+        id
+        ,rate_type
+        ,rate_period
+        ,rate
+        ,rate_date
+        ,delete_flag
+        ,create_by
+        ,create_time
+        ,update_by
+        ,update_time
+        )
+        values
+        (
+        #{id},
+        #{rateType},
+        #{ratePeriod},
+        #{rate},
+        #{rateDate},
+        #{deleteFlag},
+        #{createBy},
+        now(),
+        #{updateBy},
+        now()
+        )
+    </insert>
+
+    <sql id="selectRateInfo">
+        id, rate_type, rate_period, rate, rate_date, create_by, create_time, update_by, update_time, delete_flag
+    </sql>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into otfp_financing.financing_rate(
+        id
+        ,rate_type
+        ,rate_period
+        ,rate
+        ,rate_date
+        ,delete_flag
+        ,create_by
+        ,create_time
+        ,update_by
+        ,update_time
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.rateType},
+            #{item.ratePeriod},
+            #{item.rate},
+            #{item.rateDate},
+            #{item.deleteFlag},
+            #{item.createBy},
+            now(),
+            #{item.updateBy},
+            now()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectRate" parameterType="com.lenovo.otmp.notice.domain.FinancingRate" resultMap="entityResultMap">
+        select
+        <include refid="selectRateInfo"/>
+            from otfp_financing.financing_rate
+        where
+        rate_type  = #{rateType} and rate_period = #{ratePeriod} and rate_date = #{rateDate};
+    </select>
+
+    <update id="updateRate" parameterType="com.lenovo.otmp.notice.domain.FinancingRate">
+        update
+            otfp_financing.financing_rate
+        set rate = #{rate}, update_time  = now()
+        where
+        rate_type  = #{rateType} and rate_period = #{ratePeriod} and rate_date = #{rateDate};
+    </update>
+
+</mapper>

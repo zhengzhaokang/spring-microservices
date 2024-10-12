@@ -1,0 +1,10 @@
+package com.microservices.otmp.financing.mapper;
+
+import com.microservices.otmp.common.core.dao.BaseMapper;
+import com.microservices.otmp.financing.domain.entity.SysUserFinancingDo;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface SysUserFinancingMapper extends BaseMapper<SysUserFinancingDo> {
+
+}

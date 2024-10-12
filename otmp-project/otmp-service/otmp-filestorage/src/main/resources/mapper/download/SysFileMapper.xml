@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.filestorage.mapper.SysFileMapper">
+
+	<resultMap type="com.lenovo.otmp.filestorage.dto.SystemFileDO" id="SysFileResult">
+		<id     property="fileId"     column="file_id"     />
+		<result property="fileUuid"   column="file_uuid"   />
+		<result property="fileNameOri"   column="file_name_ori"   />
+		<result property="folder"     column="folder"      />
+		<result property="createBy"   column="create_by"   />
+		<result property="createTime" column="create_time" />
+		<result property="updateBy"   column="update_by"   />
+		<result property="updateTime" column="update_time" />
+		<result property="fileStatus" column="file_status" />
+		<result property="dataId" column="data_id" />
+	</resultMap>
+
+	<sql id="selectSysFileVo">
+		select file_id, file_uuid, file_name_ori, folder, data_id, file_status, create_by, create_time,update_by, update_time
+		from otfp_base.sys_file
+	</sql>
+
+	<insert id="insertSelective" parameterType="com.lenovo.otmp.filestorage.dto.SystemFileDO">
+		insert into otfp_base.sys_file
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="fileId != null" >
+				file_id,
+			</if>
+			<if test="fileUuid != null" >
+				file_uuid,
+			</if>
+			<if test="fileNameOri != null" >
+				file_name_ori,
+			</if>
+			<if test="folder != null" >
+				folder,
+			</if>
+			<if test="dataId != null">
+				data_id,
+			</if>
+			<if test="createBy != null" >
+				create_by,
+			</if>
+			<if test="createTime != null" >
+				create_time,
+			</if>
+			<if test="updateBy != null" >
+				update_by,
+			</if>
+			<if test="updateTime != null" >
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="fileId != null" >
+				#{fileId,jdbcType=BIGINT},
+			</if>
+			<if test="fileUuid != null" >
+				#{fileUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="fileNameOri != null" >
+				#{fileNameOri,jdbcType=VARCHAR},
+			</if>
+			<if test="folder != null" >
+				#{folder,jdbcType=VARCHAR},
+			</if>
+			<if test="dataId != null" >
+				#{dataId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null" >
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null" >
+				#{createTime,jdbcType=VARCHAR},
+			</if>
+			<if test="updateBy != null" >
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null" >
+				#{updateTime,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="selectByFileUuid" parameterType="string" resultMap="SysFileResult">
+		<include refid="selectSysFileVo"/>
+		where file_uuid = #{fileUUID}
+	</select>
+
+	<delete id="deleteByFileUuid" parameterType="string">
+		delete from otfp_base.sys_file where file_uuid = #{fileUuid}
+	</delete>
+
+	<select id="selectBySysFile" resultMap="SysFileResult" parameterType="com.lenovo.otmp.filestorage.dto.SystemFile">
+		<include refid="selectSysFileVo"/>
+		<where>
+			<if test="params.fileUuid != null and params.fileUuid != ''">
+				AND file_uuid = #{params.fileUuid,jdbcType=VARCHAR}
+			</if>
+			<if test="params.dataId != null  and params.dataId != ''">
+				AND data_id = #{params.dataId,jdbcType=BIGINT} AND file_status = 0
+			</if>
+		</where>
+	</select>
+
+	<select id="selectForTest" resultMap="SysFileResult" parameterType="com.lenovo.otmp.filestorage.dto.SystemFile">
+		<include refid="selectSysFileVo"/>
+		where file_status = 0 limit 10
+	</select>
+
+	<update id="updateByDataIdAndFileUuid" parameterType="map">
+		update otfp_base.sys_file set file_status = 1 , update_time = now()
+		<where>
+			<if test="params.dataId !=null  and params.dataId != ''">
+				AND data_id = #{params.dataId}
+			</if>
+			<if test="params.fileUuid !=null  and params.fileUuid != ''">
+				AND file_uuid = #{params.fileUuid}
+			</if>
+		</where>
+	</update>
+
+	<select id="selectByDataId" resultType="java.lang.String">
+		select file_uuid from otfp_base.sys_file where data_id = #{params.dataId}
+	</select>
+
+	<update id="batchUpdateFileStatusByFileUuid" parameterType="list">
+		<if test="items != null and items.size() != 0">
+			update otfp_base.sys_file set file_status = 1 , update_time = now() where file_uuid in
+			<foreach collection="items" item="fileUuid" index="index"
+					 separator="," open="(" close=")">
+				#{fileUuid,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</update>
+
+	<update id="batchUpdateFileStatusAvilableByFileUuids" parameterType="list">
+		<if test="items != null and items.size() != 0">
+			update otfp_base.sys_file set file_status = 0, update_time = now() where file_uuid in
+			<foreach collection="items" item="fileUuid" index="index"
+					 separator="," open="(" close=")">
+				#{fileUuid,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</update>
+
+	<update id="updateByDataId">
+		update otfp_base.sys_file set update_time = now()
+		<if test=" dataId != null and dataId != ''" >
+			, data_id = #{dataId,jdbcType=BIGINT}
+		</if>
+		where file_uuid in
+		<foreach collection="items" item="fileUuid" index="index"
+				 separator="," open="(" close=")">
+			#{fileUuid,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.notice.mapper.NoticeHistoryMapper">
+    <resultMap type="com.lenovo.otmp.notice.dto.NoticeHistoryDto" id="noticeHistoryResult">
+        <result property="id"             column="id"              />
+        <result property="noticeType"     column="notice_type"     />
+        <result property="noticeTitle"    column="notice_title"    />
+        <result property="noticeContent"  column="notice_content"  />
+        <result property="status"         column="status"          />
+        <result property="createTime"     column="create_time"      />
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.notice.dto.NoticeHistoryManageDto" id="noticeHistoryManageResult">
+        <result property="id"             column="id"              />
+        <result property="noticeType"     column="notice_type"     />
+        <result property="noticeTitle"    column="notice_title"    />
+        <result property="noticeContent"  column="notice_content"  />
+        <result property="status"         column="status"          />
+        <result property="loginName"          column="login_name"           />
+        <result property="createTime"     column="create_time"      />
+        <result property="updateTime"     column="update_time"      />
+    </resultMap>
+
+    <select id="selectNoticeHistoryCountByUserId" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            notice_history nh
+            left join notice_history_user nhu on
+            nh.id = nhu.notice_history_id
+        where
+        nh.delete_flag = false
+        <if test="status != null and status != ''">
+            AND nhu.status = #{status}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND  nhu.user_id = #{userId}
+        </if>
+    </select>
+
+    <select id="selectNoticeHistoryListByUserId" resultMap="noticeHistoryResult">
+        select
+            nh.id,
+            nh.notice_type,
+            nh.notice_title,
+            nh.notice_content,
+            nhu.status,
+            nh.create_time
+        from
+            notice_history nh
+            left join notice_history_user nhu on
+            nh.id = nhu.notice_history_id
+        where
+        nh.delete_flag = false
+        and nh.create_time >= CURRENT_DATE - INTERVAL '3 months'
+        <if test="status != null and status != ''">
+            AND nhu.status = #{status}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND  nhu.user_id = #{userId}
+        </if>
+        order by nh.create_time desc LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectManageNoticeHistoryList" resultMap="noticeHistoryManageResult">
+        select
+        nh.id,
+        nh.notice_type,
+        nh.notice_title,
+        nh.notice_content,
+        nhu.status,
+        su.login_name,
+        nh.create_time,
+        nh.update_time
+        <include refid="selectManageNoticeHistoryCommon"/>
+        order by
+        nh.create_time desc LIMIT #{limit} OFFSET #{offset} ;
+    </select>
+
+    <sql id="selectManageNoticeHistoryCommon">
+        from
+        notice_history nh
+        left join notice_history_user nhu on
+        nh.id = nhu.notice_history_id
+        left join sys_user su on
+        nhu.user_id = su.user_id
+        where 1 = 1
+        <if test="noticeType != null and noticeType != ''">
+            AND nh.notice_type = #{noticeType}
+        </if>
+        <if test="status != null and status != ''">
+            AND nhu.status = #{status}
+        </if>
+        <if test="loginName != null and loginName != ''">
+            AND su.login_name like '%'||#{loginName}||'%'
+        </if>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != '' ">
+            and nh.create_time between #{startTime} and #{endTime}
+        </if>
+    </sql>
+
+    <select id="selectManageNoticeHistoryCount" resultType="java.lang.Integer">
+        select count(*)
+        <include refid="selectManageNoticeHistoryCommon"/>
+    </select>
+</mapper>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.finance.mapper.FinanceInvoiceApMapper">
+    
+    <resultMap type="com.lenovo.otmp.finance.domain.entity.FinanceInvoiceApDO" id="FinanceInvoiceApResult">
+        <result property="id"    column="id"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="invoiceUniqueId"    column="invoice_unique_id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="fiscalYear"    column="fiscal_year"    />
+        <result property="invoiceAdditionalReference"    column="invoice_additional_reference"    />
+        <result property="eccInvoiceNumber"    column="ecc_invoice_number"    />
+        <result property="invoiceIssueDate"    column="invoice_issue_date"    />
+        <result property="invoiceBaselineDate"    column="invoice_baseline_date"    />
+        <result property="invoiceDueDate"    column="invoice_due_date"    />
+        <result property="invoiceCurrency"    column="invoice_currency"    />
+        <result property="invoiceAmount"    column="invoice_amount"    />
+        <result property="typeOfBilling"    column="type_of_billing"    />
+        <result property="enterDate"    column="enter_date"    />
+        <result property="invoicePayDate"    column="invoice_pay_date"    />
+        <result property="invoiceType"    column="invoice_type"    />
+        <result property="invoiceReference"    column="invoice_reference"    />
+        <result property="maturityDate"    column="maturity_date"    />
+        <result property="status"    column="status"    />
+        <result property="statusUpdateDate" column="status_update_date" />
+        <result property="interestRate" column="interest_rate"/>
+    </resultMap>
+
+    <sql id="selectFinanceInvoiceApVo">
+        select id, company_code, delete_flag, create_time, create_by, update_time, update_by, invoice_unique_id, vendor_code, fiscal_year, invoice_additional_reference, ecc_invoice_number, invoice_issue_date, invoice_baseline_date, invoice_due_date, invoice_currency, invoice_amount, type_of_billing, enter_date, invoice_pay_date, invoice_type, invoice_reference, maturity_date, status from otfp_financing.finance_invoice_ap
+    </sql>
+
+    <select id="selectFinanceInvoiceApList" parameterType="com.lenovo.otmp.finance.domain.dto.FinanceInvoiceApDTO" resultMap="FinanceInvoiceApResult">
+        <include refid="selectFinanceInvoiceApVo"/>
+        <where>  
+            <if test="companyCode != null  and companyCode != ''"> and company_code = #{companyCode}</if>
+            <if test="deleteFlag != null  and deleteFlag != ''"> and delete_flag = #{deleteFlag}</if>
+            <if test="invoiceUniqueId != null  and invoiceUniqueId != ''"> and invoice_unique_id = #{invoiceUniqueId}</if>
+            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
+            <if test="fiscalYear != null  and fiscalYear != ''"> and fiscal_year = #{fiscalYear}</if>
+            <if test="invoiceAdditionalReference != null  and invoiceAdditionalReference != ''"> and invoice_additional_reference = #{invoiceAdditionalReference}</if>
+            <if test="eccInvoiceNumber != null "> and ecc_invoice_number = #{eccInvoiceNumber}</if>
+            <if test="invoiceIssueDate != null  and invoiceIssueDate != ''"> and invoice_issue_date = #{invoiceIssueDate}</if>
+            <if test="invoiceBaselineDate != null  and invoiceBaselineDate != ''"> and invoice_baseline_date = #{invoiceBaselineDate}</if>
+            <if test="invoiceDueDate != null  and invoiceDueDate != ''"> and invoice_due_date = #{invoiceDueDate}</if>
+            <if test="invoiceCurrency != null  and invoiceCurrency != ''"> and invoice_currency = #{invoiceCurrency}</if>
+            <if test="invoiceAmount != null "> and invoice_amount = #{invoiceAmount}</if>
+            <if test="typeOfBilling != null  and typeOfBilling != ''"> and type_of_billing = #{typeOfBilling}</if>
+            <if test="enterDate != null  and enterDate != ''"> and enter_date = #{enterDate}</if>
+            <if test="invoicePayDate != null  and invoicePayDate != ''"> and invoice_pay_date = #{invoicePayDate}</if>
+            <if test="invoiceType != null  and invoiceType != ''"> and invoice_type = #{invoiceType}</if>
+            <if test="invoiceReference != null  and invoiceReference != ''"> and invoice_reference = #{invoiceReference}</if>
+            <if test="maturityDate != null  and maturityDate != ''"> and maturity_date = #{maturityDate}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectFinanceInvoiceApById" parameterType="Long" resultMap="FinanceInvoiceApResult">
+        <include refid="selectFinanceInvoiceApVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFinanceInvoiceAp" parameterType="com.lenovo.otmp.finance.domain.entity.FinanceInvoiceApDO">
+        insert into otfp_financing.finance_invoice_ap
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="companyCode != null">company_code,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="invoiceUniqueId != null">invoice_unique_id,</if>
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="fiscalYear != null">fiscal_year,</if>
+            <if test="invoiceAdditionalReference != null">invoice_additional_reference,</if>
+            <if test="eccInvoiceNumber != null">ecc_invoice_number,</if>
+            <if test="invoiceIssueDate != null">invoice_issue_date,</if>
+            <if test="invoiceBaselineDate != null">invoice_baseline_date,</if>
+            <if test="invoiceDueDate != null">invoice_due_date,</if>
+            <if test="invoiceCurrency != null">invoice_currency,</if>
+            <if test="invoiceAmount != null">invoice_amount,</if>
+            <if test="typeOfBilling != null">type_of_billing,</if>
+            <if test="enterDate != null">enter_date,</if>
+            <if test="invoicePayDate != null">invoice_pay_date,</if>
+            <if test="invoiceType != null">invoice_type,</if>
+            <if test="invoiceReference != null">invoice_reference,</if>
+            <if test="maturityDate != null">maturity_date,</if>
+            <if test="status != null">status,</if>
+            <if test="statusUpdateDate != null">status_update_date,</if>
+            <if test="interestRate != null">interest_rate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="companyCode != null">#{companyCode},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="invoiceUniqueId != null">#{invoiceUniqueId},</if>
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="fiscalYear != null">#{fiscalYear},</if>
+            <if test="invoiceAdditionalReference != null">#{invoiceAdditionalReference},</if>
+            <if test="eccInvoiceNumber != null">#{eccInvoiceNumber},</if>
+            <if test="invoiceIssueDate != null">#{invoiceIssueDate},</if>
+            <if test="invoiceBaselineDate != null">#{invoiceBaselineDate},</if>
+            <if test="invoiceDueDate != null">#{invoiceDueDate},</if>
+            <if test="invoiceCurrency != null">#{invoiceCurrency},</if>
+            <if test="invoiceAmount != null">#{invoiceAmount},</if>
+            <if test="typeOfBilling != null">#{typeOfBilling},</if>
+            <if test="enterDate != null">#{enterDate},</if>
+            <if test="invoicePayDate != null">#{invoicePayDate},</if>
+            <if test="invoiceType != null">#{invoiceType},</if>
+            <if test="invoiceReference != null">#{invoiceReference},</if>
+            <if test="maturityDate != null">#{maturityDate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusUpdateDate != null">#{statusUpdateDate},</if>
+            <if test="interestRate != null">#{interestRate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinanceInvoiceAp" parameterType="com.lenovo.otmp.finance.domain.entity.FinanceInvoiceApDO">
+        update otfp_financing.finance_invoice_ap
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="invoiceUniqueId != null">invoice_unique_id = #{invoiceUniqueId},</if>
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="fiscalYear != null">fiscal_year = #{fiscalYear},</if>
+            <if test="invoiceAdditionalReference != null">invoice_additional_reference = #{invoiceAdditionalReference},</if>
+            <if test="eccInvoiceNumber != null">ecc_invoice_number = #{eccInvoiceNumber},</if>
+            <if test="invoiceIssueDate != null">invoice_issue_date = #{invoiceIssueDate},</if>
+            <if test="invoiceBaselineDate != null">invoice_baseline_date = #{invoiceBaselineDate},</if>
+            <if test="invoiceDueDate != null">invoice_due_date = #{invoiceDueDate},</if>
+            <if test="invoiceCurrency != null">invoice_currency = #{invoiceCurrency},</if>
+            <if test="invoiceAmount != null">invoice_amount = #{invoiceAmount},</if>
+            <if test="typeOfBilling != null">type_of_billing = #{typeOfBilling},</if>
+            <if test="enterDate != null">enter_date = #{enterDate},</if>
+            <if test="invoicePayDate != null">invoice_pay_date = #{invoicePayDate},</if>
+            <if test="invoiceType != null">invoice_type = #{invoiceType},</if>
+            <if test="invoiceReference != null">invoice_reference = #{invoiceReference},</if>
+            <if test="maturityDate != null">maturity_date = #{maturityDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusUpdateDate != null">status_update_date = #{statusUpdateDate},</if>
+            <if test="interestRate != null">interest_rate = #{interestRate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFinanceInvoiceApById" parameterType="Long">
+        delete from otfp_financing.finance_invoice_ap where id = #{id}
+    </delete>
+
+    <delete id="deleteFinanceInvoiceApByIds" parameterType="String">
+        delete from otfp_financing.finance_invoice_ap where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <resultMap id="BaseResultDTOMap" type="com.lenovo.otmp.bank.domain.dto.FinanceInvoiceApHasSupplierDTO">
+        <result property="id"    column="id"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="invoiceUniqueId"    column="invoice_unique_id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="fiscalYear"    column="fiscal_year"    />
+        <result property="invoiceAdditionalReference"    column="invoice_additional_reference"    />
+        <result property="eccInvoiceNumber"    column="ecc_invoice_number"    />
+        <result property="invoiceIssueDate"    column="invoice_issue_date"    />
+        <result property="invoiceBaselineDate"    column="invoice_baseline_date"    />
+        <result property="invoiceDueDate"    column="invoice_due_date"    />
+        <result property="invoiceCurrency"    column="invoice_currency"    />
+        <result property="invoiceAmount"    column="invoice_amount"    />
+        <result property="typeOfBilling"    column="type_of_billing"    />
+        <result property="enterDate"    column="enter_date"    />
+        <result property="invoicePayDate"    column="invoice_pay_date"    />
+        <result property="invoiceType"    column="invoice_type"    />
+        <result property="invoiceReference"    column="invoice_reference"    />
+        <result property="maturityDate"    column="maturity_date"    />
+        <result property="confirmedMaturityDate"    column="confirmed_maturity_date"    />
+        <result property="status"    column="status"    />
+        <result column="supplier_unique_id" property="supplierUniqueId"/>
+        <result column="currency" property="currency" />
+        <result property="statusUpdateDate" column="status_update_date" />
+        <result property="interestRate" column="interest_rate"/>
+    </resultMap>
+
+    <select id="getFinanceInvoiceAp" resultMap="BaseResultDTOMap">
+        SELECT
+        fia.* ,
+        bs.supplier_unique_id,
+        bs.currency
+        FROM
+        otfp_financing.finance_batch_invoice fbi
+        LEFT JOIN otfp_financing.finance_invoice_ap fia ON fia.invoice_reference = fbi.invoice_reference
+        LEFT JOIN otfp_financing.supplier_bank_setting bs ON (
+        fbi.supplier_code = bs.supplier_code
+        AND fbi.bank_id = bs.bank_id)
+        WHERE
+        bs.delete_flag = '0'
+        AND fbi.batch_number = #{batchNo,jdbcType=VARCHAR}
+        AND fbi.supplier_code = #{supplierCode,jdbcType=VARCHAR}
+        AND fbi.bank_id = #{bankCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findFinanceInvoiceApMapOld" resultType="java.util.Map">
+        SELECT
+            fia.* ,
+            bs.supplier_unique_id
+        FROM
+            otfp_financing.finance_batch_invoice fbi
+            LEFT JOIN otfp_financing.finance_invoice_ap fia ON fia.ID = fbi.invoice_id
+            LEFT JOIN (
+            SELECT T
+                .*,
+                P.supplier_code,
+                P.seller_unique_id supplier_unique_id
+            FROM
+                otfp_financing.supplier_bank_setting
+                T LEFT JOIN otfp_financing.supplier_unique P ON T.supplier_id = P.supplier_id
+                WHERE P.supplier_code =  #{supplierCode} AND P.bank_id= #{bankId}
+                AND T.delete_flag='0' AND P.delete_flag = '0'
+            ) bs ON ( fbi.supplier_code = bs.supplier_code AND fbi.bank_id = bs.bank_id )
+        WHERE
+        fbi.batch_number = #{batchNo}
+        AND fbi.supplier_code = #{supplierCode}
+        AND fbi.bank_id = #{bankId}
+
+    </select>
+
+
+    <select id="findFinanceInvoiceApMap" resultType="java.util.Map">
+        select
+            su.seller_unique_id supplier_unique_id,
+            fia.*
+            from
+            otfp_financing.finance_invoice_ap fia
+            left join otfp_financing.finance_batch_invoice fbi on
+            fia.ID = fbi.invoice_id
+            left join
+            otfp_financing.supplier_bank_setting sbs
+            on
+            (sbs.bank_id = fbi.bank_id
+            and sbs.entity_id = fbi.entity_id)
+            left join
+            otfp_financing.supplier_unique su
+            on
+            (su.bank_id = fbi.bank_id
+            and fbi.supplier_code = su.supplier_code
+            and sbs.supplier_id = su.supplier_id)
+            where
+            sbs.delete_flag = '0'
+            and su.delete_flag = '0'
+            and fbi.batch_number = #{batchNo}
+            and fbi.bank_id = #{bankId}
+            and su.entity_id= #{entityId}
+
+    </select>
+
+
+
+
+    <select id="getFinancingDataDBS" resultType="com.lenovo.otmp.bank.domain.dto.DbsDTO">
+        SELECT DISTINCT
+        bs.buyer_org_id AS "buyer",
+        bs.supplier_unique_id AS "seller",
+        bs.currency AS "instrumentCurrency",
+        fia.amount AS "instrumentAmount",
+        fia.due_date AS "instrumentDueDate",
+        fia.pay_date AS "paymentDueDate",
+        fia.issue_date AS "instrumentDate",
+        fia.invoice_type AS "instrumentType",
+        fia.invoice_reference AS "instrumentNumber"
+        FROM
+        otfp_financing.finance_invoice_ap fia
+        LEFT JOIN otfp_financing.finance_batch_invoice fbi ON  fia.invoice_reference = fbi.invoice_reference
+        LEFT JOIN otfp_financing.supplier_bank_setting bs ON (
+        fbi.bank_code = bs.bank_code
+        AND fbi.supplier_code = bs.supplier_code
+        )
+        WHERE
+        fbi.batch_number = #{batchNo,jdbcType=INTEGER}
+        AND fbi.supplier_code = #{supplierCode,jdbcType=VARCHAR}
+        AND fbi.bank_code = #{bankCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findFinancingDataDBSMapOld" resultType="java.util.Map">
+        SELECT
+            bs.buyer_org_id,
+            bs.buyer_org,
+            bs.supplier_unique_id,
+            fia.*
+        FROM
+            otfp_financing.finance_invoice_ap fia
+            LEFT JOIN otfp_financing.finance_batch_invoice fbi ON fia.ID = fbi.invoice_id
+            LEFT JOIN (
+            SELECT T
+                .*,
+                P.supplier_code,
+                P.seller_unique_id supplier_unique_id
+            FROM
+                otfp_financing.supplier_bank_setting
+                T LEFT JOIN otfp_financing.supplier_unique P ON T.supplier_id = P.supplier_id
+                 WHERE P.supplier_code =  #{supplierCode} AND P.bank_id= #{bankId}
+                AND T.delete_flag='0' AND P.delete_flag = '0'
+            ) bs ON ( fbi.bank_id = bs.bank_id AND fbi.supplier_code = bs.supplier_code )
+        WHERE
+        fbi.batch_number = #{batchNo}
+        AND fbi.supplier_code = #{supplierCode}
+        AND fbi.bank_id = #{bankId}
+
+    </select>
+
+    <select id="findFinancingDataDBSMap" resultType="java.util.Map">
+       select
+            sbs.buyer_org_id,
+            sbs.buyer_org,
+            su.seller_unique_id supplier_unique_id,
+            fia.*
+        from
+            otfp_financing.finance_invoice_ap fia
+        left join otfp_financing.finance_batch_invoice fbi on
+            fia.ID = fbi.invoice_id
+        left join
+         otfp_financing.supplier_bank_setting sbs
+         on
+            (sbs.bank_id = fbi.bank_id
+                and sbs.entity_id = fbi.entity_id)
+        left join
+         otfp_financing.supplier_unique su
+         on
+            (su.bank_id = fbi.bank_id
+                and fbi.supplier_code = su.supplier_code
+                and sbs.supplier_id = su.supplier_id)
+		where
+            sbs.delete_flag = '0'
+            and su.delete_flag = '0'
+            and fbi.batch_number = #{batchNo}
+            and fbi.bank_id = #{bankId}
+            and su.entity_id= #{entityId}
+    </select>
+</mapper>

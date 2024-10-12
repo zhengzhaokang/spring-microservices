@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseExchangeRateMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate" id="BizBaseExchangeRateResult">
+        <result property="id"    column="id"    />
+        <result property="currencyCode"    column="currency_code"    />
+        <result property="rateValue"    column="rate_value"    />
+        <result property="rateDate"    column="rate_date"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+
+        <result property="exchangeRateType"    column="exchange_rate_type"    />
+
+
+    </resultMap>
+
+    <sql id="selectBizBaseExchangeRateVo">
+        select id, currency_code, rate_value, rate_date, status, remark,exchange_rate_type, update_time, update_by, create_by, create_time from biz_base_exchange_rate
+    </sql>
+
+    <select id="selectBizBaseExchangeRateList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate" resultMap="BizBaseExchangeRateResult">
+        <include refid="selectBizBaseExchangeRateVo"/>
+        <where>
+            <if test="currencyCode != null "> and lower(currency_code) = lower(#{currencyCode})</if>
+            <if test="rateDate != null "> and rate_date = #{rateDate}</if>
+
+            <if test="rateValueStr != null  and rateValueStr != ''">
+                <choose>
+                    <when test=" 1 == rateValueStr.split(',').length">
+                        and rate_value = #{rateValueStr}
+                    </when>
+                    <otherwise>
+                        and rate_value between
+                        <foreach collection="rateValueStr.split(',')" item="item" open=" " close=" " separator="and">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+            <if test="rateValue != null and rateValue != ''">
+                and rate_value = #{rateValue}
+            </if>
+            <if test="exchangeRateType != null   and exchangeRateType != ''"> and exchange_rate_type = #{exchangeRateType}</if>
+        </where>
+        order by rate_date desc
+    </select>
+
+    <select id="selectBizBaseExchangeRateListByRemote" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate" resultMap="BizBaseExchangeRateResult">
+        SELECT * FROM biz_base_exchange_rate
+        <where>
+            <if test="exchangeRateType != null   and exchangeRateType != ''"> and exchange_rate_type = #{exchangeRateType}</if>
+            <if test="rateDate != null "> and rate_date &lt;=  #{rateDate}</if>
+            and currency_code =#{ currencyCode }
+            and status = 'Y'
+            AND rate_date > CURRENT_TIMESTAMP - INTERVAL '1YEAR'
+        </where>
+            order by rate_date desc
+        limit 1
+    </select>
+
+
+    <select id="selectBizBaseExchangeRateById" parameterType="Long" resultMap="BizBaseExchangeRateResult">
+        <include refid="selectBizBaseExchangeRateVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseExchangeRate" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_exchange_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currencyCode != null">currency_code,</if>
+            <if test="rateValue != null">rate_value,</if>
+            <if test="rateDate != null">rate_date,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="exchangeRateType != null and exchangeRateType != ''">exchange_rate_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="currencyCode != null">#{currencyCode},</if>
+            <if test="rateValue != null">#{rateValue},</if>
+            <if test="rateDate != null">#{rateDate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="exchangeRateType != null and exchangeRateType != ''">#{exchangeRateType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseExchangeRate" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate">
+        update biz_base_exchange_rate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currencyCode != null">currency_code = #{currencyCode},</if>
+            <if test="rateValue != null">rate_value = #{rateValue},</if>
+            <if test="rateDate != null">rate_date = #{rateDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="exchangeRateType != null and exchangeRateType != ''">exchange_rate_type = #{exchangeRateType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseExchangeRateById" parameterType="Long">
+        delete from biz_base_exchange_rate where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseExchangeRateByIds" parameterType="String">
+        delete from biz_base_exchange_rate where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseExchangeRateListCheck" resultMap="BizBaseExchangeRateResult">
+        <include refid="selectBizBaseExchangeRateVo"/>
+        <where>
+            <if test="currencyCode != null and currencyCode != ''">
+                and currency_code = #{currencyCode}
+            </if>
+            <if test="exchangeRateType != null  and exchangeRateType != ''">
+                and exchange_rate_type = #{exchangeRateType}
+            </if>
+            and status ='Y'
+            <if test="rateValue != null  and rateValue != ''">
+                and rate_value = #{rateValue}
+            </if>
+        </where>
+    </select>
+    <select id="selectBizBaseExchangeRateListNow"
+            parameterType="com.lenovo.otmp.masterdata.domain.BizBaseExchangeRate" resultMap="BizBaseExchangeRateResult">
+        SELECT A
+                   .*
+        FROM
+            (
+                SELECT
+                    *,
+                    ROW_NUMBER ( ) OVER ( PARTITION BY currency_code ORDER BY rate_date DESC ) AS n
+                FROM
+                    biz_base_exchange_rate
+                WHERE
+                    exchange_rate_type = 'M'
+                  AND status = 'Y'
+            ) AS A
+        WHERE
+            n = 1
+    </select>
+</mapper>

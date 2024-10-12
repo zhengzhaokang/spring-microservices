@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseVendorMapper">
+
+    <resultMap type="com.microservices.otmp.masterdata.domain.entity.BizBaseVendorDO" id="BizBaseVendorResult">
+        <result property="id"    column="id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="vendorCountry"    column="vendor_country"    />
+        <result property="state"    column="state"    />
+        <result property="city"    column="city"    />
+        <result property="vatNumber"    column="vat_number"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="indiaGstin"    column="india_gstin"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="additionalVendorCategory"    column="additional_vendor_category"    />
+        <result property="primaryVendorCategory"    column="primary_vendor_category"    />
+        <result property="transactionVendorCategories"    column="transaction_vendor_categories"    />
+        <result property="taxNumber1"    column="tax_number1"    />
+        <result property="taxNumber2"    column="tax_number2"    />
+        <result property="taxNumber3"    column="tax_number3"    />
+        <result property="taxNumber4"    column="tax_number4"    />
+        <result property="taxNumber5"    column="tax_number5"    />
+        <result property="status"    column="status"    />
+        <result property="bankType"    column="bank_type"    />
+        <result property="bankAccount"    column="bank_account"    />
+        <result property="bankNumber"    column="bank_number"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankCountry"    column="bank_country"    />
+        <result property="errorInfo"    column="error_info"    />
+    </resultMap>
+
+    <sql id="selectBizBaseVendorVo">
+        select id, vendor_code, vendor_name, vendor_country, state, city, vat_number, customer_id, india_gstin, create_time,
+        update_time, additional_vendor_category, primary_vendor_category, transaction_vendor_categories, tax_number1,
+        tax_number2, tax_number3, tax_number4, tax_number5, status, error_info from biz_base_vendor
+    </sql>
+
+    <select id="getVendorAndBankInfoList" parameterType="com.microservices.otmp.masterdata.domain.dto.BizBaseVendorDTO" resultMap="BizBaseVendorResult">
+        select
+        bbv.*,
+        bbvb.bank_type,
+        bbvb.bank_account,
+        bbvb.bank_number,
+        bbvb.bank_name,
+        bbvb.bank_country
+        from
+        biz_base_vendor bbv
+        left join biz_base_vendor_bank bbvb on
+        bbv.vendor_code = bbvb.vendor_code
+        and bbvb.delete_flag = false and bbv.status='Y' and bbvb.status='Y'
+        <where>
+            <if test="vendorCode != null  and vendorCode != ''"> and bbv.vendor_code = #{vendorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and bbv.vendor_name Ilike '%'||#{vendorName}||'%'</if>
+            <if test="vendorCountry != null  and vendorCountry != ''"> and bbv.vendor_country = #{vendorCountry}</if>
+            <if test="state != null  and state != ''"> and bbv.state = #{state}</if>
+            <if test="city != null  and city != ''"> and bbv.city = #{city}</if>
+            <if test="vatNumber != null  and vatNumber != ''"> and bbv.vat_number = #{vatNumber}</if>
+            <if test="customerId != null  and customerId != ''"> and bbv.customer_id = #{customerId}</if>
+            <if test="indiaGstin != null  and indiaGstin != ''"> and bbv.india_gstin = #{indiaGstin}</if>
+            <if test="additionalVendorCategory != null  and additionalVendorCategory != ''"> and bbv.additional_vendor_category = #{additionalVendorCategory}</if>
+            <if test="primaryVendorCategory != null  and primaryVendorCategory != ''"> and bbv.primary_vendor_category = #{primaryVendorCategory}</if>
+            <if test="transactionVendorCategories != null  and transactionVendorCategories != ''"> and bbv.transaction_vendor_categories = #{transactionVendorCategories}</if>
+            <if test="taxNumber1 != null  and taxNumber1 != ''"> and bbv.tax_number1 = #{taxNumber1}</if>
+            <if test="taxNumber2 != null  and taxNumber2 != ''"> and bbv.tax_number2 = #{taxNumber2}</if>
+            <if test="taxNumber3 != null  and taxNumber3 != ''"> and bbv.tax_number3 = #{taxNumber3}</if>
+            <if test="taxNumber4 != null  and taxNumber4 != ''"> and bbv.tax_number4 = #{taxNumber4}</if>
+            <if test="taxNumber5 != null  and taxNumber5 != ''"> and bbv.tax_number5 = #{taxNumber5}</if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseVendorList" parameterType="com.microservices.otmp.masterdata.domain.dto.BizBaseVendorDTO" resultMap="BizBaseVendorResult">
+        <include refid="selectBizBaseVendorVo"/>
+        <where>
+            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name Ilike '%'||#{vendorName}||'%'</if>
+            <if test="vendorCountry != null  and vendorCountry != ''"> and vendor_country = #{vendorCountry}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="vatNumber != null  and vatNumber != ''"> and vat_number = #{vatNumber}</if>
+            <if test="customerId != null  and customerId != ''"> and customer_id = #{customerId}</if>
+            <if test="indiaGstin != null  and indiaGstin != ''"> and india_gstin = #{indiaGstin}</if>
+            <if test="additionalVendorCategory != null  and additionalVendorCategory != ''"> and additional_vendor_category = #{additionalVendorCategory}</if>
+            <if test="primaryVendorCategory != null  and primaryVendorCategory != ''"> and primary_vendor_category = #{primaryVendorCategory}</if>
+            <if test="transactionVendorCategories != null  and transactionVendorCategories != ''"> and transaction_vendor_categories = #{transactionVendorCategories}</if>
+            <if test="taxNumber1 != null  and taxNumber1 != ''"> and tax_number1 = #{taxNumber1}</if>
+            <if test="taxNumber2 != null  and taxNumber2 != ''"> and tax_number2 = #{taxNumber2}</if>
+            <if test="taxNumber3 != null  and taxNumber3 != ''"> and tax_number3 = #{taxNumber3}</if>
+            <if test="taxNumber4 != null  and taxNumber4 != ''"> and tax_number4 = #{taxNumber4}</if>
+            <if test="taxNumber5 != null  and taxNumber5 != ''"> and tax_number5 = #{taxNumber5}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseVendorById" parameterType="Long" resultMap="BizBaseVendorResult">
+        <include refid="selectBizBaseVendorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseVendor" parameterType="com.microservices.otmp.masterdata.domain.entity.BizBaseVendorDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="vendorName != null">vendor_name,</if>
+            <if test="vendorCountry != null">vendor_country,</if>
+            <if test="state != null">state,</if>
+            <if test="city != null">city,</if>
+            <if test="vatNumber != null">vat_number,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="indiaGstin != null">india_gstin,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="additionalVendorCategory != null">additional_vendor_category,</if>
+            <if test="primaryVendorCategory != null">primary_vendor_category,</if>
+            <if test="transactionVendorCategories != null">transaction_vendor_categories,</if>
+            <if test="taxNumber1 != null">tax_number1,</if>
+            <if test="taxNumber2 != null">tax_number2,</if>
+            <if test="taxNumber3 != null">tax_number3,</if>
+            <if test="taxNumber4 != null">tax_number4,</if>
+            <if test="taxNumber5 != null">tax_number5,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="vendorName != null">#{vendorName},</if>
+            <if test="vendorCountry != null">#{vendorCountry},</if>
+            <if test="state != null">#{state},</if>
+            <if test="city != null">#{city},</if>
+            <if test="vatNumber != null">#{vatNumber},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="indiaGstin != null">#{indiaGstin},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="additionalVendorCategory != null">#{additionalVendorCategory},</if>
+            <if test="primaryVendorCategory != null">#{primaryVendorCategory},</if>
+            <if test="transactionVendorCategories != null">#{transactionVendorCategories},</if>
+            <if test="taxNumber1 != null">#{taxNumber1},</if>
+            <if test="taxNumber2 != null">#{taxNumber2},</if>
+            <if test="taxNumber3 != null">#{taxNumber3},</if>
+            <if test="taxNumber4 != null">#{taxNumber4},</if>
+            <if test="taxNumber5 != null">#{taxNumber5},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseVendor" parameterType="com.microservices.otmp.masterdata.domain.entity.BizBaseVendorDO">
+        update biz_base_vendor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="vendorName != null">vendor_name = #{vendorName},</if>
+            <if test="vendorCountry != null">vendor_country = #{vendorCountry},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="vatNumber != null">vat_number = #{vatNumber},</if>
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="indiaGstin != null">india_gstin = #{indiaGstin},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="additionalVendorCategory != null">additional_vendor_category = #{additionalVendorCategory},</if>
+            <if test="primaryVendorCategory != null">primary_vendor_category = #{primaryVendorCategory},</if>
+            <if test="transactionVendorCategories != null">transaction_vendor_categories = #{transactionVendorCategories},</if>
+            <if test="taxNumber1 != null">tax_number1 = #{taxNumber1},</if>
+            <if test="taxNumber2 != null">tax_number2 = #{taxNumber2},</if>
+            <if test="taxNumber3 != null">tax_number3 = #{taxNumber3},</if>
+            <if test="taxNumber4 != null">tax_number4 = #{taxNumber4},</if>
+            <if test="taxNumber5 != null">tax_number5 = #{taxNumber5},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseVendorById" parameterType="Long">
+        delete from biz_base_vendor where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseVendorByIds" parameterType="String">
+        delete from biz_base_vendor where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertVendorLgvmKafka">
+        INSERT INTO "sdms_base"."biz_base_vendor"
+            ("vendor_code", "vendor_name", "vendor_country", "state", "city", "vat_number", "customer_id",
+             "india_gstin", "create_time", "update_time",
+             "additional_vendor_category","primary_vendor_category","transaction_vendor_categories",
+             "tax_number1","tax_number2","tax_number3","tax_number4","tax_number5", "error_info")
+        VALUES
+            (#{vendorCode}, #{vendorName}, #{vendorCountry}, #{state}, #{city}, #{vatNumber}, #{customerId},
+             #{indiaGstin}, #{createTime}, #{updateTime},
+             #{additionalVendorCategory},#{primaryVendorCategory},#{transactionVendorCategories},
+             #{taxNumber1},#{taxNumber2},#{taxNumber3},#{taxNumber4},#{taxNumber5},#{errorInfo})
+    </insert>
+    <update id="updateVendor">
+        update
+            "sdms_base"."biz_base_vendor"
+        set
+            "vendor_name" = #{vendorName},
+            "vendor_country" = #{vendorCountry},
+            "state" = #{state},
+            "city" = #{city},
+            "customer_id" = #{customerId},
+            "additional_vendor_category" = #{additionalVendorCategory},
+            "primary_vendor_category" = #{primaryVendorCategory},
+            "transaction_vendor_categories" = #{transactionVendorCategories},
+            "vat_number" = #{vatNumber},
+            "india_gstin" = #{indiaGstin},
+            "tax_number1" = #{taxNumber1},
+            "tax_number2" = #{taxNumber2},
+            "tax_number3" = #{taxNumber3},
+            "tax_number4" = #{taxNumber4},
+            "tax_number5" = #{taxNumber5},
+            "update_time" = #{updateTime}
+            "error_info" = #{errorInfo}
+        where
+            "vendor_code" = #{vendorCode}
+    </update>
+    <select id="selectCountByVendorCode" resultType="java.lang.Integer">
+        select count(1) from "sdms_base"."biz_base_vendor" where vendor_code = #{vendorCode} and company_code = #{companyCode} and status = 'Y'
+    </select>
+    <select id="getVendor"
+            resultType="com.microservices.otmp.masterdata.domain.dto.BizBaseVendorAndPerferBankDTO">
+        select
+            customer_id as customerId,
+            vendor_code as vendorCode,
+            vendor_name as vendorName,
+            vendor_country as vendorCountry,
+            state as state,
+            error_info as errorInfo
+        from
+            biz_base_vendor
+        where
+            vendor_code = #{vendorCode}
+            and status = 'Y'
+        order by
+            id desc
+        limit 1
+    </select>
+    <select id="getVendorCodeByCustomerId" resultType="java.lang.String">
+        select vendor_code from "sdms_base"."biz_base_vendor" where customer_id = #{customerId} and status = 'Y' order by id desc limit 1
+    </select>
+    <select id="getVendorNameByCode" resultMap="BizBaseVendorResult">
+        <include refid="selectBizBaseVendorVo"/>
+        where vendor_code = #{vendorCode} and status = 'Y' order by id desc limit 1
+    </select>
+
+    <update id="deleteBizBaseVendorByUpdateTime">
+        update "sdms_base"."biz_base_vendor" set status = 'N' where vendor_code = #{vendorCode} and update_time != #{date} and update_time is not null
+    </update>
+    <update id="updateErrorInfoByVendor">
+        update biz_base_vendor set error_info = #{errorInfo} where vendor_code = #{vendorCode}
+    </update>
+</mapper>

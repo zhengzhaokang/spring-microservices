@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.TsIIntegrationStatusSdmsMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.TsIIntegrationStatusSdmsDO" id="TsIIntegrationStatusSdmsResult">
+        <result property="id"    column="id"    />
+        <result property="versionDate"    column="version_date"    />
+        <result property="targetTable"    column="target_table"    />
+        <result property="integrationType"    column="integration_type"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="status"    column="status"    />
+        <result property="interrupt"    column="interrupt"    />
+        <result property="interruptTime"    column="interrupt_time"    />
+    </resultMap>
+
+    <sql id="selectTsIIntegrationStatusSdmsVo">
+        select id, version_date, target_table, integration_type, start_time, finish_time, status, interrupt, interrupt_time from ts_i_integration_status_sdms
+    </sql>
+
+    <select id="selectTsIIntegrationStatusSdmsList" parameterType="com.lenovo.otmp.masterdata.domain.dto.TsIIntegrationStatusSdmsDTO" resultMap="TsIIntegrationStatusSdmsResult">
+        <include refid="selectTsIIntegrationStatusSdmsVo"/>
+        <where>  
+            <if test="versionDate != null ">
+
+              and   to_char(version_date,'yyyy-MM-dd')= SUBSTR(#{versionDate}, 0,11)
+            </if>
+            <if test="targetTable != null  and targetTable != ''"> and target_table = #{targetTable}</if>
+            <if test="integrationType != null "> and integration_type = #{integrationType}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="interrupt != null "> and interrupt = #{interrupt}</if>
+            <if test="interruptTime != null "> and interrupt_time = #{interruptTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTsIIntegrationStatusSdmsById" parameterType="Long" resultMap="TsIIntegrationStatusSdmsResult">
+        <include refid="selectTsIIntegrationStatusSdmsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTsIIntegrationStatusSdms" parameterType="com.lenovo.otmp.masterdata.domain.entity.TsIIntegrationStatusSdmsDO" useGeneratedKeys="true" keyProperty="id">
+        insert into ts_i_integration_status_sdms
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="versionDate != null">version_date,</if>
+            <if test="targetTable != null">target_table,</if>
+            <if test="integrationType != null">integration_type,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="status != null">status,</if>
+            <if test="interrupt != null">interrupt,</if>
+            <if test="interruptTime != null">interrupt_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="versionDate != null">#{versionDate},</if>
+            <if test="targetTable != null">#{targetTable},</if>
+            <if test="integrationType != null">#{integrationType},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="interrupt != null">#{interrupt},</if>
+            <if test="interruptTime != null">#{interruptTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTsIIntegrationStatusSdms" parameterType="com.lenovo.otmp.masterdata.domain.entity.TsIIntegrationStatusSdmsDO">
+        update ts_i_integration_status_sdms
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="versionDate != null">version_date = #{versionDate},</if>
+            <if test="targetTable != null">target_table = #{targetTable},</if>
+            <if test="integrationType != null">integration_type = #{integrationType},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="interrupt != null">interrupt = #{interrupt},</if>
+            <if test="interruptTime != null">interrupt_time = #{interruptTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTsIIntegrationStatusSdmsById" parameterType="Long">
+        delete from ts_i_integration_status_sdms where id = #{id}
+    </delete>
+
+    <delete id="deleteTsIIntegrationStatusSdmsByIds" parameterType="String">
+        delete from ts_i_integration_status_sdms where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

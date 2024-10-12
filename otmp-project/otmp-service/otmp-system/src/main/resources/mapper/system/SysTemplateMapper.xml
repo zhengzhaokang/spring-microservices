@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.system.mapper.SysTemplateMapper">
+    
+    <resultMap type="com.microservices.otmp.system.domain.SysTemplate" id="SysTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="module"    column="module"    />
+        <result property="templateCode"    column="template_code"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="templateUrl"    column="template_url"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="ossId" column="oss_id"/>
+        <result property="originalName" column="original_name"/>
+    </resultMap>
+
+    <sql id="selectSysTemplateVo">
+        select id, module, template_code, template_name, create_by, create_time, update_by, update_time, template_url, remark, del_flag, oss_id, original_name from sys_template
+    </sql>
+
+    <select id="selectSysTemplateList" parameterType="com.microservices.otmp.system.domain.SysTemplate" resultMap="SysTemplateResult">
+        <include refid="selectSysTemplateVo"/>
+        <where>  
+            <if test="module != null  and module != ''"> and module  like  '%'||#{module}||'%'</if>
+            <if test="templateCode != null  and templateCode != ''"> and template_code like  '%'||#{templateCode}||'%'</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like '%'||#{templateName}||'%'</if>
+            <if test="templateUrl != null  and templateUrl != ''"> and template_url = #{templateUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTemplateById" parameterType="Integer" resultMap="SysTemplateResult">
+        <include refid="selectSysTemplateVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysTemplate" parameterType="com.microservices.otmp.system.domain.SysTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="module != null">module,</if>
+            <if test="templateCode != null">template_code,</if>
+            <if test="templateName != null">template_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="templateUrl != null">template_url,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="ossId != null ">oss_id,</if>
+            <if test="originalName != null">original_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="module != null">#{module},</if>
+            <if test="templateCode != null">#{templateCode},</if>
+            <if test="templateName != null">#{templateName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="templateUrl != null">#{templateUrl},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="ossId != null ">#{ossId},</if>
+            <if test="originalName != null">#{originalName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysTemplate" parameterType="com.microservices.otmp.system.domain.SysTemplate">
+        update sys_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="module != null">module = #{module},</if>
+            <if test="templateCode != null">template_code = #{templateCode},</if>
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="templateUrl != null">template_url = #{templateUrl},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="ossId != null ">oss_id = #{ossId},</if>
+            <if test="originalName != null">original_name = #{originalName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTemplateById" parameterType="Integer">
+        delete from sys_template where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTemplateByIds" parameterType="String">
+        delete from sys_template where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="removeFileById" parameterType="Integer">
+        update sys_template a
+        set template_url = null ,oss_id = null
+        where a.id = #{id};
+    </update>
+    <select id="countByTemplateCode" resultType="Integer">
+        select count(1) from sys_template where template_code = #{templateCode} limit 1
+    </select>
+    <select id="countByTemplateName" resultType="Integer">
+        select count(1) from sys_template where template_name = #{templateName} limit 1
+    </select>
+</mapper>

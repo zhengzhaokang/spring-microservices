@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.BizSdmsReportKeyMetricsMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.BizSdmsReportKeyMetricsDO" id="BizSdmsReportKeyMetricsResult">
+        <result property="keyMetricsId"    column="key_metrics_id"    />
+        <result property="categoryCode"    column="category_code"    />
+        <result property="businessUnit"    column="business_unit"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="metirc"    column="metirc"    />
+        <result property="frequency"    column="frequency"    />
+        <result property="unit"    column="unit"    />
+        <result property="value"    column="value"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="percentageValue"    column="percentage_value"    />
+    </resultMap>
+
+    <sql id="selectBizSdmsReportKeyMetricsVo">
+        select key_metrics_id, category_code, business_unit, geo_code, metirc, frequency, unit, value, status, remark, create_by, create_time, update_by, update_time, percentage_value from biz_sdms_report_key_metrics
+    </sql>
+
+    <select id="selectBizSdmsReportKeyMetricsList" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportKeyMetricsDO" resultMap="BizSdmsReportKeyMetricsResult">
+        <include refid="selectBizSdmsReportKeyMetricsVo"/>
+        <where>  
+            <if test="keyMetricsId != null "> and key_metrics_id = #{keyMetricsId}</if>
+            <if test="categoryCode != null  and categoryCode != ''"> and category_code = #{categoryCode}</if>
+            <if test="businessUnit != null  and businessUnit != ''"> and business_unit = #{businessUnit}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="metirc != null  and metirc != ''"> and metirc = #{metirc}</if>
+            <if test="frequency != null  and frequency != ''"> and frequency = #{frequency}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="value != null  and value != ''"> and value = #{value}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="percentageValue != null  and percentageValue != ''"> and percentage_value = #{percentageValue}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizSdmsReportKeyMetricsByKeyMetricsId" parameterType="Long" resultMap="BizSdmsReportKeyMetricsResult">
+        <include refid="selectBizSdmsReportKeyMetricsVo"/>
+        where key_metrics_id = #{keyMetricsId}
+    </select>
+        
+    <insert id="insertBizSdmsReportKeyMetrics" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportKeyMetricsDO">
+        insert into biz_sdms_report_key_metrics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="keyMetricsId != null">key_metrics_id,</if>
+            <if test="categoryCode != null">category_code,</if>
+            <if test="businessUnit != null">business_unit,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="metirc != null">metirc,</if>
+            <if test="frequency != null">frequency,</if>
+            <if test="unit != null">unit,</if>
+            <if test="value != null">value,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="percentageValue != null">percentage_value,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="keyMetricsId != null">#{keyMetricsId},</if>
+            <if test="categoryCode != null">#{categoryCode},</if>
+            <if test="businessUnit != null">#{businessUnit},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="metirc != null">#{metirc},</if>
+            <if test="frequency != null">#{frequency},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="value != null">#{value},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="percentageValue != null">#{percentageValue},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSdmsReportKeyMetrics" parameterType="com.lenovo.otmp.system.domain.entity.BizSdmsReportKeyMetricsDO">
+        update biz_sdms_report_key_metrics
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryCode != null">category_code = #{categoryCode},</if>
+            <if test="businessUnit != null">business_unit = #{businessUnit},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="metirc != null">metirc = #{metirc},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="percentageValue != null">percentage_value = #{percentageValue},</if>
+        </trim>
+        where key_metrics_id = #{keyMetricsId}
+    </update>
+
+    <delete id="deleteBizSdmsReportKeyMetricsByKeyMetricsId" parameterType="Long">
+        delete from biz_sdms_report_key_metrics where key_metrics_id = #{keyMetricsId}
+    </delete>
+
+    <delete id="deleteBizSdmsReportKeyMetricsByKeyMetricsIds" parameterType="String">
+        delete from biz_sdms_report_key_metrics where key_metrics_id in 
+        <foreach item="keyMetricsId" collection="array" open="(" separator="," close=")">
+            #{keyMetricsId}
+        </foreach>
+    </delete>
+</mapper>

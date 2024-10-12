@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.FinanceInvoiceApMapper">
+
+    <resultMap id="baseInvoiceApMap" type="com.lenovo.otmp.financing.domain.entity.BaseInvoiceInfo">
+        <id column="id" property="id"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="invoice_unique_id" property="invoiceUniqueId"/>
+        <result column="vendor_code" property="vendorCode"/>
+        <result column="fiscal_year" property="fiscalYear"/>
+        <result column="invoice_additional_reference" property="invoiceAdditionalReference"/>
+        <!-- 原invoice_number -->
+        <result column="ecc_invoice_number" property="eccInvoiceNumber"/>
+        <result column="invoice_issue_date" property="invoiceIssueDate"/>
+        <result column="invoice_baseline_date" property="invoiceBaselineDate"/>
+        <!-- 原due_date -->
+        <result column="invoice_due_date" property="invoiceDueDate"/>
+        <result column="invoice_currency" property="invoiceCurrency"/>
+        <!-- 原amount -->
+        <result column="invoice_amount" property="invoiceAmount"/>
+        <result column="type_of_billing" property="typeOfBilling"/>
+        <result column="enter_date" property="enterDate"/>
+        <!-- 原pay_date -->
+        <result column="invoice_pay_date" property="invoicePayDate"/>
+        <result column="maturity_date" property="maturityDate"/>
+        <result column="invoice_type" property="invoiceType"/>
+        <result column="invoice_reference" property="invoiceReference"/>
+        <result column="status" property="status"/>
+        <result column="company_code" property="companyCode"/>
+    </resultMap>
+
+    <resultMap id="invoiceApMap" type="com.lenovo.otmp.financing.domain.entity.InvoiceApDo" extends="baseInvoiceApMap">
+    </resultMap>
+
+    <resultMap id="invoiceApWithEntityInfoMap" type="com.lenovo.otmp.financing.domain.entity.InvoiceApWithEntityInfoDo"
+               extends="invoiceApMap">
+        <result column="entity_Name" property="entityName"/>
+    </resultMap>
+
+    <resultMap id="financeInvoiceApMap" type="com.lenovo.otmp.financing.domain.entity.FinanceInvoiceApDo"
+               extends="baseInvoiceApMap">
+        <result column="confirmed_maturity_date" property="confirmedMaturityDate"/>
+    </resultMap>
+
+    <resultMap id="rejectedInvoiceMap" type="com.lenovo.otmp.financing.domain.entity.RejectedInvoiceDo"
+               extends="baseInvoiceApMap">
+        <result column="entity_name" property="entityName"/>
+        <result column="currency_type" property="currencyType"/>
+    </resultMap>
+    <resultMap id="submittedInvoiceMap" type="com.lenovo.otmp.financing.domain.entity.SubmittedInvoiceApDo"
+               extends="baseInvoiceApMap">
+        <result column="batch_number" property="batchNumber"/>
+        <result column="submitted_date" property="submittedDate"/>
+        <result column="bank_name" property="bankName"/>
+    </resultMap>
+
+    <resultMap id="financeInvoiceBatchDoMap" type="com.lenovo.otmp.financing.domain.entity.FinancedInvoiceBatchDo">
+        <result column="batch_id" property="batchId"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="entity_name" property="entityName"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="discount_date" property="discountDate"/>
+    </resultMap>
+
+    <sql id="financeInvoiceAp">
+        fia.id,fia.delete_flag,fia.create_time,fia.create_by,fia.update_time,fia.update_by,
+        fia.invoice_unique_id,fia.vendor_code,fia.fiscal_year,fia.invoice_additional_reference,
+        fia.ecc_invoice_number,fia.invoice_issue_date,fia.invoice_baseline_date,fia.invoice_due_date,
+        fia.invoice_currency,fia.invoice_amount,fia.type_of_billing,fia.enter_date,fia.invoice_pay_date,
+        fia.maturity_date,fia.invoice_type,fia.invoice_reference,fia.status,fia.company_code,fia.confirmed_maturity_date
+    </sql>
+    <sql id="entity">
+        e.entity_name,e.currency_type
+    </sql>
+    <update id="updateStatus">
+        UPDATE finance_invoice_ap
+        SET status = #{status}
+            ,update_time=#{updateTime}
+            ,update_by=#{updateBy},
+            confirmed_maturity_date =
+            CASE
+                WHEN confirmed_maturity_date IS NULL THEN maturity_date
+                ELSE confirmed_maturity_date
+            END
+        WHERE EXISTS (
+            SELECT 1 FROM (
+                VALUES
+                <foreach collection="ids" item="item" separator=",">
+                    (#{item})
+                </foreach>
+            ) AS tmp(id) WHERE finance_invoice_ap.id = tmp.id )
+        AND status = #{oldStatus}
+    </update>
+<!--    <update id="updateStatus">-->
+<!--        UPDATE finance_invoice_ap-->
+<!--        SET status = #{status},update_time=#{updateTime},update_by=#{updateBy},-->
+<!--        confirmed_maturity_date =-->
+<!--        CASE-->
+<!--            WHEN confirmed_maturity_date IS NULL THEN maturity_date-->
+<!--            ELSE confirmed_maturity_date-->
+<!--        END-->
+<!--        WHERE status = #{oldStatus}-->
+<!--        AND id IN-->
+<!--        <foreach collection="ids" item="item" separator="," open="(" close=")">-->
+<!--            #{item}-->
+<!--        </foreach>-->
+<!--    </update>-->
+    <update id="updateConfirmedMaturityDate">
+        UPDATE finance_invoice_ap
+        SET confirmed_maturity_date = #{time}
+        WHERE id IN
+        <foreach collection="data" open="(" close=")" item="item" separator=",">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="updateConfirmedMaturityDateByIds">
+        UPDATE finance_invoice_ap
+        SET confirmed_maturity_date = #{confirmed},
+        update_time = #{updateTime},
+        update_by = #{updateBy}
+        WHERE EXISTS (
+            SELECT 1 FROM (
+                VALUES
+                <foreach collection="ids" separator="," item="item">
+                    (#{item})
+                </foreach>
+            ) AS tmp(id)
+            WHERE tmp.id = finance_invoice_ap.id )
+        AND invoice_type = 'Debit Memo'
+        AND maturity_date = #{maturity}
+    </update>
+
+<!--    <update id="updateConfirmedMaturityDateByIds">-->
+<!--        UPDATE finance_invoice_ap-->
+<!--        SET confirmed_maturity_date = #{confirmed},-->
+<!--        update_time = #{updateTime},-->
+<!--        update_by = #{updateBy}-->
+<!--        WHERE id IN-->
+<!--        <foreach collection="ids" separator="," item="item" open="(" close=")">-->
+<!--            #{item}-->
+<!--        </foreach>-->
+<!--        AND invoice_type = 'Debit Memo'-->
+<!--        AND maturity_date = #{maturity}-->
+<!--    </update>-->
+
+    <select id="rejectedInvoiceList" resultMap="rejectedInvoiceMap">
+        SELECT
+        <include refid="financeInvoiceAp"/>,
+        <include refid="entity"/>
+        FROM finance_invoice_ap fia
+        INNER JOIN entity_company_code ecc
+        ON fia.company_code = ecc.company_code
+        INNER JOIN entity e
+        ON ecc.entity_code = e.entity_code
+        WHERE fia.status = 'Reject'
+        AND fia.delete_flag = false
+        <if test="type != null">
+            AND fia.invoice_type =#{type}
+        </if>
+        <if test="entityName != null and entityName != ''">
+            AND e.entity_name =#{entityName}
+        </if>
+        <if test="invoiceNumber != null and invoiceNumber != ''">
+            AND fia.ecc_invoice_number =#{invoiceNumber}
+        </if>
+        AND fia.vendor_code IN
+        <foreach collection="codes" close=")" separator="," open="(" item="item">
+            #{item.supplierCode}
+        </foreach>
+    </select>
+
+    <select id="financedInvoiceList" resultMap="financeInvoiceBatchDoMap">
+        SELECT fbi.id AS batch_id, fbi.batch_number,entity_name,fb.discount_amount,fb.discount_date
+        FROM finance_batch fb
+        INNER JOIN finance_batch_invoice fbi
+        ON fb.batch_number = fbi.batch_number
+        INNER JOIN entity e
+        ON fbi.company_code = e.company_code
+        WHERE fbi.delete_flag = false
+        AND fb.delete_flag = false
+        AND e.delete_flag = '0'
+        AND fb.status = 2
+        AND e.entity_name = #{entityName}
+        AND fb.discount_date = #{discountDate}
+        AND fb.batch_number = #{batchNum}
+        AND fia.vendor_code IN
+        <foreach collection="codes" close=")" separator="," open="(" item="item">
+            #{item.supplierCode}
+        </foreach>
+        GROUP BY fbi.batch_number
+    </select>
+
+    <select id="submittedInvoiceList" resultMap="submittedInvoiceMap">
+        SELECT
+        fb.batch_number ,fb.submission_date,b.bank_name,e.entity_name , fia.company_code ,fia.ecc_invoice_number ,
+        fia.invoice_issue_date ,fia.invoice_due_date ,fia.maturity_date ,fia.invoice_amount ,e.invoice_currency
+        FROM finance_invoice_ap fia
+        INNER JOIN finance_batch_invoice fbi
+        ON fia.id = fbi.invoice_id
+        INNER JOIN finance_batch fb
+        ON fbi.batch_number = fb.batch_number
+        INNER JOIN bank b
+        ON fbi.bank_id = b.id
+        INNER JOIN entity e
+        ON fia.company_code = e.company_code
+        WHERE fia.status = 'Financing'
+        AND fia.delete_flag = false
+        <if test="type != null">
+            AND fia.invoice_type =#{type}
+        </if>
+        <if test="batchNumber != null and batchNumber !=''">
+            AND fbi.batch_number = #{batchNumber}
+        </if>
+        <if test="entityName != null and entityName != ''">
+            AND e.entity_name =#{entityName}
+        </if>
+        <if test="submittedDate != null and submittedDate != ''">
+            AND fb.submission_date = #{submittedDate}
+        </if>
+        <if test="codes != null and codes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="codes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="batchInvoiceDetail" resultMap="financeInvoiceApMap">
+        SELECT
+        fia.id,fia.ecc_invoice_number,fia.vendor_code,fia.company_code,fia.invoice_reference,fia.invoice_due_date,
+        fia.invoice_pay_date,fia.maturity_date,fia.invoice_amount,fia.invoice_type,fia.create_time,fia.update_by,fia.update_time
+        FROM finance_invoice_ap fia
+        INNER JOIN finance_batch_invoice fbi
+        ON fbi.invoice_id = fia.id
+        WHERE fbi.delete_flag = false
+        AND fia.delete_flag = false
+        AND fia.type = #{type}
+        AND fbi.id = #{batchId}
+    </select>
+    <select id="availableInvoiceFreeList" resultMap="financeInvoiceApMap">
+        SELECT fia.company_code, fia.id, fia.ecc_invoice_number,
+        fia.company_code,fia.invoice_reference,fia.invoice_due_date,fia.invoice_pay_date,
+        fia.maturity_date,fia.invoice_issue_date, fia.invoice_amount,fia.invoice_type,fia.create_time,fia.update_by,
+        fia.update_time,fia.invoice_currency
+        FROM finance_invoice_ap fia
+        WHERE fia.invoice_type = #{type}
+        AND fia.delete_flag = false
+        AND fia.status = 'Waiting'
+        <if test="issueEndTime != null and issueEndTime.length != 0">
+            AND fia.invoice_issue_date &lt;= #{issueEndTime}
+        </if>
+        <if test="issueStartTime != null and issueStartTime.length != 0">
+            AND fia.invoice_issue_date &gt;= #{issueStartTime}
+        </if>
+        <if test="maturityEndTime != null and maturityEndTime.length != 0">
+            AND fia.maturity_date &lt;= #{maturityEndTime}
+        </if>
+        <if test="maturityStartTime != null and maturityStartTime.length != 0">
+            AND fia.maturity_date &gt;= #{maturityStartTime}
+        </if>
+        <if test="vendorCodes != null and vendorCodes.size != 0">
+            AND fia.vendor_code IN
+            <foreach collection="vendorCodes" open="(" separator="," close=")" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+        <if test="companyCodes != null and companyCodes.size !=0">
+            AND fia.company_code IN
+            <foreach collection="companyCodes" open="(" separator="," close=")" item="companyCode">
+                #{companyCode}
+            </foreach>
+        </if>
+        ORDER BY fia.maturity_date DESC, fia.id DESC
+    </select>
+    <select id="selectInvoicesByIds" resultMap="financeInvoiceApMap">
+        SELECT
+        <include refid="financeInvoiceAp"/>
+        FROM finance_invoice_ap fia
+        WHERE fia.delete_flag = false
+        AND fia.id IN
+        <foreach collection="invoiceIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectInvoicesBySupplierId" resultMap="financeInvoiceApMap">
+        SELECT
+        <include refid="financeInvoiceAp"/>
+        FROM finance_invoice_ap fia
+        WHERE fia.delete_flag = false
+        AND fia.vendor_code IN
+        <foreach collection="vendorCodes" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        AND fia.id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+    <select id="availableInvoiceFinanceList" resultMap="financeInvoiceApMap">
+        SELECT fia.id, fia.invoice_amount,fia.company_code,fia.invoice_currency,
+        fia.ecc_invoice_number,fia.invoice_reference,fia.invoice_issue_date,fia.invoice_due_date,fia.maturity_date
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="maturityTime != null and maturityTime.length !=0">
+            AND fia.maturity_date = #{maturityTime}
+        </if>
+        <if test="companyCodes != null and companyCodes.size !=0 ">
+            AND fia.company_code IN
+            <foreach collection="companyCodes" open="(" separator="," close=")" item="code">
+                #{code}
+            </foreach>
+        </if>
+        <if test="codes != null and codes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="codes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+        ORDER BY fia.maturity_date ASC,id ASC
+        LIMIT #{querySize} OFFSET #{queryOffset}
+    </select>
+
+    <select id="availableInvoiceFinanceListCount" resultType="java.lang.Long">
+        SELECT COUNT(fia.id)
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="maturityTime != null and maturityTime.length !=0">
+            AND fia.maturity_date = #{maturityTime}
+        </if>
+        <if test="companyCodes != null and companyCodes.size !=0 ">
+            AND fia.company_code IN
+            <foreach collection="companyCodes" open="(" separator="," close=")" item="code">
+                #{code}
+            </foreach>
+        </if>
+        <if test="codes != null and codes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="codes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="availableDebitFinance" resultMap="financeInvoiceApMap">
+        SELECT fia.id, fia.vendor_code,fia.invoice_amount,fia.company_code,fia.invoice_currency,
+        fia.ecc_invoice_number,fia.invoice_reference,fia.invoice_issue_date,fia.invoice_due_date,fia.maturity_date,fia.invoice_type
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="codes != null and codes.size != 0">
+            AND fia.company_code IN
+            <foreach collection="codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="vendorCodes != null and vendorCodes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="vendorCodes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="availableCreditFinance" resultMap="financeInvoiceApMap">
+        SELECT fia.id, fia.vendor_code,fia.invoice_amount,fia.company_code,fia.invoice_currency,
+        fia.ecc_invoice_number,fia.invoice_reference,fia.invoice_issue_date,fia.invoice_due_date,fia.maturity_date,fia.invoice_type
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Credit Memo'
+        <if test="codes != null and codes.size != 0">
+            AND fia.company_code IN
+            <foreach collection="codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="vendorCodes != null and vendorCodes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="vendorCodes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+    <select id="availableDebitAmount" resultType="java.math.BigDecimal">
+        SELECT SUM(fia.invoice_amount)
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="codes != null and codes.size != 0">
+            AND fia.company_code IN
+            <foreach collection="codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="vendorCodes != null and vendorCodes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="vendorCodes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="availableCreditAmount" resultType="java.math.BigDecimal">
+        SELECT SUM(fia.invoice_amount)
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Credit Memo'
+        <if test="codes != null and codes.size != 0">
+            AND fia.company_code IN
+            <foreach collection="codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="vendorCodes != null and vendorCodes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="vendorCodes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectConfirmInvoices" resultMap="financeInvoiceApMap">
+        SELECT fia.id, fia.invoice_amount,fia.company_code,fia.invoice_currency,
+        fia.ecc_invoice_number,fia.invoice_reference,fia.invoice_issue_date,fia.invoice_due_date,fia.maturity_date,fia.confirmed_maturity_date
+        FROM finance_invoice_ap fia
+        WHERE fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="invoiceIds != null and invoiceIds.size !=0">
+            AND fia.id IN
+            <foreach collection="invoiceIds" item="id" close=")" open="(" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="maturityTime != null and maturityTime.length !=0">
+            AND fia.maturity_date = #{maturityTime}
+        </if>
+        <if test="companyCodes != null and companyCodes.size !=0 ">
+            AND fia.company_code IN
+            <foreach collection="companyCodes" open="(" separator="," close=")" item="code">
+                #{code}
+            </foreach>
+        </if>
+        <if test="codes != null and codes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="codes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+        ORDER BY fia.maturity_date ASC,id ASC
+    </select>
+
+    <select id="selectConfirmInvoicesCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM finance_invoice_ap fia
+        WHERE EXISTS (
+            SELECT 1 FROM (
+                VALUES
+                <foreach collection="invoiceIds" item="id" separator=",">
+                    (#{id})
+                </foreach>
+            ) AS tmp(id)
+            WHERE tmp.id = fia.id
+        )
+        AND fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        AND fia.invoice_type = 'Debit Memo'
+        <if test="maturityTime != null and maturityTime.length !=0">
+            AND fia.maturity_date = #{maturityTime}
+        </if>
+        <if test="companyCodes != null and companyCodes.size !=0 ">
+            AND fia.company_code IN
+            <foreach collection="companyCodes" open="(" separator="," close=")" item="code">
+                #{code}
+            </foreach>
+        </if>
+        <if test="codes != null and codes.size !=0 ">
+            AND fia.vendor_code IN
+            <foreach collection="codes" close=")" separator="," open="(" item="item">
+                #{item.supplierCode}
+            </foreach>
+        </if>
+    </select>
+
+<!--    <select id="selectConfirmInvoicesCount" resultType="java.lang.Long">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM finance_invoice_ap fia-->
+<!--        WHERE fia.status = 'Waiting'-->
+<!--        AND fia.delete_flag = false-->
+<!--        AND fia.invoice_type = 'Debit Memo'-->
+<!--        <if test="invoiceIds != null and invoiceIds.size !=0">-->
+<!--            AND fia.id IN-->
+<!--            <foreach collection="invoiceIds" item="id" close=")" open="(" separator=",">-->
+<!--                #{id}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        <if test="maturityTime != null and maturityTime.length !=0">-->
+<!--            AND fia.maturity_date = #{maturityTime}-->
+<!--        </if>-->
+<!--        <if test="companyCodes != null and companyCodes.size !=0 ">-->
+<!--            AND fia.company_code IN-->
+<!--            <foreach collection="companyCodes" open="(" separator="," close=")" item="code">-->
+<!--                #{code}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        <if test="codes != null and codes.size !=0 ">-->
+<!--            AND fia.vendor_code IN-->
+<!--            <foreach collection="codes" close=")" separator="," open="(" item="item">-->
+<!--                #{item.supplierCode}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--    </select>-->
+
+    <insert id="insertListWithId" >
+        INSERT INTO otfp_financing.finance_invoice_ap
+            (id, company_code, delete_flag, create_time, create_by, update_time, update_by,
+            invoice_unique_id, vendor_code, fiscal_year, invoice_additional_reference, ecc_invoice_number,
+            invoice_issue_date, invoice_baseline_date, invoice_due_date, invoice_currency, invoice_amount,
+            type_of_billing, enter_date, invoice_pay_date, invoice_type, invoice_reference, maturity_date,
+            status, confirmed_maturity_date)
+        VALUES
+        <foreach collection="invoices" separator="," item="item">
+            (#{item.id},#{item.companyCode},#{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy},
+            #{item.invoiceUniqueId},#{item.vendorCode},#{item.fiscalYear},#{item.invoiceAdditionalReference},#{item.eccInvoiceNumber},
+            #{item.invoiceIssueDate},#{item.invoiceBaselineDate},#{item.invoiceDueDate},#{item.invoiceCurrency},#{item.invoiceAmount},
+            #{item.typeOfBilling},#{item.enterDate},#{item.invoicePayDate},#{item.invoiceType},#{item.invoiceReference},#{item.maturityDate},
+            #{item.status},#{item.confirmedMaturityDate})
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseVendorBankMapper">
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseVendorBank" id="BizBaseVendorBankResult">
+        <result property="id"    column="id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="bankType"    column="bank_type"    />
+        <result property="bankAccount"    column="bank_account"    />
+        <result property="bankNumber"    column="bank_number"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankCountry"    column="bank_country"    />
+        <result property="swiftCode"    column="swift_code"    />
+        <result property="iban"    column="iban"    />
+        <result property="accountHolder"    column="account_holder"    />
+        <result property="branchCode"    column="branch_code"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseVendorBankVo">
+        select id, vendor_code, bank_type, bank_account, bank_number, bank_name, bank_country, swift_code, iban, account_holder,
+        branch_code, status, create_time, update_time from biz_base_vendor_bank
+    </sql>
+
+    <select id="selectBizBaseVendorBankList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseVendorBankDTO" resultMap="BizBaseVendorBankResult">
+        <include refid="selectBizBaseVendorBankVo"/>
+        <where>
+            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
+            <if test="bankType != null  and bankType != ''"> and bank_type = #{bankType}</if>
+            <if test="bankAccount != null  and bankAccount != ''"> and bank_account = #{bankAccount}</if>
+            <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if>
+            <if test="bankName != null  and bankName != ''"> and bank_name Ilike '%'||#{bankName}||'%'</if>
+            <if test="bankCountry != null  and bankCountry != ''"> and bank_country = #{bankCountry}</if>
+            <if test="swiftCode != null  and swiftCode != ''"> and swift_code = #{swiftCode}</if>
+            <if test="iban != null  and iban != ''"> and iban = #{iban}</if>
+            <if test="accountHolder != null  and accountHolder != ''"> and account_holder = #{accountHolder}</if>
+            <if test="branchCode != null  and branchCode != ''"> and branch_code = #{branchCode}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseVendorBankById" parameterType="Long" resultMap="BizBaseVendorBankResult">
+        <include refid="selectBizBaseVendorBankVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseVendorBank" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseVendorBank" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_vendor_bank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="bankType != null">bank_type,</if>
+            <if test="bankAccount != null">bank_account,</if>
+            <if test="bankNumber != null">bank_number,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="bankCountry != null">bank_country,</if>
+            <if test="swiftCode != null">swift_code,</if>
+            <if test="iban != null">iban,</if>
+            <if test="accountHolder != null">account_holder,</if>
+            <if test="branchCode != null">branch_code,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="bankType != null">#{bankType},</if>
+            <if test="bankAccount != null">#{bankAccount},</if>
+            <if test="bankNumber != null">#{bankNumber},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="bankCountry != null">#{bankCountry},</if>
+            <if test="swiftCode != null">#{swiftCode},</if>
+            <if test="iban != null">#{iban},</if>
+            <if test="accountHolder != null">#{accountHolder},</if>
+            <if test="branchCode != null">#{branchCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseVendorBank" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseVendorBank">
+        update biz_base_vendor_bank
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="bankType != null">bank_type = #{bankType},</if>
+            <if test="bankAccount != null">bank_account = #{bankAccount},</if>
+            <if test="bankNumber != null">bank_number = #{bankNumber},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="bankCountry != null">bank_country = #{bankCountry},</if>
+            <if test="swiftCode != null">swift_code = #{swiftCode},</if>
+            <if test="iban != null">iban = #{iban},</if>
+            <if test="accountHolder != null">account_holder = #{accountHolder},</if>
+            <if test="branchCode != null">branch_code = #{branchCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseVendorBankById" parameterType="Long">
+        delete from biz_base_vendor_bank where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseVendorBankByIds" parameterType="String">
+        delete from biz_base_vendor_bank where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertLgvmdBankInfos" parameterType="java.util.List">
+        insert into "sdms_base"."biz_base_vendor_bank"(
+            vendor_code,
+            bank_type,
+            bank_account,
+            bank_number,
+            bank_name,
+            bank_country,
+            swift_code,
+            iban,
+            account_holder,
+            branch_code,
+            create_time,
+            update_time
+       )
+        values
+        <foreach collection ="list" item="bankInfo" separator =",">
+            (
+            #{bankInfo.vendorCode},
+            #{bankInfo.bankType},
+            #{bankInfo.bankAccount},
+            #{bankInfo.bankNumber},
+            #{bankInfo.bankName},
+            #{bankInfo.bankCountry},
+            #{bankInfo.swiftCode},
+            #{bankInfo.iban},
+            #{bankInfo.accountHolder},
+            #{bankInfo.branchCode},
+            #{bankInfo.createTime},
+            #{bankInfo.updateTime}
+            )
+        </foreach >
+    </insert>
+    <update id="deleteBank">
+        update "sdms_base"."biz_base_vendor_bank" set status = 'N' where vendor_code = #{vendorCode} and update_time = #{updateTime}
+    </update>
+</mapper>

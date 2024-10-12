@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.SupplierUniqueMapper">
+
+    <resultMap id="supplierUniqueMap" type="com.lenovo.otmp.financing.domain.entity.SupplierUniqueIdDo">
+        <id column="id" property="id"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="seller_unique_id" property="sellerUniqueId"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="common_company_code" property="commonCompanyCode"/>
+        <result column="entity_id" property="entityId"/>
+    </resultMap>
+
+    <insert id="insertWithId">
+        INSERT INTO supplier_unique
+            (id,supplier_id,supplier_code,bank_id,seller_unique_id,delete_flag,create_time,create_by,update_time,update_by,common_company_code,entity_id)
+        VALUES
+        <foreach collection="uniques" item="item" separator="," >
+            (#{item.id},#{item.supplierId},#{item.supplierCode},#{item.bankId},#{item.sellerUniqueId},#{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy},#{item.commonCompanyCode},#{item.entityId})
+        </foreach>
+    </insert>
+    <update id="removeSupplierUniqueRelation">
+        UPDATE supplier_unique
+        SET delete_flag = '1'
+        WHERE id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </update>
+    <update id="deleteBySupplierId">
+        UPDATE supplier_unique
+        SET delete_flag = '1'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '0'
+    </update>
+
+    <delete id="removeBySupplierId">
+        DELETE FROM supplier_unique
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </delete>
+
+    <update id="activeBySupplierId">
+        UPDATE supplier_unique
+        SET delete_flag = '0'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </update>
+
+    <select id="selectByVendorCode" resultMap="supplierUniqueMap">
+        SELECT id,supplier_id,supplier_code,bank_id,seller_unique_id,
+        delete_flag,create_time,create_by,update_time,update_by,common_company_code,entity_id
+        FROM supplier_unique
+        WHERE supplier_id = #{supplier_id}
+        AND delete_flag = 0
+        AND supplier_code IN
+        <foreach collection="vendorCodes" item="item" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectOneByVendorCode" resultMap="supplierUniqueMap">
+        SELECT id,supplier_id,supplier_code,bank_id,seller_unique_id,
+        delete_flag,create_time,create_by,update_time,update_by,common_company_code,entity_id
+        FROM supplier_unique
+        WHERE supplier_id != #{supplierId}
+        AND delete_flag = '0'
+        AND supplier_code IN
+        <foreach collection="vendorCodes" item="item" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+        LIMIT 1
+    </select>
+
+    <select id="selectOneForReactiveSupplier" resultMap="supplierUniqueMap">
+        SELECT id
+        FROM supplier_unique
+        WHERE supplier_id &lt;&gt; #{supplierId}
+        AND delete_flag = '0'
+        AND supplier_code
+        IN (
+            SELECT supplier_code
+            FROM supplier_unique
+            WHERE supplier_id = #{supplierId}
+            AND delete_flag = '1'
+        )
+        LIMIT 1
+    </select>
+
+    <select id="selectUniqueId" resultMap="supplierUniqueMap">
+        SELECT id,supplier_id,supplier_code,bank_id,seller_unique_id,entity_id
+        FROM supplier_unique
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '0'
+        AND bank_id IN
+        <foreach collection="bankIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectDistinctSupplierCodes" resultType="java.lang.String" >
+        SELECT DISTINCT supplier_code
+        FROM supplier_unique
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '0'
+    </select>
+
+    <select id="checkVendorCodeBound" resultMap="supplierUniqueMap">
+        SELECT id,supplier_id,supplier_code,bank_id,seller_unique_id,
+        delete_flag,create_time,create_by,update_time,update_by,entity_id
+        FROM supplier_unique
+        WHERE delete_flag = '0'
+        AND supplier_code = #{vendorCode}
+        LIMIT 1
+    </select>
+    <select id="selectDistinctSupplierId" resultType="java.lang.Long">
+        SELECT DISTINCT supplier_id
+        FROM supplier_unique
+        WHERE entity_id = #{entityId}
+    </select>
+
+</mapper>

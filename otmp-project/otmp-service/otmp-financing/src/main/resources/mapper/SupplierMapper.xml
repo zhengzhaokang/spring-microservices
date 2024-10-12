@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.SupplierMapper">
+
+    <update id="updateStatus" >
+        UPDATE supplier
+        SET status = #{newStatus}
+        WHERE id = #{id}
+        AND delete_flag = '0'
+        AND status = #{oldStatus}
+    </update>
+    <update id="updateToOnHold">
+        UPDATE supplier
+        SET on_hold_flag = 1
+        WHERE id IN
+        <foreach collection="supplierIds" item="item" close=")" open="(" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateCancelOnHold">
+        UPDATE supplier
+        SET on_hold_flag = 0, on_hold_start_time = null , on_hold_end_time = null
+        WHERE id IN
+        <foreach collection="supplierIds" item="item" close=")" open="(" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateSupplierNeedRefresh">
+        UPDATE supplier
+        SET need_update = true
+        WHERE id IN (
+            SELECT DISTINCT supplier_id FROM supplier_unique WHERE entity_id = #{entityId}
+        )
+    </update>
+    <select id="selectSupplierByVendorCodes"
+            resultType="com.lenovo.otmp.financing.domain.entity.SupplierWithVendorCode">
+        SELECT s.id AS id,s.supplier_name AS supplierName,sbs.currency AS currency,su.supplier_code AS supplierCode
+        FROM supplier s
+        INNER JOIN supplier_bank_setting sbs
+        ON s.id = sbs.supplier_id
+        INNER JOIN supplier_unique su
+        ON s.id = su.supplier_id
+        WHERE su.delete_flag = '0'
+        AND s.delete_flag = '0'
+        AND sbs.delete_flag = '0'
+        <if test="vendorCodes != null and vendorCodes.size != 0">
+            AND su.supplier_code IN
+            <foreach collection="vendorCodes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

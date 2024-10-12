@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.analysis.mapper.LimitStatisticMapper">
+
+    <resultMap id="limitStatisticMap" type="com.microservices.otmp.analysis.domain.entity.LimitStatisticDo">
+        <id column="id" property="id"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="amount" property="amount"/>
+        <result column="type" property="type"/>
+        <result column="statistic_date" property="statisticDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="entityBankSettingMap" type="com.microservices.otmp.analysis.domain.entity.EntityBankSettingStatisticDo">
+        <id column="id" property="id"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="bank_limit" property="bankLimit"/>
+        <result column="adhoc_limit" property="adhocLimit"/>
+        <result column="available_limit" property="availableLimit"/>
+        <result column="adhoc_expiry_date" property="adhocExpiryDate"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <select id="selectAmountCount" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM "otfp_analysis"."limit_statistic"
+        WHERE type = #{type}
+        AND statistic_date >= #{startTime}
+        AND statistic_date &lt; #{endTime}
+        <if test="bankId != null and bankId.length != 0">
+            AND bank_id = #{bankId}
+        </if>
+        <if test="entityId != null">
+            AND entity_id = #{entityId}
+        </if>
+    </select>
+
+    <select id="selectAmount" resultMap="limitStatisticMap">
+        SELECT id,bank_id,entity_id,amount,type,statistic_date
+        FROM "otfp_analysis"."limit_statistic"
+        WHERE type = #{type}
+        AND statistic_date >= #{startTime}
+        AND statistic_date &lt; #{endTime}
+        <if test="bankId != null and bankId.length != 0">
+            AND bank_id = #{bankId}
+        </if>
+        <if test="entityId != null">
+            AND entity_id = #{entityId}
+        </if>
+        ORDER BY id ASC
+        <if test="pageSize != null and startNum != null">
+            LIMIT #{pageSize} OFFSET #{startNum}
+        </if>
+    </select>
+
+<!--    <select id="selectCount" resultType="java.lang.Integer">-->
+<!--        SELECT COUNT(DISTINCT statistic_date)-->
+<!--        FROM "otfp_analysis"."limit_statistic"-->
+<!--        WHERE statistic_date >= #{startTime}-->
+<!--        AND statistic_date &lt;= #{endTime}-->
+<!--        <if test="bankId != null and bankId.length != 0">-->
+<!--            AND bank_id = #{bankId}-->
+<!--        </if>-->
+<!--        <if test="entityId != null">-->
+<!--            AND entity_id = #{entityId}-->
+<!--        </if>-->
+<!--    </select>-->
+
+    <select id="selectByTimeRange" resultType="com.microservices.otmp.analysis.domain.entity.LimitDashboardDo">
+        SELECT SUM(amount) AS amount, statistic_date AS date
+        FROM "otfp_analysis"."limit_statistic"
+        WHERE type = #{type}
+        <if test="bankId != null and bankId.length != 0">
+            AND bank_id = #{bankId}
+        </if>
+        <if test="entityId != null">
+            AND entity_id = #{entityId}
+        </if>
+        AND statistic_date >= #{startTime}
+        AND statistic_date &lt;= #{endTime}
+        GROUP BY statistic_date
+        <if test="pageSize != null and startNum != null">
+            LIMIT #{pageSize} OFFSET #{startNum}
+        </if>
+    </select>
+
+</mapper>

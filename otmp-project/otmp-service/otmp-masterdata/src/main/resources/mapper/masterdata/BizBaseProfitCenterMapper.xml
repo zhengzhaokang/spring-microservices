@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseProfitCenterMapper">
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter" id="BizBaseProfitCenterResult">
+        <result property="id"    column="id"    />
+        <result property="regionMarketCode"    column="region_market_code"    />
+        <result property="regionMarketName"    column="region_market_name"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOrgName"    column="sales_org_name"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="salesOfficeName"    column="sales_office_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="profitCenterCode"    column="profit_center_code"    />
+        <result property="bwbu"    column="bwbu"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="tsThinkFlag"    column="ts_think_flag"    />
+        <result property="dummyGtnMtm"    column="dummy_gtn_mtm"    />
+        <result property="businessGroup"    column="business_group"    />
+    </resultMap>
+
+    <sql id="selectBizBaseProfitCenterVo">
+        select id, region_market_code, region_market_name, sales_org_code, sales_org_name, sales_office_code, sales_office_name, status, remark, create_by, create_time, update_by, update_time, profit_center_code, bwbu,  geo_code, ts_think_flag, dummy_gtn_mtm, business_group from biz_base_profit_center
+    </sql>
+
+    <select id="selectBizBaseProfitCenterList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter" resultMap="BizBaseProfitCenterResult">
+        <include refid="selectBizBaseProfitCenterVo"/>
+        <where>  
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code      ilike  ('%'||#{regionMarketCode}||'%')</if>
+            <if test="regionMarketName != null  and regionMarketName != ''"> and region_market_name      ilike  ('%'||#{regionMarketName}||'%')</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code  ilike  ('%'||#{salesOrgCode}||'%') </if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name  ilike  ('%'||#{salesOrgName}||'%') </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code ilike  ('%'|| #{salesOfficeCode}||'%')</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name ilike  ('%'|| #{salesOfficeName}||'%')</if>
+            and status ='Y'
+            <if test="createBy != null  and createBy != ''"> and create_by Ilike '%'|| #{createBy}||'%' </if>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code  Ilike '%'|| #{profitCenterCode}||'%' </if>
+            <if test="bwbu != null  and bwbu != ''"> and bwbu  Ilike '%'|| #{bwbu}||'%' </if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="tsThinkFlag != null  and tsThinkFlag != ''"> and ts_think_flag  Ilike '%'|| #{tsThinkFlag}||'%'</if>
+            <if test="dummyGtnMtm != null  and dummyGtnMtm != ''"> and dummy_gtn_mtm  Ilike '%'|| #{dummyGtnMtm}||'%' </if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="remark != null  and remark != ''"> and remark Ilike '%'|| #{remark}||'%' </if>
+
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+
+        </where>
+        order by id desc
+
+    </select>
+
+
+    <select id="selectProfitCenterListPrecise" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter" resultMap="BizBaseProfitCenterResult">
+        <include refid="selectBizBaseProfitCenterVo"/>
+        <where>
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code = #{regionMarketCode}</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode} </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            and status ='Y'
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy} </if>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode} </if>
+            <if test="bwbu != null  and bwbu != ''"> and bwbu = #{bwbu} </if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="tsThinkFlag != null  and tsThinkFlag != ''"> and ts_think_flag = #{tsThinkFlag}</if>
+            <if test="dummyGtnMtm != null  and dummyGtnMtm != ''"> and dummy_gtn_mtm  = #{dummyGtnMtm} </if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark} </if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="selectProfitCenterlist" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter" resultMap="BizBaseProfitCenterResult">
+        select distinct profit_center_code from biz_base_profit_center
+        <where>
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code      ilike  ('%'||#{regionMarketCode}||'%')</if>
+            <if test="regionMarketName != null  and regionMarketName != ''"> and region_market_name      ilike  ('%'||#{regionMarketName}||'%')</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code  ilike  ('%'||#{salesOrgCode}||'%') </if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name  ilike  ('%'||#{salesOrgName}||'%') </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code ilike  ('%'|| #{salesOfficeCode}||'%')</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name ilike  ('%'|| #{salesOfficeName}||'%')</if>
+            <if test="createBy != null  and createBy != ''"> and create_by Ilike '%'|| #{createBy}||'%' </if>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code  Ilike '%'|| #{profitCenterCode}||'%' </if>
+            <if test="bwbu != null  and bwbu != ''"> and bwbu  Ilike '%'|| #{bwbu}||'%' </if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="tsThinkFlag != null  and tsThinkFlag != ''"> and ts_think_flag  Ilike '%'|| #{tsThinkFlag}||'%'</if>
+            <if test="dummyGtnMtm != null  and dummyGtnMtm != ''"> and dummy_gtn_mtm  Ilike '%'|| #{dummyGtnMtm}||'%' </if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="remark != null  and remark != ''"> and remark Ilike '%'|| #{remark}||'%' </if>
+            and status ='Y'
+        </where>
+
+    </select>
+    
+    <select id="selectBizBaseProfitCenterById" parameterType="Long" resultMap="BizBaseProfitCenterResult">
+        <include refid="selectBizBaseProfitCenterVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseProfitCenter" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_profit_center
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="regionMarketCode != null">region_market_code,</if>
+            <if test="regionMarketName != null">region_market_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOrgName != null">sales_org_name,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="salesOfficeName != null">sales_office_name,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="profitCenterCode != null">profit_center_code,</if>
+            <if test="bwbu != null">bwbu,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="tsThinkFlag != null">ts_think_flag,</if>
+            <if test="dummyGtnMtm != null">dummy_gtn_mtm,</if>
+            <if test="businessGroup != null">business_group,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regionMarketCode != null">#{regionMarketCode},</if>
+            <if test="regionMarketName != null">#{regionMarketName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOrgName != null">#{salesOrgName},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">#{salesOfficeName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="profitCenterCode != null">#{profitCenterCode},</if>
+            <if test="bwbu != null">#{bwbu},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="tsThinkFlag != null">#{tsThinkFlag},</if>
+            <if test="dummyGtnMtm != null">#{dummyGtnMtm},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseProfitCenter" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseProfitCenter">
+        update biz_base_profit_center
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regionMarketCode != null">region_market_code = #{regionMarketCode},</if>
+            <if test="regionMarketName != null">region_market_name = #{regionMarketName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOrgName != null">sales_org_name = #{salesOrgName},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">sales_office_name = #{salesOfficeName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="bwbu != null">bwbu = #{bwbu},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="tsThinkFlag != null">ts_think_flag = #{tsThinkFlag},</if>
+            <if test="dummyGtnMtm != null">dummy_gtn_mtm = #{dummyGtnMtm},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseProfitCenterById" parameterType="Long">
+        delete from biz_base_profit_center where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseProfitCenterByIds" parameterType="String">
+        delete from biz_base_profit_center where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseProfitCenterListCheck" resultMap="BizBaseProfitCenterResult">
+
+        <include refid="selectBizBaseProfitCenterVo"/>
+        <where>
+            and status ='Y'
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode}</if>
+            <if test="bwbu != null  and bwbu != ''"> and bwbu = #{bwbu}</if>
+            <if test="dummyGtnMtm != null  and dummyGtnMtm != ''"> and dummy_gtn_mtm = #{dummyGtnMtm}</if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+        </where>
+    </select>
+
+    <update id="updateBizBaseProfitCenterByIds">
+        update   biz_base_profit_center set status='N',update_time=now()    where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <select id="getDropDownList" resultMap="BizBaseProfitCenterResult">
+        select distinct profit_center_code from biz_base_profit_center
+        <where>
+            status = 'Y'
+            <if test="profitCenterCode != null  and profitCenterCode != ''">
+                <choose>
+                    <when test=" 1 == profitCenterCode.split(',').length">
+                        and profit_center_code = #{profitCenterCode}
+                    </when>
+                    <otherwise>
+                        and profit_center_code in
+                        <foreach collection="profitCenterCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">
+                <choose>
+                    <when test=" 1 == salesOfficeCode.split(',').length">
+                        and sales_office_code = #{salesOfficeCode}
+                    </when>
+                    <otherwise>
+                        and sales_office_code in
+                        <foreach collection="salesOfficeCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+             </if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">
+                <choose>
+                    <when test=" 1 == salesOrgCode.split(',').length"> and sales_org_code = #{salesOrgCode} </when>
+                    <otherwise>and sales_org_code in<foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length"> and region_market_code = #{regionMarketCode} </when>
+                    <otherwise>and region_market_code in<foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length"> and business_group = #{businessGroup} </when>
+                    <otherwise>and business_group in<foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length"> and geo_code = #{geoCode} </when>
+                    <otherwise>and geo_code in<foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+        </where>
+    </select>
+    <select id="getDropDownListByMtm" resultMap="BizBaseProfitCenterResult">
+        select distinct dummy_gtn_mtm from biz_base_profit_center
+        <where>
+            status = 'Y'
+            <if test="profitCenterCode != null  and profitCenterCode != ''">
+                <choose>
+                    <when test=" 1 == profitCenterCode.split(',').length">
+                        and profit_center_code = #{profitCenterCode}
+                    </when>
+                    <otherwise>
+                        and profit_center_code in
+                        <foreach collection="profitCenterCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">
+                <choose>
+                    <when test=" 1 == salesOfficeCode.split(',').length">
+                        and sales_office_code = #{salesOfficeCode}
+                    </when>
+                    <otherwise>
+                        and sales_office_code in
+                        <foreach collection="salesOfficeCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">
+                <choose>
+                    <when test=" 1 == salesOrgCode.split(',').length"> and sales_org_code = #{salesOrgCode} </when>
+                    <otherwise>and sales_org_code in<foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length"> and region_market_code = #{regionMarketCode} </when>
+                    <otherwise>and region_market_code in<foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length"> and business_group = #{businessGroup} </when>
+                    <otherwise>and business_group in<foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length"> and geo_code = #{geoCode} </when>
+                    <otherwise>and geo_code in<foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="dummyGtnMtm != null  and dummyGtnMtm != ''"> and dummy_gtn_mtm  Ilike '%'|| #{dummyGtnMtm}||'%' </if>
+        </where>
+    </select>
+    <select id="getDropDownListByBwbu" resultMap="BizBaseProfitCenterResult">
+        select distinct bwbu from biz_base_profit_center
+        <where>
+            status = 'Y'
+            <if test="profitCenterCode != null  and profitCenterCode != ''">
+                <choose>
+                    <when test=" 1 == profitCenterCode.split(',').length">
+                        and profit_center_code = #{profitCenterCode}
+                    </when>
+                    <otherwise>
+                        and profit_center_code in
+                        <foreach collection="profitCenterCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">
+                <choose>
+                    <when test=" 1 == salesOfficeCode.split(',').length">
+                        and sales_office_code = #{salesOfficeCode}
+                    </when>
+                    <otherwise>
+                        and sales_office_code in
+                        <foreach collection="salesOfficeCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">
+                <choose>
+                    <when test=" 1 == salesOrgCode.split(',').length"> and sales_org_code = #{salesOrgCode} </when>
+                    <otherwise>and sales_org_code in<foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length"> and region_market_code = #{regionMarketCode} </when>
+                    <otherwise>and region_market_code in<foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length"> and business_group = #{businessGroup} </when>
+                    <otherwise>and business_group in<foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length"> and geo_code = #{geoCode} </when>
+                    <otherwise>and geo_code in<foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">#{item}</foreach></otherwise></choose></if>
+            <if test="bwbu != null  and bwbu != ''"> and bwbu  Ilike '%'|| #{bwbu}||'%' </if>
+        </where>
+    </select>
+</mapper>

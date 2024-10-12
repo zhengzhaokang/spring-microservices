@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.finance.mapper.FinanceBatchInvoiceMapper">
+    
+    <resultMap type="com.microservices.otmp.finance.domain.entity.FinanceBatchInvoiceDO" id="FinanceBatchInvoiceResult">
+        <result property="id"    column="id"    />
+        <result property="batchNumber"    column="batch_number"    />
+        <result property="bankId"    column="bank_id"    />
+        <result column="bank_name" property="bankName" />
+        <result property="invoiceId"    column="invoice_id"    />
+        <result property="status"    column="status"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="invoiceReference"    column="invoice_reference"    />
+        <result property="entityId"    column="entity_id"    />
+    </resultMap>
+
+
+    <sql id="selectFinanceBatchInvoiceVo">
+        select id, batch_number, bank_id, invoice_id, status, delete_flag, create_time, create_by, update_time, update_by, supplier_code, invoice_reference, entity_id from otfp_financing.finance_batch_invoice
+    </sql>
+
+    <select id="selectFinanceBatchInvoiceList" parameterType="com.microservices.otmp.finance.domain.dto.FinanceBatchInvoiceDTO" resultMap="FinanceBatchInvoiceResult">
+        <include refid="selectFinanceBatchInvoiceVo"/>
+        <where>  
+            <if test="batchNumber != null  and batchNumber != ''"> and batch_number = #{batchNumber}</if>
+            <if test="bankId != null  and bankId != ''"> and bank_id = #{bankId}</if>
+            <if test="invoiceId != null "> and invoice_id = #{invoiceId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="deleteFlag != null  and deleteFlag != ''"> and delete_flag = #{deleteFlag}</if>
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="invoiceReference != null  and invoiceReference != ''"> and invoice_reference = #{invoiceReference}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+        </where>
+    </select>
+    
+    <select id="selectFinanceBatchInvoiceById" parameterType="Long" resultMap="FinanceBatchInvoiceResult">
+        <include refid="selectFinanceBatchInvoiceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFinanceBatchInvoice" parameterType="com.microservices.otmp.finance.domain.entity.FinanceBatchInvoiceDO">
+        insert into otfp_financing.finance_batch_invoice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="batchNumber != null">batch_number,</if>
+            <if test="bankId != null">bank_id,</if>
+            <if test="invoiceId != null">invoice_id,</if>
+            <if test="status != null">status,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="invoiceReference != null">invoice_reference,</if>
+            <if test="entityId != null">entity_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="batchNumber != null">#{batchNumber},</if>
+            <if test="bankId != null">#{bankId},</if>
+            <if test="invoiceId != null">#{invoiceId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="invoiceReference != null">#{invoiceReference},</if>
+            <if test="entityId != null">#{entityId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinanceBatchInvoice" parameterType="com.microservices.otmp.finance.domain.entity.FinanceBatchInvoiceDO">
+        update otfp_financing.finance_batch_invoice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchNumber != null">batch_number = #{batchNumber},</if>
+            <if test="bankId != null">bank_id = #{bankId},</if>
+            <if test="invoiceId != null">invoice_id = #{invoiceId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="invoiceReference != null">invoice_reference = #{invoiceReference},</if>
+            <if test="entityId != null">entity_id = #{entityId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFinanceBatchInvoiceById" parameterType="Long">
+        delete from otfp_financing.finance_batch_invoice where id = #{id}
+    </delete>
+
+    <delete id="deleteFinanceBatchInvoiceByIds" parameterType="String">
+        delete from otfp_financing.finance_batch_invoice where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="getFinanceBatchInvoice" resultMap="FinanceBatchInvoiceResult">
+       select
+            fbi.id,
+            fbi.batch_number,
+            fbi.supplier_code,
+            fbi.invoice_reference,
+            fbi.bank_id,
+            fbi.invoice_id,
+            fbi.entity_id,
+            fbi.status,
+            fbi.delete_flag,
+            fbi.create_time,
+            fbi.create_by,
+            fbi.update_time,
+            fbi.update_by,
+            b.bank_integration_chain bank_name
+        from
+            otfp_financing.finance_batch_invoice fbi
+        left join otfp_financing.bank b on
+            fbi.bank_id = b.id
+        WHERE fbi.batch_number = #{batchNo,jdbcType=VARCHAR}
+        limit 1
+    </select>
+</mapper>

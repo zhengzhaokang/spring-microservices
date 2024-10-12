@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewConditionValueMapper">
+
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewConditionValueDO" id="ViewConditionValueResult">
+        <result property="id" column="id"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="condition" column="condition"/>
+        <result property="conditionValue" column="condition_value"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectViewConditionValueVo">
+        select id, field_id, condition, condition_value, remark, create_by, create_time, update_by, update_time from
+        view_condition_value
+    </sql>
+
+    <select id="selectViewConditionValueList" parameterType="com.lenovo.otmp.system.domain.ViewConditionValue"
+            resultMap="ViewConditionValueResult">
+        <include refid="selectViewConditionValueVo"/>
+        <where>
+            <if test="fieldId != null ">and field_id = #{fieldId}</if>
+            <if test="condition != null  and condition != ''">and condition = #{condition}</if>
+            <if test="conditionValue != null  and conditionValue != ''">and condition_value = #{conditionValue}</if>
+        </where>
+        order by id
+    </select>
+
+    <select id="selectViewConditionValueById" parameterType="Integer" resultMap="ViewConditionValueResult">
+        <include refid="selectViewConditionValueVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertViewConditionValue" parameterType="com.lenovo.otmp.system.domain.ViewConditionValue"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into view_condition_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fieldId != null">field_id,</if>
+            <if test="condition != null">condition,</if>
+            <if test="conditionValue != null">condition_value,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fieldId != null">#{fieldId},</if>
+            <if test="condition != null">#{condition},</if>
+            <if test="conditionValue != null">#{conditionValue},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateViewConditionValue" parameterType="com.lenovo.otmp.system.domain.ViewConditionValue">
+        update view_condition_value
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fieldId != null">field_id = #{fieldId},</if>
+            <if test="condition != null">condition = #{condition},</if>
+            <if test="conditionValue != null">condition_value = #{conditionValue},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where
+        <choose>
+            <when test="id !=null ">id = #{id}</when>
+            <otherwise>field_id = #{fieldId} and condition = #{condition}</otherwise>
+        </choose>
+    </update>
+
+    <delete id="deleteViewConditionValueById" parameterType="Integer">
+        delete from view_condition_value where id = #{id}
+    </delete>
+
+    <delete id="deleteViewConditionValueByFieldIdAndCondition">
+        delete from view_condition_value where field_id = #{fieldId} and condition = #{condition}
+    </delete>
+
+    <delete id="deleteViewConditionValueByIds" parameterType="String">
+        delete from view_condition_value where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="deleteViewConditionGroup" parameterType="com.lenovo.otmp.system.domain.ViewConditionValue">
+        delete from view_template  where field_id = #{fieldId}
+    </update>
+</mapper>

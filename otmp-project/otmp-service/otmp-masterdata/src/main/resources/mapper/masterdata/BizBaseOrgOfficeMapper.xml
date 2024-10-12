@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseOrgOfficeMapper">
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseOrgOfficeDO" id="BizBaseOrgOfficeResult">
+        <result property="id"    column="id"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="regionMarketCode"    column="region_market_code"    />
+        <result property="regionMarketName"    column="region_market_name"    />
+        <result property="territoryCode"    column="territory_code"    />
+        <result property="territoryName"    column="territory_name"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="countryName"    column="country_name"    />
+        <result property="bpcCountryCode"    column="bpc_country_code"    />
+        <result property="bpcCountryName"    column="bpc_country_name"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOrgName"    column="sales_org_name"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="salesOfficeName"    column="sales_office_name"    />
+        <result property="distributionChannelCode"    column="distribution_channel_code"    />
+        <result property="distributionChannelName"    column="distribution_channel_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="dataVersion"    column="data_version"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="isDummy"    column="is_dummy"    />
+        <result property="localCurrencyCode"    column="local_currency_code"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="accrualCompanyCode"    column="accrual_company_code"    />
+    </resultMap>
+
+    <sql id="selectBizBaseOrgOfficeVo">
+        select id, business_group, geo_code, region_market_code, region_market_name, territory_code, territory_name, country_code, country_name, bpc_country_code, bpc_country_name, sales_org_code, sales_org_name, sales_office_code, sales_office_name, distribution_channel_code, distribution_channel_name, status, remark, create_by, create_time, update_by, update_time, data_version, delete_flag, is_dummy, local_currency_code, company_code, accrual_company_code from biz_base_org_office
+    </sql>
+
+    <select id="selectBizBaseOrgOfficeTreeList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseOrgOfficeDTO" resultMap="BizBaseOrgOfficeResult">
+        select geo_code, region_market_code, region_market_name, territory_code,  territory_name, business_group, sales_org_code, sales_org_name, local_currency_code, company_code, accrual_company_code, is_dummy from biz_base_org_office
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code Ilike '%'||#{regionMarketCode}||'%'</if>
+            <if test="regionMarketName != null  and regionMarketName != ''"> and region_market_name Ilike '%'||#{regionMarketName}||'%'</if>
+            <if test="territoryCode != null  and territoryCode != ''"> and territory_code Ilike '%'||#{territoryCode}||'%'</if>
+            <if test="territoryName != null  and territoryName != ''"> and territory_name Ilike '%'||#{territoryName}||'%'</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code Ilike '%'||#{countryCode}||'%'</if>
+            <if test="countryName != null  and countryName != ''"> and country_name Ilike '%'||#{countryName}||'%'</if>
+            <if test="bpcCountryCode != null  and bpcCountryCode != ''"> and bpc_country_code Ilike '%'||#{bpcCountryCode}||'%'</if>
+            <if test="bpcCountryName != null  and bpcCountryName != ''"> and bpc_country_name Ilike '%'||#{bpcCountryName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code Ilike '%'||#{salesOrgCode}||'%'</if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name Ilike '%'||#{salesOrgName}||'%'</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code Ilike '%'||#{salesOfficeCode}||'%'</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name Ilike '%'||#{salesOfficeName}||'%'</if>
+            <if test="distributionChannelCode != null  and distributionChannelCode != ''"> and #{distributionChannelCode} = ANY(string_to_array(distribution_channel_code, ','))</if>
+            <if test="distributionChannelName != null  and distributionChannelName != ''"> and distribution_channel_name Ilike '%'||#{distributionChannelName}||'%'</if>
+            <if test="isDummy != null and isDummy != ''"> and is_dummy = #{isDummy}</if>
+            <if test="localCurrencyCode != null and localCurrencyCode != ''"> and local_currency_code Ilike '%'||#{localCurrencyCode}||'%'</if>
+            <if test="companyCode != null and companyCode != ''"> and company_code Ilike '%'||#{companyCode}||'%'</if>
+            <if test="accrualCompanyCode != null and accrualCompanyCode != ''"> and accrual_company_code Ilike '%'||#{accrualCompanyCode}||'%'</if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+            and status = 'Y'
+        </where>
+        group by geo_code, region_market_code, region_market_name, territory_code,  territory_name, business_group, sales_org_code, sales_org_name, local_currency_code, company_code, accrual_company_code, is_dummy
+    </select>
+
+    <select id="selectBizBaseOrgOfficeById" parameterType="Long" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        where id = #{id} and status = 'Y'
+    </select>
+    <select id="getCodeAndName"
+            resultType="com.lenovo.otmp.masterdata.domain.entity.dto.BizBaseOrgOfficeNameAndCodeDTO">
+        select
+        region_market_code as regionMarketCode,
+        region_market_name as regionMarketName,
+        territory_code as territoryCode,
+        territory_name as territoryName,
+        country_code as countryCode,
+        country_name as countryName,
+        bpc_country_code as bpcCountryCode,
+        bpc_country_name as bpcCountryName,
+        sales_org_code as salesOrgCode,
+        sales_org_name as salesOrgName,
+        sales_office_code as salesOfficeCode,
+        sales_office_name as salesOfficeName,
+        distribution_channel_code as distributionChannelCode,
+        distribution_channel_name as distributionChannelName
+        from
+        biz_base_org_office
+        <where>
+            <if test="code != null and code != '' and type == 'regionMarketCode'">and region_market_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'territoryCode'">and territory_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'countryCode'">and country_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'bpcCountryCode'">and bpc_country_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'salesOrgCode'">and sales_org_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'salesOfficeCode'">and sales_office_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'distributionChannelCode'">and distribution_channel_code ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'regionMarketName'">and region_market_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'territoryName'">and territory_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'countryName'">and country_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'bpcCountryName'">and bpc_country_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'salesOrgName'">and sales_org_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'salesOfficeName'">and sales_office_name ilike '%'|| #{code}||'%'</if>
+            <if test="code != null and code != '' and type == 'distributionChannelName'">and distribution_channel_name ilike '%'|| #{code}||'%'</if>
+            and status = 'Y'
+        </where>
+    </select>
+    <select id="getTerritoryDropDownList"
+            resultType="com.lenovo.otmp.masterdata.domain.BizBaseTerritoryRelation">
+        select distinct territory_code as territory from biz_base_org_office
+        <where>
+            status = 'Y' and territory_code is not null and territory_code != ''
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length">
+                        and region_market_code = #{regionMarketCode}
+                    </when>
+                    <otherwise>
+                        and region_market_code in
+                        <foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="territory != null  and territory != ''">
+                <choose>
+                    <when test=" 1 == territory.split(',').length">
+                        and territory_code = #{territory}
+                    </when>
+                    <otherwise>
+                        and territory_code in
+                        <foreach collection="territory.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+    <select id="getDropDownList"
+            resultMap="BizBaseOrgOfficeResult">
+        select distinct bpc_country_code from biz_base_org_office
+        <where>
+            status = 'Y'
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length">
+                        and region_market_code = #{regionMarketCode}
+                    </when>
+                    <otherwise>
+                        and region_market_code in
+                        <foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">
+                <choose>
+                    <when test=" 1 == salesOrgCode.split(',').length">
+                        and sales_org_code = #{salesOrgCode}
+                    </when>
+                    <otherwise>
+                        and sales_org_code in
+                        <foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">
+                <choose>
+                    <when test=" 1 == salesOfficeCode.split(',').length">
+                        and sales_office_code = #{salesOfficeCode}
+                    </when>
+                    <otherwise>
+                        and sales_office_code in
+                        <foreach collection="salesOfficeCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="bpcCountryCode != null  and bpcCountryCode != ''">
+                <choose>
+                    <when test=" 1 == bpcCountryCode.split(',').length">
+                        and bpc_country_code = #{regionMarketCode}
+                    </when>
+                    <otherwise>
+                        and bpc_country_code in
+                        <foreach collection="bpcCountryCode .split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+    <select id="selectBizBaseOrgOfficeList"
+            parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseOrgOfficeDTO" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null"> and region_market_code = #{regionMarketCode}</if>
+            <if test="regionMarketCode == null"> and region_market_code is null</if>
+            <if test="regionMarketName != null"> and region_market_name = #{regionMarketName}</if>
+            <if test="regionMarketName == null"> and (region_market_name is null or region_market_name = '')</if>
+            <if test="territoryCode != null"> and territory_code = #{territoryCode}</if>
+            <if test="territoryCode == null"> and territory_code is null</if>
+            <if test="territoryName != null"> and territory_name = #{territoryName}</if>
+            <if test="territoryName == null"> and (territory_name is null or territory_name = '')</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code = #{countryCode}</if>
+            <if test="countryName != null  and countryName != ''"> and country_name = #{countryName}</if>
+            <if test="bpcCountryCode != null  and bpcCountryCode != ''"> and bpc_country_code = #{bpcCountryCode}</if>
+            <if test="bpcCountryName != null  and bpcCountryName != ''"> and bpc_country_name = #{bpcCountryName}</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name = #{salesOrgName}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name = #{salesOfficeName}</if>
+            <if test="distributionChannelCode != null  and distributionChannelCode != ''"> and distribution_channel_code = #{distributionChannelCode}</if>
+            <if test="distributionChannelName != null  and distributionChannelName != ''"> and distribution_channel_name = #{distributionChannelName}</if>
+            <if test="isDummy != null "> and is_dummy = #{isDummy}</if>
+            <if test="isDummy == null "> and is_dummy is null</if>
+            <if test="localCurrencyCode != null "> and local_currency_code = #{localCurrencyCode}</if>
+            <if test="localCurrencyCode == null "> and local_currency_code is null</if>
+            <if test="companyCode != null "> and company_code = #{companyCode}</if>
+            <if test="companyCode == null "> and company_code is null</if>
+            <if test="accrualCompanyCode != null "> and accrual_company_code = #{accrualCompanyCode}</if>
+            <if test="accrualCompanyCode == null "> and accrual_company_code is null</if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+            and status = 'Y'
+        </where>
+        order by id desc
+    </select>
+    <select id="checkSalesOrg" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        where
+        business_group = #{businessGroup}
+        and geo_code = #{geoCode}
+        and region_market_code = #{regionMarketCode}
+        and territory_code = #{territoryCode}
+        and sales_org_code = #{salesOrgCode}
+    </select>
+    <select id="checkSalesOffice" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        where
+        business_group = #{businessGroup}
+        and geo_code = #{geoCode}
+        and region_market_code = #{regionMarketCode}
+        and territory_code = #{territoryCode}
+        and sales_org_code = #{salesOrgCode}
+        and sales_office_code = #{salesOfficeCode}
+        and country_code = #{countryCode}
+        and status = 'Y'
+    </select>
+    <select id="getIdsBySalesOrg" resultType="java.lang.Long">
+        select
+            id
+        from
+            biz_base_org_office
+        where
+            business_group = #{businessGroup}
+          and geo_code = #{geoCode}
+          and region_market_code = #{regionMarketCode}
+          <if test="territoryCode != null and territoryCode != ''">and territory_code = #{territoryCode} </if>
+          and sales_org_code = #{salesOrgCode}
+    </select>
+    <select id="getByOrgOffice" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        where status = 'Y' and sales_org_code = #{salesOrgCode} and sales_office_code = #{salesOfficeCode} limit 1
+    </select>
+    <select id="getOrgOfficeByOrgAndBg"
+            resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        where status = 'Y' and sales_org_code = #{salesOrgCode} and business_group = #{businessGroup}
+        and accrual_company_code !=  '' and accrual_company_code is not null limit 1
+    </select>
+
+    <insert id="insertBizBaseOrgOffice" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseOrgOfficeDO">
+        insert into biz_base_org_office
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="regionMarketCode != null">region_market_code,</if>
+            <if test="regionMarketName != null">region_market_name,</if>
+            <if test="territoryCode != null">territory_code,</if>
+            <if test="territoryName != null">territory_name,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="bpcCountryCode != null">bpc_country_code,</if>
+            <if test="bpcCountryName != null">bpc_country_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOrgName != null">sales_org_name,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="salesOfficeName != null">sales_office_name,</if>
+            <if test="distributionChannelCode != null">distribution_channel_code,</if>
+            <if test="distributionChannelName != null">distribution_channel_name,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="dataVersion != null">data_version,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="isDummy != null">is_dummy,</if>
+            <if test="localCurrencyCode != null">local_currency_code,</if>
+            <if test="companyCode != null">company_code,</if>
+            <if test="accrualCompanyCode != null">accrual_company_code,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="regionMarketCode != null">#{regionMarketCode},</if>
+            <if test="regionMarketName != null">#{regionMarketName},</if>
+            <if test="territoryCode != null">#{territoryCode},</if>
+            <if test="territoryName != null">#{territoryName},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="bpcCountryCode != null">#{bpcCountryCode},</if>
+            <if test="bpcCountryName != null">#{bpcCountryName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOrgName != null">#{salesOrgName},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">#{salesOfficeName},</if>
+            <if test="distributionChannelCode != null">#{distributionChannelCode},</if>
+            <if test="distributionChannelName != null">#{distributionChannelName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="dataVersion != null">#{dataVersion},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="isDummy != null">#{isDummy},</if>
+            <if test="localCurrencyCode != null">#{localCurrencyCode},</if>
+            <if test="companyCode != null">#{companyCode},</if>
+            <if test="accrualCompanyCode != null">#{accrualCompanyCode},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseOrgOffice" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseOrgOfficeDO">
+        update biz_base_org_office
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="regionMarketCode != null">region_market_code = #{regionMarketCode},</if>
+            <if test="regionMarketName != null">region_market_name = #{regionMarketName},</if>
+            <if test="territoryCode != null">territory_code = #{territoryCode},</if>
+            <if test="territoryName != null">territory_name = #{territoryName},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="bpcCountryCode != null">bpc_country_code = #{bpcCountryCode},</if>
+            <if test="bpcCountryName != null">bpc_country_name = #{bpcCountryName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOrgName != null">sales_org_name = #{salesOrgName},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">sales_office_name = #{salesOfficeName},</if>
+            <if test="distributionChannelCode != null">distribution_channel_code = #{distributionChannelCode},</if>
+            <if test="distributionChannelName != null">distribution_channel_name = #{distributionChannelName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="dataVersion != null">data_version = #{dataVersion},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="isDummy != null">is_dummy = #{isDummy},</if>
+            <if test="localCurrencyCode != null">local_currency_code = #{localCurrencyCode},</if>
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="accrualCompanyCode != null">accrual_company_code = #{accrualCompanyCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseOrgOfficeById" parameterType="Long">
+        delete from biz_base_org_office where id = #{id}
+    </delete>
+
+    <update id="deleteBizBaseOrgOfficeByIds" parameterType="String">
+        update biz_base_org_office set status = 'N' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectBizBaseOrgAndOffice"
+            parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseOrgOfficeDTO" resultMap="BizBaseOrgOfficeResult">
+        <include refid="selectBizBaseOrgOfficeVo"/>
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null"> and region_market_code = #{regionMarketCode}</if>
+            <if test="regionMarketName != null"> and region_market_name = #{regionMarketName}</if>
+            <if test="territoryCode != null"> and territory_code = #{territoryCode}</if>
+            <if test="territoryName != null"> and territory_name = #{territoryName}</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code = #{countryCode}</if>
+            <if test="countryName != null  and countryName != ''"> and country_name = #{countryName}</if>
+            <if test="bpcCountryCode != null  and bpcCountryCode != ''"> and bpc_country_code = #{bpcCountryCode}</if>
+            <if test="bpcCountryName != null  and bpcCountryName != ''"> and bpc_country_name = #{bpcCountryName}</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name = #{salesOrgName}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name = #{salesOfficeName}</if>
+            <if test="distributionChannelCode != null  and distributionChannelCode != ''"> and distribution_channel_code = #{distributionChannelCode}</if>
+            <if test="distributionChannelName != null  and distributionChannelName != ''"> and distribution_channel_name = #{distributionChannelName}</if>
+            <if test="isDummy != null and isDummy != '' "> and is_dummy = #{isDummy}</if>
+            <if test="localCurrencyCode != null and localCurrencyCode != ''"> and local_currency_code = #{localCurrencyCode}</if>
+            <if test="companyCode != null and companyCode != '' "> and company_code = #{companyCode}</if>
+            <if test="accrualCompanyCode != null and accrualCompanyCode != '' "> and accrual_company_code = #{accrualCompanyCode}</if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+            and status = 'Y'
+        </where>
+        order by id desc
+    </select>
+</mapper>

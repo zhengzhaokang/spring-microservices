@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseTerritoryRelationMapper">
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseTerritoryRelation" id="BizBaseTerritoryRelationResult">
+        <result property="id"    column="id"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="regionMarketCode"    column="region_market_code"    />
+        <result property="regionMarketName"    column="region_market_name"    />
+        <result property="territory"    column="territory"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseTerritoryRelationVo">
+        select id, business_group, geo_code, region_market_code, region_market_name, territory, status, remark, create_by, create_time, update_by, update_time from biz_base_territory_relation
+    </sql>
+
+    <select id="selectBizBaseTerritoryRelationList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTerritoryRelation" resultMap="BizBaseTerritoryRelationResult">
+        <include refid="selectBizBaseTerritoryRelationVo"/>
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''"> and region_market_code = #{regionMarketCode}</if>
+            <if test="regionMarketName != null  and regionMarketName != ''"> and region_market_name like '%'||#{regionMarketName}||'%'</if>
+            <if test="territory != null  and territory != ''"> and territory = #{territory}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+
+    <select id="getDropDownList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDropDownCondition" resultMap="BizBaseTerritoryRelationResult">
+        select distinct territory from biz_base_territory_relation
+        <where>
+            status = 'Y'
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length">
+                        and region_market_code = #{regionMarketCode}
+                    </when>
+                    <otherwise>
+                        and region_market_code in
+                        <foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseTerritoryRelationById" parameterType="Long" resultMap="BizBaseTerritoryRelationResult">
+        <include refid="selectBizBaseTerritoryRelationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseTerritoryRelation" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTerritoryRelation" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_territory_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessGroup != null">business_group,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="regionMarketCode != null">region_market_code,</if>
+            <if test="regionMarketName != null">region_market_name,</if>
+            <if test="territory != null">territory,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="regionMarketCode != null">#{regionMarketCode},</if>
+            <if test="regionMarketName != null">#{regionMarketName},</if>
+            <if test="territory != null">#{territory},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseTerritoryRelation" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseTerritoryRelation">
+        update biz_base_territory_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="regionMarketCode != null">region_market_code = #{regionMarketCode},</if>
+            <if test="regionMarketName != null">region_market_name = #{regionMarketName},</if>
+            <if test="territory != null">territory = #{territory},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseTerritoryRelationById" parameterType="Long">
+        delete from biz_base_territory_relation where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseTerritoryRelationByIds" parameterType="String">
+        delete from biz_base_territory_relation where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectbizBaseTerritoryRelationListCheck" resultType="com.lenovo.otmp.masterdata.domain.BizBaseSegment">
+        <include refid="selectBizBaseTerritoryRelationVo"/>
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+</mapper>

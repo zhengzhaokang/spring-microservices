@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.financing.mapper.LimitStatisticMapper">
+
+    <resultMap id="resultMap" type="com.microservices.otmp.financing.domain.entity.LimitStatisticDo">
+        <id column="id" property="id" />
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="amount" property="amount"/>
+        <result column="type" property="type"/>
+        <result column="statistic_date" property="statisticDate"/>
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+
+    <insert id="insertWithId">
+        INSERT INTO "otfp_analysis"."limit_statistic"
+            (id,bank_id,entity_id,amount,type,statistic_date,create_time,create_by,update_time,update_by)
+        VALUES
+        <foreach collection="records" item="item" separator=",">
+            (#{item.id},#{item.bankId},#{item.entityId},#{item.amount},#{item.type},#{item.statisticDate},
+            #{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRecords">
+        DELETE FROM "otfp_analysis"."limit_statistic" ls
+        WHERE ls.statistic_date = #{statisticDate}
+    </delete>
+
+    <select id="selectLastDate" resultMap="resultMap">
+        SELECT id,bank_id,entity_id,amount,type,statistic_date
+        FROM "otfp_analysis"."limit_statistic" ls
+        WHERE statistic_date = #{date}
+    </select>
+    <select id="selectLastStatisticDate" resultType="java.lang.String">
+        SELECT MAX(DISTINCT statistic_date)
+        FROM "otfp_analysis"."limit_statistic"
+    </select>
+</mapper>

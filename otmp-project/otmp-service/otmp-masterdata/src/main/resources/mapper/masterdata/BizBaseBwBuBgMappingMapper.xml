@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseBwBuBgMappingMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseBwBuBgMappingDO" id="BizBaseBwBuBgMappingResult">
+        <result property="id"    column="id"    />
+        <result property="bwBu"    column="bw_bu"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="profitCenterCode"    column="profit_center_code"    />
+        <result property="validateFrom"    column="validate_from"    />
+        <result property="validateTo"    column="validate_to"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseBwBuBgMappingVo">
+        select id, bw_bu, business_group, profit_center_code, validate_from, validate_to, create_by, create_time, update_by, update_time from biz_base_bw_bu_bg_mapping
+    </sql>
+
+    <select id="selectBizBaseBwBuBgMappingList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseBwBuBgMappingDTO" resultMap="BizBaseBwBuBgMappingResult">
+        <include refid="selectBizBaseBwBuBgMappingVo"/>
+        <where>
+             del_flag = 0
+            <if test="bwBu != null  and bwBu != ''"> and bw_bu = #{bwBu}</if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode}</if>
+            <if test="validateFrom != null  and validateFrom != ''"> and validate_from = #{validateFrom}</if>
+            <if test="validateTo != null  and validateTo != ''"> and validate_to = #{validateTo}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseBwBuBgMappingById" parameterType="Long" resultMap="BizBaseBwBuBgMappingResult">
+        <include refid="selectBizBaseBwBuBgMappingVo"/>
+        where id = #{id} and del_flag = 0
+    </select>
+        
+    <insert id="insertBizBaseBwBuBgMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBwBuBgMappingDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_bw_bu_bg_mapping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bwBu != null">bw_bu,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="profitCenterCode != null">profit_center_code,</if>
+            <if test="validateFrom != null">validate_from,</if>
+            <if test="validateTo != null">validate_to,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bwBu != null">#{bwBu},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="profitCenterCode != null">#{profitCenterCode},</if>
+            <if test="validateFrom != null">#{validateFrom},</if>
+            <if test="validateTo != null">#{validateTo},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseBwBuBgMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBwBuBgMappingDO">
+        update biz_base_bw_bu_bg_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bwBu != null">bw_bu = #{bwBu},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="validateFrom != null">validate_from = #{validateFrom},</if>
+            <if test="validateTo != null">validate_to = #{validateTo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateByKey" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseBwBuBgMappingDO">
+        update biz_base_bw_bu_bg_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bwBu != null">bw_bu = #{bwBu},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="validateFrom != null">validate_from = #{validateFrom},</if>
+            <if test="validateTo != null">validate_to = #{validateTo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        <where>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode}</if>
+            <if test="validateFrom != null  and validateFrom != ''"> and validate_from = #{validateFrom}</if>
+        </where>
+    </update>
+
+    <delete id="deleteBizBaseBwBuBgMappingById" parameterType="Long">
+        delete from biz_base_bw_bu_bg_mapping where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseBwBuBgMappingByIds" parameterType="String">
+        delete from biz_base_bw_bu_bg_mapping where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseDropDownMapper">
+    
+
+    <resultMap type="com.microservices.otmp.masterdata.domain.BizBaseDropDownList" id="BizBaseDropDownList">
+        <result property="value"    column="value"    />
+        <result property="label"    column="label"    />
+    </resultMap>
+
+
+    <select id="getBptype" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition" resultMap="BizBaseDropDownList">
+        select distinct bp_type as label ,bp_type as value from biz_base_bp_type
+        <where>
+            status = 'Y'
+        </where>
+    </select>
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.system.mapper.BizAsyncTaskLogMapper">
+
+    <resultMap type="com.microservices.otmp.system.domain.entity.BizAsyncTaskLogDO" id="BizAsyncTaskLogResult">
+        <result property="id" column="id"/>
+        <result property="asyncCode" column="async_code"/>
+        <result property="module" column="module"/>
+        <result property="businessType" column="business_type"/>
+        <result property="status" column="status"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="progress" column="progress"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="url" column="url"/>
+        <result property="useTime" column="use_time"/>
+        <result property="errorInfo" column="error_info"/>
+        <result property="taskType" column="task_type"/>
+        <result property="fileName" column="file_name"/>
+    </resultMap>
+
+    <sql id="selectBizAsyncTaskLogVo">
+        select id, async_code, module, business_type, status, start_date, end_date, progress, remark, create_by,
+        create_time, update_by, update_time, url, use_time, error_info, task_type, file_name from biz_async_task_log
+    </sql>
+
+    <select id="selectBizAsyncTaskLogList" parameterType="com.microservices.otmp.system.domain.BizAsyncTaskLogDTO"
+            resultMap="BizAsyncTaskLogResult">
+        <include refid="selectBizAsyncTaskLogVo"/>
+        <where>
+            <if test="asyncCode != null  and asyncCode != ''">and async_code = #{asyncCode}</if>
+            <if test="module != null  and module != ''">and module = #{module}</if>
+            <if test="businessType != null  and businessType != ''">and business_type = #{businessType}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="startDate != null ">and start_date = #{startDate}</if>
+            <if test="endDate != null ">and end_date = #{endDate}</if>
+            <if test="progress != null ">and progress = #{progress}</if>
+            <if test="url != null  and url != ''">and url = #{url}</if>
+            <if test="useTime != null ">and use_time = #{useTime}</if>
+            <if test="errorInfo != null  and errorInfo != ''">and error_info = #{errorInfo}</if>
+            <if test="taskType != null  and taskType != ''">and task_type = #{taskType}</if>
+            <if test="fileName != null  and fileName != ''">and file_name Ilike '%'||#{fileName}||'%'</if>
+            <if test="beginCreateTime!=null">
+                and create_time >= to_date(#{beginCreateTime},'MM/dd/yyyy')
+            </if>
+            <if test="endCreateTime!=null">
+                <![CDATA[and create_time <= to_date(#{endCreateTime},'MM/dd/yyyy')::timestamp + '1 day' ]]>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectBizAsyncTaskLogById" parameterType="Long" resultMap="BizAsyncTaskLogResult">
+        <include refid="selectBizAsyncTaskLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizAsyncTaskLog" parameterType="com.microservices.otmp.system.domain.entity.BizAsyncTaskLogDO"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into biz_async_task_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="asyncCode != null">async_code,</if>
+            <if test="module != null">module,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="status != null">status,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="progress != null">progress,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="url != null">url,</if>
+            <if test="useTime != null">use_time,</if>
+            <if test="errorInfo != null">error_info,</if>
+            <if test="taskType != null">task_type,</if>
+            <if test="fileName != null">file_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="asyncCode != null">#{asyncCode},</if>
+            <if test="module != null">#{module},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="progress != null">#{progress},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="url != null">#{url},</if>
+            <if test="useTime != null">#{useTime},</if>
+            <if test="errorInfo != null">#{errorInfo},</if>
+            <if test="taskType != null">#{taskType},</if>
+            <if test="fileName != null">#{fileName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizAsyncTaskLog" parameterType="com.microservices.otmp.system.domain.entity.BizAsyncTaskLogDO">
+        update biz_async_task_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="asyncCode != null">async_code = #{asyncCode},</if>
+            <if test="module != null">module = #{module},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="useTime != null">use_time = #{useTime},</if>
+            <if test="errorInfo != null">error_info = #{errorInfo},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizAsyncTaskLogById" parameterType="Long">
+        delete from biz_async_task_log where id = #{id}
+    </delete>
+
+    <delete id="deleteBizAsyncTaskLogByIds" parameterType="String">
+        delete from biz_async_task_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

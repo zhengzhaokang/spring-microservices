@@ -1,0 +1,142 @@
+server:
+  port: 8873
+# 日志配置
+logging:
+  level:
+    com.lenovo.otmp: debug
+    org.springframework: warn
+    com.lenovo.otmp.*.feign.**: DEBUG
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:notice}
+  # 切换配置
+  profiles:
+    active: tst
+  devtools:
+    restart:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: MM/dd/yyyy HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      maxFileSize: 10MB  #单位必须大写MB或不写(即为B)
+      maxRequestSize: 10MB
+  activiti:
+    check-process-definitions: false
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      label: master
+      discovery:
+        enabled: true
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.int}
+    prefer-ip-address: true
+
+feign:
+  hystrix:
+    enabled: false
+  client:
+    config:
+      default:
+        connect-timeout: 10000
+        read-timeout: 10000
+        loggerLevel: FULL #  日志级别
+# MyBatis
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.lenovo.otmp
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  configuration:
+    default-fetch-size: 5000
+mapper:
+  not-empty: true
+  identity: postgresql
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: postgresql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,info,health"
+  endpoint:
+    prometheus:
+      enabled: true
+
+# 不同环境区分
+# 开发环境配置
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:notice}
+  profiles: dev
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      #uri: http://otmp-config.t-sy-in.earth.xcloud.lenovo.com
+      uri: http://localhost:8888
+      discovery:
+        enabled: false
+        service-id: otmp-config
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://127.0.0.1:7001/eureka/
+
+# 测试环境配置
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:notice}
+  profiles: tst
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+uriSuffix: -tst
+
+---
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:notice-prod}
+  profiles: prod
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+uriSuffix: -prod
+

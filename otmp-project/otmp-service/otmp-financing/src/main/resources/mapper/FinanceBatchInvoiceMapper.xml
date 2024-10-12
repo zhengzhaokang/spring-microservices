@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.FinanceBatchInvoiceMapper">
+    <resultMap id="financeBatchInvoiceMap" type="com.lenovo.otmp.financing.domain.entity.FinanceBatchInvoiceDo">
+        <id column="id" property="id"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="invoice_id" property="invoiceId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="invoice_reference" property="invoiceReference"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+    <insert id="insertListWithId">
+        INSERT INTO finance_batch_invoice
+            (id,batch_number,bank_id,invoice_id,entity_id,supplier_code,supplier_id,invoice_reference,
+            delete_flag,create_time,create_by,update_time,update_by)
+        VALUES
+        <foreach collection="invoices" separator="," item="item">
+            (#{item.id},#{item.batchNumber},#{item.bankId},#{item.invoiceId},#{item.entityId},#{item.supplierCode},#{item.supplierId} ,
+            #{item.invoiceReference},#{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+</mapper>

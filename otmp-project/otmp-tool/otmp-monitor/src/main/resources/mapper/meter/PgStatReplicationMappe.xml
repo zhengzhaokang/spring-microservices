@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.monitor.meter.mapper.PgStatReplicationMapper">
+
+    <select id="list" resultType="com.lenovo.otmp.monitor.meter.domain.PgStatReplication">
+        select slot_name,
+               database,
+               pid,
+               usename,
+               client_addr,
+               extract(epoch from write_lag)  write_lag_second,
+               extract(epoch from flush_lag)  flush_lag_second,
+               extract(epoch from replay_lag) replay_lag_second
+        FROM pg_replication_slots prs
+                 left join pg_stat_replication psr on prs.active_pid = psr.pid
+        where prs.active = true;
+    </select>
+</mapper>

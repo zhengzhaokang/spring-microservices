@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseCustomerMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseCustomer" id="BizBaseCustomerResult">
+        <result property="id"    column="id"    />
+        <result property="customerNumber"    column="customer_number"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="salesOrgCode"    column="sales_org_code"    />
+        <result property="salesOrgName"    column="sales_org_name"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="salesOfficeName"    column="sales_office_name"    />
+        <result property="divisionCode"    column="division_code"    />
+        <result property="divisionName"    column="division_name"    />
+        <result property="tierType"    column="tier_type"    />
+        <result property="status"    column="status"    />
+        <result property="customerAccountGroup"    column="customer_account_group"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="countryName"    column="country_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="blockFlag"    column="block_flag"    />
+        <result property="archiveFlag"    column="archive_flag"    />
+    </resultMap>
+
+    <sql id="selectBizBaseCustomerVo">
+        select id, customer_number, customer_name, sales_org_code, sales_org_name, sales_office_code,sales_office_name, division_code, division_name, tier_type, status, customer_account_group, country_code, country_name, remark, create_by, create_time, update_by, update_time, block_flag, archive_flag from biz_base_customer
+    </sql>
+
+    <select id="selectBizBaseCustomerList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCustomer" resultMap="BizBaseCustomerResult">
+        <include refid="selectBizBaseCustomerVo"/>
+        <where>  
+            <if test="customerNumber != null  and customerNumber != ''"> and customer_number  Ilike '%'|| #{customerNumber}||'%' </if>
+            <if test="customerName != null  and customerName != ''"> and customer_name Ilike '%'||#{customerName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code  Ilike '%'|| #{salesOrgCode}||'%' </if>
+            <if test="salesOrgName != null  and salesOrgName != ''"> and sales_org_name  Ilike '%'|| #{salesOrgName}||'%' </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code  Ilike '%'|| #{salesOfficeCode}||'%' </if>
+            <if test="salesOfficeName != null  and salesOfficeName != ''"> and sales_office_name  Ilike '%'|| #{salesOfficeName}||'%' </if>
+            <if test="divisionCode != null  and divisionCode != ''"> and division_code  Ilike '%'|| #{divisionCode}||'%' </if>
+            <if test="divisionName != null  and divisionName != ''"> and division_name  Ilike '%'|| #{divisionName}||'%' </if>
+            <if test="tierType != null  and tierType != ''"> and tier_type  Ilike '%'|| #{tierType}||'%'  </if>
+            and status ='Y'
+            <if test="customerAccountGroup != null  and customerAccountGroup != ''"> and customer_account_group  Ilike '%'|| #{customerAccountGroup}||'%'  </if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code  Ilike '%'|| #{countryCode}||'%' </if>
+            <if test="countryName != null  and countryName != ''"> and country_name  Ilike '%'|| #{countryName}||'%' </if>
+            <if test="createBy != null  and createBy != ''"> and create_by Ilike '%'|| #{createBy}||'%' </if>
+            <if test="remark != null  and remark != ''"> and remark  Ilike '%'|| #{remark}||'%' </if>
+            <if test="blockFlag != null  and blockFlag != ''"> and block_flag  Ilike '%'|| #{blockFlag}||'%' </if>
+            <if test="archiveFlag != null  and archiveFlag != ''"> and archive_flag  Ilike '%'|| #{archiveFlag}||'%' </if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+        </where>
+        order by id desc
+
+    </select>
+    
+    <select id="selectBizBaseCustomerById" parameterType="Long" resultMap="BizBaseCustomerResult">
+        <include refid="selectBizBaseCustomerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseCustomer" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCustomer" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerNumber != null">customer_number,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOrgName != null">sales_org_name,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="salesOfficeName != null">sales_office_name,</if>
+            <if test="divisionCode != null">division_code,</if>
+            <if test="divisionName != null">division_name,</if>
+            <if test="tierType != null">tier_type,</if>
+            <if test="status != null">status,</if>
+            <if test="customerAccountGroup != null">customer_account_group,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="blockFlag != null">block_flag,</if>
+            <if test="archiveFlag != null">archive_flag,</if>
+            <if test="client != null">client,</if>
+            <if test="distributionChannel != null">distribution_channel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerNumber != null">#{customerNumber},</if>
+            <if test="customerName != null">#{customerName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOrgName != null">#{salesOrgName},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">#{salesOfficeName},</if>
+            <if test="divisionCode != null">#{divisionCode},</if>
+            <if test="divisionName != null">#{divisionName},</if>
+            <if test="tierType != null">#{tierType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="customerAccountGroup != null">#{customerAccountGroup},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="blockFlag != null">#{blockFlag},</if>
+            <if test="archiveFlag != null">#{archiveFlag},</if>
+            <if test="client != null">#{client},</if>
+            <if test="distributionChannel != null">#{distributionChannel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseCustomer" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCustomer">
+        update biz_base_customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerNumber != null">customer_number = #{customerNumber},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOrgName != null">sales_org_name = #{salesOrgName},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="salesOfficeName != null">sales_office_name = #{salesOfficeName},</if>
+            <if test="divisionCode != null">division_code = #{divisionCode},</if>
+            <if test="divisionName != null">division_name = #{divisionName},</if>
+            <if test="tierType != null">tier_type = #{tierType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="customerAccountGroup != null">customer_account_group = #{customerAccountGroup},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="blockFlag != null">block_flag = #{blockFlag},</if>
+            <if test="archiveFlag != null">archive_flag = #{archiveFlag},</if>
+            <if test="client != null">client = #{client},</if>
+            <if test="distributionChannel != null">distribution_channel = #{distributionChannel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseCustomerById" parameterType="Long">
+        delete from biz_base_customer where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseCustomerByIds" parameterType="String">
+        delete from biz_base_customer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseCustomerListCheck" resultMap="BizBaseCustomerResult">
+        <include refid="selectBizBaseCustomerVo"/>
+        <where>
+            <if test="customerNumber != null  and customerNumber != ''"> and customer_number = #{customerNumber}</if>
+            and status ='Y'
+            <if test="salesOrgCode != null  and salesOrgCode != ''"> and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="divisionCode != null  and divisionCode != ''"> and division_code = #{divisionCode}</if>
+
+        </where>
+
+
+    </select>
+
+    <update id="updateBizBaseCustomerByIds">
+        update    biz_base_customer set status='N',update_time=now()   where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getDropDownList" resultMap="BizBaseCustomerResult">
+
+        select distinct customer_number  ,customer_name  from biz_base_customer
+        <where>
+            status = 'Y'
+            <if test="customerName != null  and customerName != ''"> and <foreach item="item" collection="customerName.split(',')" open="(" separator=" or " close=")"> customer_name ilike '%' || #{item} || '%' </foreach></if>
+            <if test="customerNumber != null  and customerNumber != ''"> and <foreach item="item" collection="customerNumber.split(',')" open="(" separator=" or " close=")"> customer_number ilike '%' || #{item} || '%' </foreach></if>
+
+            <if test="tierType != null  and tierType != ''"><choose>
+                <when test=" 1 == tierType.split(',').length"> and tier_type = #{tierType} </when>
+                <otherwise> and tier_type in <foreach collection="tierType.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+
+            <if test="salesOrgCode != null  and salesOrgCode != ''"><choose>
+                <when test=" 1 == salesOrgCode.split(',').length"> and sales_org_code = #{salesOrgCode} </when>
+                <otherwise> and sales_org_code in <foreach collection="salesOrgCode.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"><choose>
+                <when test=" 1 == salesOfficeCode.split(',').length"> and sales_office_code = #{salesOfficeCode} </when>
+                <otherwise> and sales_office_code in <foreach collection="salesOfficeCode.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+
+        </where>
+    </select>
+</mapper>

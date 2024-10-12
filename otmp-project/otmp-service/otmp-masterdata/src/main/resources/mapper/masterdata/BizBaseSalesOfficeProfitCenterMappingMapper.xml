@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseSalesOfficeProfitCenterMappingMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseSalesOfficeProfitCenterMappingDO" id="BizBaseSalesOfficeProfitCenterMappingResult">
+        <result property="id"    column="id"    />
+        <result property="salesOfficeCode"    column="sales_office_code"    />
+        <result property="profitCenterCode"    column="profit_center_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectBizBaseSalesOfficeProfitCenterMappingVo">
+        select id, sales_office_code, profit_center_code, create_by, create_time, update_by, update_time, remark, del_flag from biz_base_sales_office_profit_center_mapping
+    </sql>
+
+    <select id="selectBizBaseSalesOfficeProfitCenterMappingList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseSalesOfficeProfitCenterMappingDTO" resultMap="BizBaseSalesOfficeProfitCenterMappingResult">
+        <include refid="selectBizBaseSalesOfficeProfitCenterMappingVo"/>
+        <where>
+            del_flag = 0
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''"> and sales_office_code = #{salesOfficeCode}</if>
+            <if test="profitCenterCode != null  and profitCenterCode != ''"> and profit_center_code = #{profitCenterCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseSalesOfficeProfitCenterMappingById" parameterType="Long" resultMap="BizBaseSalesOfficeProfitCenterMappingResult">
+        <include refid="selectBizBaseSalesOfficeProfitCenterMappingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseSalesOfficeProfitCenterMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseSalesOfficeProfitCenterMappingDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_sales_office_profit_center_mapping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="profitCenterCode != null">profit_center_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="profitCenterCode != null">#{profitCenterCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseSalesOfficeProfitCenterMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseSalesOfficeProfitCenterMappingDO">
+        update biz_base_sales_office_profit_center_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateBySalesOffice" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseSalesOfficeProfitCenterMappingDO">
+        update biz_base_sales_office_profit_center_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="profitCenterCode != null">profit_center_code = #{profitCenterCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+        </trim>
+        where sales_office_code = #{salesOfficeCode} and profit_center_code = #{profitCenterCode}
+    </update>
+
+    <delete id="deleteBizBaseSalesOfficeProfitCenterMappingById" parameterType="Long">
+        delete from biz_base_sales_office_profit_center_mapping where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseSalesOfficeProfitCenterMappingByIds" parameterType="String">
+        delete from biz_base_sales_office_profit_center_mapping where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

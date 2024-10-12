@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.InvoiceQueryMapper">
+
+    <resultMap id="invoiceListMap" type="com.lenovo.otmp.financing.domain.dto.InvoiceQueryDaoDto">
+        <result column="batch_number" property="batchNumber"/>
+        <result column="submission_date" property="submissionDate"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="invoice_reference" property="invoiceNumber"/>
+        <result column="invoice_issue_date" property="issueDate"/>
+        <result column="invoice_due_date" property="dueDate"/>
+        <result column="maturity_date" property="maturityDate"/>
+        <result column="invoice_amount" property="amount"/>
+        <result column="discount_date" property="discountDate"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="status_description" property="statusDescription"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="invoice_id" property="invoiceId"/>
+        <result column="invoice_currency" property="currency"/>
+        <result column="interest_rate" property="rate"/>
+        <result column="discount" property="discount"/>
+        <result column="confirmed_maturity_date" property="confirmedMaturityDate"/>
+        <result column="entity_name" property="entityName"/>
+    </resultMap>
+
+    <resultMap id="financingRatMap" type="com.lenovo.otmp.financing.domain.dto.FinancingRateDTO">
+        <result column="id" property="id" />
+        <result column="rate_type" property="rateType" />
+        <result column="rate_date" property="rateDate" />
+        <result column="rate_period" property="ratePeriod" />
+        <result column="rate"  property="rate" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="create_by"  property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_by"  property="updateBy" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <select id="submittedCount" resultType="java.lang.Integer">
+        select count(fbi.id)
+        <include refid="submittedCommonSql"/>
+    </select>
+
+    <sql id="submittedCommonSql">
+        from otfp_financing.finance_batch fb left join otfp_financing.finance_batch_invoice fbi on fb.batch_number = fbi.batch_number
+        left join otfp_financing.finance_invoice_ap fia on fbi.invoice_id = fia.id
+        where
+        fia.status = 'Financing'
+        AND fb.delete_flag = false
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        <if test="param.entityId != null  and param.entityId != ''">
+            and fbi.entity_id = #{param.entityId}
+        </if>
+        <if test="param.batchNumber != null  and param.batchNumber != ''">
+            and fb.batch_number = #{param.batchNumber}
+        </if>
+        <if test="param.submittedDateStart != null  and param.submittedDateStart != ''
+            and param.submittedDateEnd != null  and param.submittedDateEnd != '' ">
+            and fb.submission_date between #{param.submittedDateStart} and #{param.submittedDateEnd}
+        </if>
+        <if test="param.invoiceType != null  and param.invoiceType != ''">
+            and fia.invoice_type = #{param.invoiceType}
+        </if>
+        and <include refid="invoiceCondition"/>
+    </sql>
+
+    <select id="submittedList" resultMap="invoiceListMap">
+        select fb.batch_number,fb.submission_date,fbi.bank_id,fbi.entity_id,fia.company_code,fia.invoice_reference,
+        fia.invoice_issue_date ,fia.invoice_due_date ,fia.confirmed_maturity_date maturity_date ,fia.invoice_amount,
+        fia.invoice_currency
+        <include refid="submittedCommonSql"/> order by fb.batch_number desc
+        LIMIT #{param.limit} OFFSET #{param.offset};
+    </select>
+
+    <sql id="invoiceCondition">
+        fia.company_code in (
+        select distinct company_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+        and fia.vendor_code in (
+        select distinct supplier_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+    </sql>
+
+    <sql id="invoiceCondition2">
+        ia.company_code in (
+        select distinct company_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+        and ia.vendor_code in (
+        select distinct supplier_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+    </sql>
+
+    <select id="rejectedCount" resultType="java.lang.Integer">
+        select count(*) from
+        (<include refid="rejectedCommonSql"/>) tmp
+    </select>
+
+    <sql id="rejectedCommonSql1">
+        select fb.batch_number,fb.submission_date,fbi.bank_id,fbi.entity_id,fia.company_code,fia.invoice_reference,
+        fia.invoice_issue_date ,fia.invoice_due_date ,fia.confirmed_maturity_date maturity_date ,fia.invoice_amount,
+        fia.invoice_currency,fb.status_description
+        from finance_batch fb left join finance_batch_invoice fbi on fb.batch_number = fbi.batch_number
+        left join finance_invoice_ap fia on fbi.invoice_id = fia.id
+        where fia.status = 'Rejected'
+        AND fb.delete_flag = false
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        <if test="param.entityId != null  and param.entityId != ''">
+            and fbi.entity_id = #{param.entityId}
+        </if>
+        <if test="param.invoiceNumber != null  and param.invoiceNumber != ''">
+            and fia.invoice_reference = #{param.invoiceNumber}
+        </if>
+        <if test="param.invoiceType != null  and param.invoiceType != ''">
+            and fia.invoice_type = #{param.invoiceType}
+        </if>
+        and <include refid="invoiceCondition"/>
+    </sql>
+
+    <sql id="rejectedCommonSql2">
+        select '' batch_number,null submission_date,'' bank_id,null entity_id,
+        ia.company_code,ia.invoice_reference,
+        ia.invoice_issue_date ,ia.invoice_due_date ,ia.maturity_date ,ia.invoice_amount,
+        ia.invoice_currency,ia.status_description
+        from
+        otfp_financing.invoice_ap ia
+        where
+        ia.status in ('Invalid', 'Expired')
+        <if test="param.status != null  and param.status != ''">
+            and ia.status = #{param.status}
+        </if>
+        <if test="param.invoiceType != null  and param.invoiceType != ''">
+            and ia.invoice_type = #{param.invoiceType}
+        </if>
+        <if test="param.invoiceNumber != null  and param.invoiceNumber != ''">
+            and ia.invoice_reference = #{param.invoiceNumber}
+        </if>
+        <if test="param.entityId != null  and param.entityId != ''">
+            and ia.company_code in
+            (select distinct company_code from entity_company_code ecc where ecc.delete_flag = '0' and ecc.entity_id = #{param.entityId})
+        </if>
+        and <include refid="invoiceCondition2"/>
+    </sql>
+
+    <sql id="rejectedCommonSql">
+        <choose>
+            <when test="param.status == 'Rejected'">
+                <include refid="rejectedCommonSql1"/>
+            </when>
+            <otherwise>
+                <include refid="rejectedCommonSql2"/>
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="rejectedList" resultMap="invoiceListMap">
+        select tmp.* from
+        (<include refid="rejectedCommonSql"/>) tmp order by tmp.invoice_issue_date desc
+        LIMIT #{param.limit} OFFSET #{param.offset};
+    </select>
+
+    <select id="financedCount" resultType="java.lang.Integer">
+        select count (distinct fb.batch_number)
+        <include refid="financedCommonSql"/>
+    </select>
+
+    <sql id="financedCommonSql">
+        from otfp_financing.finance_batch fb left join otfp_financing.finance_batch_invoice fbi on fb.batch_number = fbi.batch_number
+        where fb.status = 'Financed'
+        AND fb.delete_flag = false
+        AND fbi.delete_flag = false
+        <if test="param.batchNumber != null  and param.batchNumber != ''">
+            and fb.batch_number = #{param.batchNumber}
+        </if>
+        <if test="param.disCountDateStart != null  and param.disCountDateEnd != ''
+            and param.disCountDateStart != null  and param.disCountDateEnd != '' ">
+            and fb.discount_date between #{param.disCountDateStart} and #{param.disCountDateEnd}
+        </if>
+        <if test="param.entityId != null  and param.entityId != ''">
+            and fbi.entity_id = #{param.entityId}
+        </if>
+        and fbi.supplier_code in (select distinct supplier_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+    </sql>
+
+    <select id="financedList" resultMap="invoiceListMap">
+        select distinct  fb.batch_number, fb.discount_date, fb.discount_amount,fb.interest_rate,fb.discount, fbi.entity_id
+        <include refid="financedCommonSql"/> order by fb.batch_number desc
+        LIMIT #{param.limit} OFFSET #{param.offset};
+    </select>
+
+    <sql id="selectRateInfo">
+        rate_type, rate_period, rate, rate_date, delete_flag
+    </sql>
+
+    <select id="selectRate" parameterType="com.lenovo.otmp.financing.domain.dto.FinancingRateDTO" resultMap="financingRatMap">
+        select
+        <include refid="selectRateInfo"/>
+        from otfp_financing.financing_rate
+        where delete_flag = false
+        <if test="rateType != null  and rateType != ''">
+            and rate_type  = #{rateType}
+        </if>
+        <if test="ratePeriod != null  and ratePeriod != ''">
+            and rate_period = #{ratePeriod}
+        </if>
+        <if test="startDate != null  and startDate != '' and endDate != null  and endDate != '' ">
+            and rate_date between #{startDate} and #{endDate}
+        </if>
+        group by <include refid="selectRateInfo"/>
+        order by rate_date
+    </select>
+    <select id="financedDetailList" resultMap="invoiceListMap">
+        SELECT fb.batch_number ,fb.submission_date ,fb.discount_date,
+            fbi.invoice_id ,fbi.invoice_reference AS invoice_reference,fbi.entity_id,
+            fia.company_code ,fia.invoice_issue_date,fia.invoice_due_date,fia.confirmed_maturity_date maturity_date,fia.invoice_amount ,fia.invoice_currency ,
+            b.bank_name
+        FROM otfp_financing.finance_batch fb
+        INNER JOIN otfp_financing.finance_batch_invoice fbi
+        ON fb.batch_number = fbi.batch_number
+        INNER JOIN otfp_financing.finance_invoice_ap fia
+        ON fbi.invoice_id = fia.id
+        INNER JOIN otfp_financing.bank b
+        ON fbi.bank_id = b.id
+        WHERE fb.delete_flag = false
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        AND fb.batch_number  = #{batchNumber}
+        AND fia.invoice_type = #{type}
+    </select>
+
+    <select id="financedDetailListByBatches" resultMap="invoiceListMap">
+        SELECT fb.batch_number ,fb.submission_date ,fb.discount_date,
+        fbi.invoice_id ,fbi.invoice_reference AS invoice_reference,fbi.entity_id,
+        fia.company_code ,fia.invoice_issue_date,fia.invoice_due_date ,fia.confirmed_maturity_date maturity_date,fia.invoice_amount ,fia.invoice_currency ,
+        b.bank_name,e.entity_name
+        FROM otfp_financing.finance_batch fb
+        INNER JOIN otfp_financing.finance_batch_invoice fbi
+        ON fb.batch_number = fbi.batch_number
+        INNER JOIN otfp_financing.finance_invoice_ap fia
+        ON fbi.invoice_id = fia.id
+        INNER JOIN otfp_financing.bank b
+        ON fbi.bank_id = b.id
+        INNER JOIN otfp_financing.entity e
+        ON fbi.entity_id = e.id
+        WHERE fb.delete_flag = false
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        AND fia.invoice_type = #{type}
+        <if test="batches != null and batches.size != 0">
+            AND fb.batch_number IN
+            <foreach collection="batches" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

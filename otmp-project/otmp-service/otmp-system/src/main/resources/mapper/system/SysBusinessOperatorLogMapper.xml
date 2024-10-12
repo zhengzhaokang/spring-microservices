@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.SysBusinessOperatorLogMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.SysBusinessOperatorLogDO" id="SysBusinessOperatorLogResult">
+        <result property="id"    column="id"    />
+        <result property="operation"    column="operation"    />
+        <result property="operator"    column="operator"    />
+        <result property="operationDate"    column="operation_date"    />
+        <result property="target"    column="target"    />
+        <result property="detail"    column="detail"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="moduleType"    column="module_type"    />
+    </resultMap>
+
+    <sql id="selectSysBusinessOperatorLogVo">
+        select id, operation, operator, operation_date, target, detail, create_by, create_time, update_by, update_time, module_type from sys_business_operator_log
+    </sql>
+
+    <select id="selectSysBusinessOperatorLogList" parameterType="com.lenovo.otmp.system.domain.dto.SysBusinessOperatorLogDTO" resultMap="SysBusinessOperatorLogResult">
+        <include refid="selectSysBusinessOperatorLogVo"/>
+        <where>  
+            <if test="operation != null  and operation != ''"> and operation in
+                <foreach collection="operation.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach>
+             </if>
+            <if test="operator != null  and operator != ''"> and operator Ilike '%'|| #{operator}||'%'
+             </if>
+            <if test="operationDate	!= null "> and operation_date = #{operationDate}</if>
+            <if test="target != null  and target != ''"> and target
+                Ilike '%'|| #{target}||'%'
+             </if>
+                and detail !='{}' and detail!='#'
+
+            <if test="moduleType != null  and moduleType != ''"> and module_type = #{moduleType}</if>
+            <if test="operatorDateStart != null"> and  operation_date  &gt;= #{operatorDateStart} </if>
+            <if test="operatorDateEnd != null">   and   operation_date  &lt;= (#{operatorDateEnd} ::timestamp + '1 day')</if>
+<!--
+            <if test="operatorDateStart != null"> and  to_char(operation_date,'yyyy-MM-dd') &gt;= #{operatorDateStart} </if>
+            <if test="operatorDateEnd != null">   and   to_char(operation_date,'yyyy-MM-dd') &lt;= #{operatorDateEnd}</if>-->
+        </where>
+        order by id desc
+    </select>
+    
+    <select id="selectSysBusinessOperatorLogById" parameterType="Long" resultMap="SysBusinessOperatorLogResult">
+        <include refid="selectSysBusinessOperatorLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysBusinessOperatorLog" parameterType="com.lenovo.otmp.system.domain.entity.SysBusinessOperatorLogDO">
+        insert into sys_business_operator_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="operation != null">operation,</if>
+            <if test="operator != null">operator,</if>
+            <if test="operationDate	!= null">operation_date,</if>
+            <if test="target != null">target,</if>
+            <if test="detail != null">detail,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="moduleType != null">module_type,</if>
+            <if test="geoCode != null and geoCode != '' ">geo_code,</if>
+            <if test="businessGroup != null and businessGroup != '' ">business_group,</if>
+            <if test="salesOrgCode != null and salesOrgCode != '' ">sales_org_code,</if>
+            <if test="salesOfficeCode != null and salesOfficeCode != '' ">sales_office_code,</if>
+            <if test="regionMarketCode != null and regionMarketCode != '' ">region_market_code,</if>
+            <if test="segmentCode != null and segmentCode != '' ">segment_code,</if>
+            <if test="gtnTypeCode != null and gtnTypeCode != '' ">gtn_type_code,</if>
+            <if test="accrualVersion != null ">accrual_version,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="operation != null">#{operation},</if>
+            <if test="operator != null">#{operator},</if>
+            <if test="operationDate != null">#{operationDate},</if>
+            <if test="target != null">#{target},</if>
+            <if test="detail != null">#{detail},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="moduleType != null">#{moduleType},</if>
+            <if test="geoCode != null and geoCode != '' ">#{geoCode},</if>
+            <if test="businessGroup != null and businessGroup != '' ">#{businessGroup},</if>
+            <if test="salesOrgCode != null and salesOrgCode != '' ">#{salesOrgCode},</if>
+            <if test="salesOfficeCode != null and salesOfficeCode != '' ">#{salesOfficeCode},</if>
+            <if test="regionMarketCode != null and regionMarketCode != '' ">#{regionMarketCode},</if>
+            <if test="segmentCode != null and segmentCode != '' ">#{segmentCode},</if>
+            <if test="gtnTypeCode != null and gtnTypeCode != '' ">#{gtnTypeCode},</if>
+            <if test="accrualVersion != null ">#{accrualVersion},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysBusinessOperatorLog" parameterType="com.lenovo.otmp.system.domain.entity.SysBusinessOperatorLogDO">
+        update sys_business_operator_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operation != null">operation = #{operation},</if>
+            <if test="operator != null">operator = #{operator},</if>
+            <if test="operationDate	!= null">operation_date	= #{operationDate},</if>
+            <if test="target != null">target = #{target},</if>
+            <if test="detail != null">detail = #{detail},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="moduleType != null">module_type = #{moduleType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysBusinessOperatorLogById" parameterType="Long">
+        delete from sys_business_operator_log where id = #{id}
+    </delete>
+
+    <delete id="deleteSysBusinessOperatorLogByIds" parameterType="String">
+        delete from sys_business_operator_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteSysBusinessOperatorLogByOperationDate">
+         delete from sys_business_operator_log where
+         				  to_char(operation_date,'yyyy-mm-dd') &gt;= #{startQuarter}
+         				  and   to_char(operation_date,'yyyy-mm-dd') &lt;= #{lastQuarter}
+
+    </delete>
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.analysis.mapper.SupplierInvoiceMapper">
+
+    <resultMap id="AmountResultMap" type="com.lenovo.otmp.analysis.common.domain.SupplierAccountsValue" >
+        <result column="value_date" property="valueDate" jdbcType="VARCHAR" />
+        <result column="vendor_code" property="vendorCode" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="NUMERIC" />
+        <result column="invoice_count" property="invoiceCount" jdbcType="BIGINT" />
+    </resultMap>
+
+    <resultMap id="SupplierInvoiceInfoVoResultMap" type="com.lenovo.otmp.analysis.domain.vo.SupplierInvoiceInfoVo" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="invoice_unique_id" property="invoiceUniqueId" jdbcType="VARCHAR" />
+        <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+        <result column="vendor_code" property="vendorCode" jdbcType="VARCHAR" />
+        <result column="fiscal_year" property="fiscalYear" jdbcType="VARCHAR" />
+        <result column="invoice_reference" property="invoiceReference" jdbcType="VARCHAR" />
+        <result column="invoice_additional_reference" property="invoiceAdditionalReference" jdbcType="VARCHAR" />
+        <result column="ecc_invoice_number" property="eccInvoiceNumber" jdbcType="VARCHAR" />
+        <result column="invoice_due_date" property="invoiceIssueDate" jdbcType="VARCHAR" />
+        <result column="invoice_baseline_date" property="invoiceBaselineDate" jdbcType="VARCHAR" />
+        <result column="invoice_due_date" property="invoiceDueDate" jdbcType="VARCHAR" />
+        <result column="invoice_currency" property="invoiceCurrency" jdbcType="VARCHAR" />
+        <result column="invoice_amount" property="invoiceAmount" jdbcType="NUMERIC" />
+        <result column="type_of_billing" property="typeOfBilling" jdbcType="VARCHAR" />
+        <result column="enter_date" property="enterDate" jdbcType="VARCHAR" />
+        <result column="invoice_pay_date" property="invoicePayDate" jdbcType="VARCHAR" />
+        <result column="maturity_date" property="maturityDate" jdbcType="DATE" />
+        <result column="invoice_type" property="invoiceType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="SupplierCompanyCodeInfoResultMap" type="com.lenovo.otmp.analysis.domain.vo.SupplierCompanyCodeInfo" >
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR" />
+        <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+        <result column="entity_name" property="entityName" jdbcType="VARCHAR" />
+        <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="findSupplierInvoiceCount" resultType="com.lenovo.otmp.analysis.common.domain.SupplierInvoiceCount">
+        select status,count(status)  from "otfp_financing"."supplier" WHERE delete_flag = '0' GROUP BY status
+    </select>
+
+    <select id="findSupplierInvoiceAllCount" resultType="Integer">
+        select count(1) from "otfp_financing"."supplier" WHERE delete_flag = '0'
+    </select>
+
+    <select id="findSupplierAmount" resultType="java.util.Map">
+        with t as (select vendor_code,sum(case WHEN invoice_type = 'Credit Memo' THEN invoice_amount * -1 else invoice_amount END) as invoice_amount  from otfp_financing.finance_invoice_ap
+        where status &lt;&gt; 'Invalid'
+        <if test="status !=null and status !=''">
+            and (status = #{status} or status = 'Financing')
+        </if>
+        GROUP BY vendor_code),
+        s as (select DISTINCT sl.supplier_id ,su.supplier_name,sl.supplier_code
+        from otfp_financing.supplier_unique sl
+        join otfp_financing.supplier su on su.id = sl.supplier_id
+        WHERE sl.delete_flag = '0' and su.delete_flag = '0')
+
+        select s.supplier_id as "supplierId",s.supplier_name as "supplierName", sum(t.invoice_amount) as "totalAmount"
+        from s
+        join t on s.supplier_code = t.vendor_code
+        GROUP BY s.supplier_id,s.supplier_name
+        ORDER BY "totalAmount" desc LIMIT 5 OFFSET 0
+    </select>
+
+    <select id="findBankLimit" resultType="BigDecimal" >
+        with a as (select (sum(case WHEN bank_limit is null THEN 0 else bank_limit end)
+        + sum(case WHEN adhoc_limit is not null and adhoc_expiry_date > now() THEN adhoc_limit else 0 end)) as totalamount
+        from "otfp_financing"."entity_bank_setting"
+        where delete_flag = '0'),
+        b as (SELECT sum(case WHEN invoice_type = 'Credit Memo' THEN amount * -1 else amount END) as useamount
+        from "otfp_financing"."invoice_submit_record" where delete_flag = '0')
+        select CASE WHEN a.totalamount = 0 THEN 0 ELSE b.useamount/a.totalamount END
+        from a,b
+    </select>
+
+    <select id="findAccountsAmount" resultMap="AmountResultMap" >
+        select
+        <if test="type == 1"> substr(invoice_date,0,5) </if>
+        <if test="type == 2"> substr(invoice_date, 0, 7) </if>
+        as value_date,vendor_code,sum(total_amount) as amount,sum(invoice_count) as invoice_count
+        from "otfp_analysis"."supplier_accounts_value"
+        where amount_type = #{amountType}
+        and to_char( create_time ,'yyyymmdd') >= to_char( now() ,'yyyymmdd')
+        GROUP BY vendor_code,value_date
+        ORDER BY value_date
+    </select>
+
+    <insert id="computePayableAccountsAmount">
+        INSERT into "otfp_analysis"."supplier_accounts_value" ("vendor_code","invoice_date","amount_type","invoice_count",
+        "total_amount","create_time")
+        (
+        select vendor_code,
+        invoice_pay_date
+        as invoice_date,1 as amount_type,
+        count(invoice_unique_id) as invoice_count,
+        sum(invoice_amount) as invoice_amount,now()
+        from otfp_financing.finance_invoice_ap
+        GROUP BY vendor_code,
+        invoice_pay_date
+        ORDER BY invoice_date
+        )
+    </insert>
+
+
+    <insert id="computeFinancingAccountsAmount">
+        INSERT into "otfp_analysis"."supplier_accounts_value" ("vendor_code","invoice_date","amount_type","invoice_count",
+        "total_amount","create_time")
+        (
+        select
+        vendor_code
+        ,dis.discount_dstr as invoice_date,
+        2 as amount_type,
+        count(dis.invoice_unique_id) as invoice_count,
+        sum(dis.invoice_amount) as invoice_amount
+        ,now()
+        from (select to_char(submission_date, 'yyyymmdd') as discount_dstr,* from otfp_financing.finance_invoice_ap fia
+        join otfp_financing.finance_batch_invoice fbi on fia.id = fbi.invoice_id
+        join otfp_financing.finance_batch fb on fb.batch_number = fbi.batch_number
+        where fb.submission_date is not null and fia.status = 'Financed'
+        ) dis
+        GROUP BY vendor_code,
+        dis.discount_dstr
+        )
+    </insert>
+
+    <select id="findSupplierCode" resultMap="SupplierCompanyCodeInfoResultMap">
+        select DISTINCT s.supplier_code,su.supplier_name,en.entity_name,ecc.company_code from otfp_financing.supplier_unique s
+        join otfp_financing.supplier su on su.id = s.supplier_id
+        join otfp_financing.entity_bank_setting ebs on s.bank_id = ebs.bank_id
+        join "otfp_financing"."entity" en on en.id = ebs.entity_id
+        join "otfp_financing"."supplier_company_code" scc on scc.supplier_id = su.id
+        join "otfp_financing"."entity_company_code" ecc on ecc.company_code = scc.company_code and ecc.entity_id = en.id
+        WHERE s.delete_flag = '0' and su.delete_flag = '0' and ebs.delete_flag = '0' and scc.delete_flag = '0' and ecc.delete_flag = '0'
+        and en.delete_flag = '0'
+        <if test="null != bankId and bankId != ''"> and ebs.bank_id = #{bankId}</if>
+        <if test="null != entityId and entityId != ''"> and ebs.entity_id = #{entityId}</if>
+        <if test="null != supplierId and supplierId != ''"> and su.id = #{supplierId}</if>
+    </select>
+
+    <select id="findBoeModelRatio" resultType="Integer" >
+        SELECT count(1) as count from "otfp_financing"."supplier" where  supplier_model = 'BOE' and delete_flag = '0' and status=2
+    </select>
+    <select id="findAllModelRatio" resultType="Integer" >
+        SELECT count(1) from "otfp_financing"."supplier" where delete_flag = '0' and status=2
+    </select>
+
+    <select id="findAccountsFinancingAmount" resultMap="AmountResultMap" >
+        select
+        invoice_date as value_date,vendor_code,total_amount as amount,invoice_count as invoice_count
+        from "otfp_analysis"."supplier_accounts_value"
+        where amount_type = #{param.amountType}
+        <if test="param.type == 1"> and substr(invoice_date,0,5) = #{param.typeValue} </if>
+        <if test="param.type == 2"> and substr(invoice_date, 0, 7) = #{param.typeValue} </if>
+        <if test="supplierCodes != null and supplierCodes.size != 0">
+            and vendor_code in
+            <foreach collection="supplierCodes" separator="," open="(" close=")" item="code">
+                #{code}
+            </foreach>
+        </if>
+        and to_char( create_time ,'yyyymmdd') >= to_char( now() ,'yyyymmdd')
+        ORDER BY value_date
+    </select>
+
+    <select id="findSupplierInvoice" resultMap="SupplierInvoiceInfoVoResultMap" >
+        select
+        *
+        from "otfp_financing"."finance_invoice_ap"
+        <where>
+            <if test="param.type == 1"> substr(invoice_pay_date,0,5) = #{param.typeValue} </if>
+            <if test="param.type == 2"> substr(invoice_pay_date, 0, 7) = #{param.typeValue} </if>
+            <if test="supplierCodes != null and supplierCodes.size != 0">
+                and vendor_code in
+                <foreach collection="supplierCodes" separator="," open="(" close=")" item="code">
+                    #{code}
+                </foreach>
+            </if>
+            <if test="companyCodes != null and companyCodes.size != 0">
+                and company_code in
+                <foreach collection="companyCodes" separator="," open="(" close=")" item="companyCode">
+                    #{companyCode}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY invoice_pay_date
+    </select>
+</mapper>

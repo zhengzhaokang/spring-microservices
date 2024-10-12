@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseRegionMarketMapper">
+
+    <resultMap type="com.microservices.otmp.masterdata.domain.BizBaseRegionMarket" id="BizBaseRegionMarketResult">
+        <result property="id" column="id"/>
+        <result property="geoCode" column="geo_code"/>
+        <result property="regionMarketCode" column="region_market_code"/>
+        <result property="regionMarketName" column="region_market_name"/>
+        <result property="regionMarketCurrency" column="region_market_currency"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="com.microservices.otmp.masterdata.domain.BizBaseDropDownList" id="BizBaseDropDownList">
+        <result property="value" column="value"/>
+        <result property="label" column="label"/>
+    </resultMap>
+
+    <sql id="selectBizBaseRegionMarketVo">
+        select id, geo_code, region_market_code, region_market_name, region_market_currency,
+        status, remark, create_by, create_time, update_by, update_time from biz_base_region_market
+    </sql>
+
+    <select id="selectBizBaseRegionMarketList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseRegionMarket"
+            resultMap="BizBaseRegionMarketResult">
+        <include refid="selectBizBaseRegionMarketVo"/>
+        <where>
+            <if test="geoCode != null  and  geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">and region_market_code Ilike
+                '%'||#{regionMarketCode}||'%'
+            </if>
+            <if test="regionMarketName != null  and regionMarketName != ''">and region_market_name Ilike
+                '%'||#{regionMarketName}||'%'
+            </if>
+            <if test="regionMarketCurrency != null  and regionMarketCurrency != ''">and region_market_currency Ilike
+                '%'||#{regionMarketCurrency}||'%'
+            </if>
+            and status ='Y'
+            <if test="createBy != null  and createBy != ''">and create_by Ilike '%'|| #{createBy}||'%'</if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+            <if test="remark != null  and remark != ''"> and remark  Ilike '%'|| #{remark}||'%'  </if>
+            <if test="createBy != null  and createBy != ''"> and create_by  Ilike '%'|| #{createBy}||'%'  </if>
+        </where>
+        order by id desc
+
+    </select>
+
+
+    <select id="getDropDownList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition"
+            resultMap="BizBaseRegionMarketResult">
+        select distinct region_market_code ,region_market_name from biz_base_org_office
+        <where>
+            status = 'Y'
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code like '%'|| #{geoCode}||'%'
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        order by region_market_code asc
+    </select>
+
+    <select id="getCurrencyForPool" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition"
+            resultMap="BizBaseDropDownList">
+        select distinct region_market_currency as label, region_market_currency as value from biz_base_region_market
+        <where>
+            status = 'Y' AND region_market_currency is not null
+            <if test="regionMarketCode != null  and regionMarketCode != ''">and region_market_code =
+                #{regionMarketCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseRegionMarketById" parameterType="Long" resultMap="BizBaseRegionMarketResult">
+        <include refid="selectBizBaseRegionMarketVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseRegionMarket" parameterType="com.microservices.otmp.masterdata.domain.BizBaseRegionMarket"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_region_market
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null and geoCode != ''">geo_code,</if>
+            <if test="regionMarketCode != null and regionMarketCode != ''">region_market_code,</if>
+            <if test="regionMarketName != null and regionMarketName != ''">region_market_name,</if>
+            <if test="regionMarketCurrency != null">region_market_currency,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null and geoCode != ''">#{geoCode},</if>
+            <if test="regionMarketCode != null and regionMarketCode != ''">#{regionMarketCode},</if>
+            <if test="regionMarketName != null and regionMarketName != ''">#{regionMarketName},</if>
+            <if test="regionMarketCurrency != null">#{regionMarketCurrency},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseRegionMarket" parameterType="com.microservices.otmp.masterdata.domain.BizBaseRegionMarket">
+        update biz_base_region_market
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="geoCode != null and geoCode != ''">geo_code = #{geoCode},</if>
+            <if test="regionMarketCode != null and regionMarketCode != ''">region_market_code = #{regionMarketCode},
+            </if>
+            <if test="regionMarketName != null and regionMarketName != ''">region_market_name = #{regionMarketName},
+            </if>
+            <if test="regionMarketCurrency != null">region_market_currency = #{regionMarketCurrency},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseRegionMarketById" parameterType="Long">
+        delete from biz_base_region_market where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseRegionMarketByIds" parameterType="String">
+        delete from biz_base_region_market where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseRegionMarketListByGeoCode" resultType="java.lang.String">
+        select distinct region_market_code from biz_base_region_market where geo_code=#{geoCode}
+    </select>
+
+    <select id="selectBizBaseRegionMarketListCheck" resultMap="BizBaseRegionMarketResult">
+        <include refid="selectBizBaseRegionMarketVo"/>
+        <where>
+            <if test="geoCode != null  and geoCode != ''">and geo_code = #{geoCode}</if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">and region_market_code =
+                #{regionMarketCode}
+            </if>
+            and status ='Y'
+        </where>
+    </select>
+
+    <update id="updateBizBaseRegionMarketByIds">
+        update biz_base_region_market set status='N',update_time=now() where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getMsDropDownList" resultMap="BizBaseRegionMarketResult">
+        select distinct region_market_code ,region_market_name,geo_code from biz_base_region_market
+        <where>
+            status = 'Y'
+
+            <if test="geoCodeList != null and geoCodeList.size()> 0">
+                and geo_code in
+                <foreach item="id" collection="geoCodeList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

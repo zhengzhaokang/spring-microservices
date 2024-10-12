@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.system.mapper.ViewTestItemMapper">
+    
+    <resultMap type="com.lenovo.otmp.system.domain.entity.ViewTestItemDO" id="ViewTestItemResult">
+        <result property="name"    column="name"    />
+        <result property="testName"    column="test_name"    />
+        <result property="relation"    column="relation"    />
+        <result property="age"    column="age"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="sex"    column="sex"    />
+        <result property="describe"    column="describe"    />
+        <result property="whetherAdult"    column="whether_adult"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectViewTestItemVo">
+        select name, test_name, relation, age, birthday, sex, describe, whether_adult,id from view_test_item
+    </sql>
+
+    <select id="selectViewTestItemList" parameterType="com.lenovo.otmp.system.domain.ViewTestItem" resultMap="ViewTestItemResult">
+        <include refid="selectViewTestItemVo"/>
+        <where>  
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name = #{name}</if>
+            <if test="testName != null  and testName != ''"> and test_name = #{testName}</if>
+            <if test="relation != null  and relation != ''"> and relation = #{relation}</if>
+            <if test="age != null  and age != ''"> and age = #{age}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="describe != null  and describe != ''"> and describe = #{describe}</if>
+            <if test="whetherAdult != null  and whetherAdult != ''"> and whether_adult = #{whetherAdult}</if>
+        </where>
+        order by id
+    </select>
+    
+    <select id="selectViewTestItemById" parameterType="String" resultMap="ViewTestItemResult">
+        <include refid="selectViewTestItemVo"/>
+        where name = #{name}
+    </select>
+        
+    <insert id="insertViewTestItem" parameterType="com.lenovo.otmp.system.domain.entity.ViewTestItemDO">
+        insert into view_test_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="testName != null  and testName != ''">test_name,</if>
+            <if test="relation != null  and relation != ''">relation,</if>
+            <if test="age != null  and age != ''">age,</if>
+            <if test="birthday != null ">birthday,</if>
+            <if test="sex != null  and sex != ''">sex,</if>
+            <if test="describe != null  and describe != ''">describe,</if>
+            <if test="whetherAdult != null  and whetherAdult != ''">whether_adult,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="testName != null  and testName != ''">#{testName},</if>
+            <if test="relation != null  and relation != ''">#{relation},</if>
+            <if test="age != null  and age != ''">#{age},</if>
+            <if test="birthday != null ">#{birthday},</if>
+            <if test="sex != null  and sex != ''">#{sex},</if>
+            <if test="describe != null  and describe != ''">#{describe},</if>
+            <if test="whetherAdult != null  and whetherAdult != ''">#{whetherAdult},</if>
+         </trim>
+    </insert>
+
+    <update id="updateViewTestItem" parameterType="com.lenovo.otmp.system.domain.entity.ViewTestItemDO">
+        update view_test_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="testName != null  and testName != ''">test_name = #{testName},</if>
+            <if test="relation != null  and relation != ''">relation = #{relation},</if>
+            <if test="age != null  and age != ''">age = #{age},</if>
+            <if test="birthday != null ">birthday = #{birthday},</if>
+            <if test="sex != null  and sex != ''">sex = #{sex},</if>
+            <if test="describe != null  and describe != ''">describe = #{describe},</if>
+            <if test="whetherAdult != null  and whetherAdult != ''">whether_adult = #{whetherAdult},</if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <delete id="deleteViewTestItemById" parameterType="String">
+        delete from view_test_item where name = #{name}
+    </delete>
+
+    <delete id="deleteViewTestItemByIds" parameterType="String">
+        delete from view_test_item where name in 
+        <foreach item="name" collection="array" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </delete>
+    
+</mapper>

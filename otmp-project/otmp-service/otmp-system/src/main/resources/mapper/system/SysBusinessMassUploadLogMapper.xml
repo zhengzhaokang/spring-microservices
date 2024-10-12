@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.system.mapper.SysBusinessMassUploadLogMapper">
+    
+    <resultMap type="com.microservices.otmp.system.domain.entity.SysBusinessMassUploadLogDO" id="SysBusinessMassUploadLogResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="status"    column="status"    />
+        <result property="recordCount"    column="record_count"    />
+        <result property="errorCount"    column="error_count"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="operator"    column="operator"    />
+        <result property="operatorDate"    column="operator_date"    />
+        <result property="url"    column="url"    />
+        <result property="moduleType"    column="module_type"    />
+        <result property="startDateTime"    column="start_time"    />
+        <result property="endDateTime"    column="end_time"    />
+    </resultMap>
+
+    <sql id="selectSysBusinessMassUploadLogVo">
+        select id, file_name, status, record_count, error_count, create_by, create_time, update_by, update_time, operator, operator_date, url, module_type,start_time,end_time from sys_business_mass_upload_log
+    </sql>
+
+    <select id="selectSysBusinessMassUploadLogList" parameterType="com.microservices.otmp.system.domain.dto.SysBusinessMassUploadLogDTO" resultMap="SysBusinessMassUploadLogResult">
+        <include refid="selectSysBusinessMassUploadLogVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name Ilike '%'||#{fileName}||'%'</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="recordCount != null "> and record_count = #{recordCount}</if>
+            <if test="errorCount != null "> and error_count = #{errorCount}</if>
+            <if test="operator != null  and operator != ''"> and operator
+                Ilike '%'|| #{operator}||'%'
+             </if>
+            <if test="operatorDate != null "> and operator_date = #{operatorDate}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="moduleType != null  and moduleType != ''"> and module_type = #{moduleType}</if>
+            <if test="operatorDateStart != null"> and  operator_date  &gt;= #{operatorDateStart} </if>
+            <if test="operatorDateEnd != null">   and   operator_date  &lt;= (#{operatorDateEnd}::timestamp + '1 day')</if>
+            <if test="accrualVersion != null "> and accrual_version = #{accrualVersion}</if>
+            <if test="geoCode != null and geoCode != '' ">and geo_code = #{geoCode} </if>
+            <if test="businessGroup != null and businessGroup != '' ">and business_group = #{businessGroup} </if>
+           <!--  <if test="operatorDateStart != null"> and  to_char(operator_date,'yyyy-MM-dd') &gt;= #{operatorDateStart} </if>
+            <if test="operatorDateEnd != null">   and   to_char(operator_date,'yyyy-MM-dd') &lt;= #{operatorDateEnd}</if>
+     -->   </where>
+        order by id desc
+    </select>
+    
+    <select id="selectSysBusinessMassUploadLogById" parameterType="Long" resultMap="SysBusinessMassUploadLogResult">
+        <include refid="selectSysBusinessMassUploadLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysBusinessMassUploadLog" parameterType="com.microservices.otmp.system.domain.entity.SysBusinessMassUploadLogDO" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_business_mass_upload_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">file_name,</if>
+            <if test="status != null">status,</if>
+            <if test="recordCount != null">record_count,</if>
+            <if test="errorCount != null">error_count,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="operator != null">operator,</if>
+            <if test="operatorDate != null">operator_date,</if>
+            <if test="url != null">url,</if>
+            <if test="moduleType != null">module_type,</if>
+            <if test="geoCode != null ">geo_code,</if>
+            <if test="accrualVersion != null ">accrual_version,</if>
+            <if test="businessGroup != null ">business_group,</if>
+            <if test="startDateTime != null ">start_time,</if>
+            <if test="endDateTime != null ">end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">#{fileName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="recordCount != null">#{recordCount},</if>
+            <if test="errorCount != null">#{errorCount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="operator != null">#{operator},</if>
+            <if test="operatorDate != null">#{operatorDate},</if>
+            <if test="url != null">#{url},</if>
+            <if test="moduleType != null">#{moduleType},</if>
+            <if test="geoCode != null ">#{geoCode} ,</if>
+            <if test="accrualVersion != null ">#{accrualVersion},</if>
+            <if test="businessGroup != null ">#{businessGroup},</if>
+            <if test="startDateTime != null ">#{startDateTime},</if>
+            <if test="endDateTime != null ">#{endDateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysBusinessMassUploadLog" parameterType="com.microservices.otmp.system.domain.entity.SysBusinessMassUploadLogDO">
+        update sys_business_mass_upload_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="recordCount != null">record_count = #{recordCount},</if>
+            <if test="errorCount != null">error_count = #{errorCount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="operator != null">operator = #{operator},</if>
+            <if test="operatorDate != null">operator_date = #{operatorDate},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="moduleType != null">module_type = #{moduleType},</if>
+            <if test="startDateTime != null">start_time = #{startDateTime},</if>
+            <if test="endDateTime != null">end_time = #{endDateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysBusinessMassUploadLogById" parameterType="Long">
+        delete from sys_business_mass_upload_log where id = #{id}
+    </delete>
+
+    <delete id="deleteSysBusinessMassUploadLogByIds" parameterType="String">
+        delete from sys_business_mass_upload_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteSysBusinessOperatorLogByOperationDate">
+         delete from sys_business_mass_upload_log where
+         				  to_char(operation_date,'yyyy-mm-dd') &gt;= #{startQuarter}
+         				  and   to_char(operation_date,'yyyy-mm-dd') &lt;= #{lastQuarter}
+    </delete>
+</mapper>

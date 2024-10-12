@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseCompanyLocalCurrecyMappingMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.entity.BizBaseCompanyLocalCurrecyMappingDO" id="BizBaseCompanyLocalCurrecyMappingResult">
+        <result property="id"    column="id"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="localCurrencyCode"    column="local_currency_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectBizBaseCompanyLocalCurrecyMappingVo">
+        select id, company_code, local_currency_code, create_by, create_time, update_by, update_time, remark, del_flag from biz_base_company_local_currecy_mapping
+    </sql>
+
+    <select id="selectBizBaseCompanyLocalCurrecyMappingList" parameterType="com.lenovo.otmp.masterdata.domain.dto.BizBaseCompanyLocalCurrecyMappingDTO" resultMap="BizBaseCompanyLocalCurrecyMappingResult">
+        <include refid="selectBizBaseCompanyLocalCurrecyMappingVo"/>
+        <where>
+            del_flag = 0
+            <if test="companyCode != null  and companyCode != ''"> and company_code = #{companyCode}</if>
+            <if test="localCurrencyCode != null  and localCurrencyCode != ''"> and local_currency_code = #{localCurrencyCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseCompanyLocalCurrecyMappingById" parameterType="Long" resultMap="BizBaseCompanyLocalCurrecyMappingResult">
+        <include refid="selectBizBaseCompanyLocalCurrecyMappingVo"/>
+        where id = #{id} and del_flag = 0
+    </select>
+        
+    <insert id="insertBizBaseCompanyLocalCurrecyMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseCompanyLocalCurrecyMappingDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_company_local_currecy_mapping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null">company_code,</if>
+            <if test="localCurrencyCode != null">local_currency_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="companyName != null">company_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null">#{companyCode},</if>
+            <if test="localCurrencyCode != null">#{localCurrencyCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="companyName != null">#{companyName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseCompanyLocalCurrecyMapping" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseCompanyLocalCurrecyMappingDO">
+        update biz_base_company_local_currecy_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="localCurrencyCode != null">local_currency_code = #{localCurrencyCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateByCompanyCode" parameterType="com.lenovo.otmp.masterdata.domain.entity.BizBaseCompanyLocalCurrecyMappingDO">
+        update biz_base_company_local_currecy_mapping
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="localCurrencyCode != null">local_currency_code = #{localCurrencyCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+        </trim>
+        where company_code = #{companyCode} and local_currency_code =  #{localCurrencyCode}
+    </update>
+    <delete id="deleteBizBaseCompanyLocalCurrecyMappingById" parameterType="Long">
+        delete from biz_base_company_local_currecy_mapping where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseCompanyLocalCurrecyMappingByIds" parameterType="String">
+        delete from biz_base_company_local_currecy_mapping where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

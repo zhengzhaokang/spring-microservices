@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseVendorCodeMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseVendorCode" id="BizBaseVendorCodeResult">
+        <result property="id"    column="id"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseVendorCodeVo">
+        select id, business_group, vendor_code, vendor_name, company_code, status, remark, create_by, create_time, update_by, update_time from biz_base_vendor_code
+    </sql>
+
+    <select id="selectBizBaseVendorCodeList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseVendorCode" resultMap="BizBaseVendorCodeResult">
+        <include refid="selectBizBaseVendorCodeVo"/>
+        <where>  
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="vendorCode != null and vendorCode != ''"> and vendor_code = #{vendorCode} </if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name like '%'||#{vendorName}||'%'</if>
+            <if test="companyCode != null  and companyCode != ''"> and company_code = #{companyCode}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseVendorCodeById" parameterType="Long" resultMap="BizBaseVendorCodeResult">
+        <include refid="selectBizBaseVendorCodeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseVendorCode" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseVendorCode" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_vendor_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessGroup != null">business_group,</if>
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="vendorName != null">vendor_name,</if>
+            <if test="companyCode != null">company_code,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="vendorName != null">#{vendorName},</if>
+            <if test="companyCode != null">#{companyCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseVendorCode" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseVendorCode">
+        update biz_base_vendor_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="vendorName != null">vendor_name = #{vendorName},</if>
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseVendorCodeById" parameterType="Long">
+        delete from biz_base_vendor_code where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseVendorCodeByIds" parameterType="String">
+        delete from biz_base_vendor_code where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.erp.mapper.InvoiceMaturityAmountInfoMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.lenovo.otmp.erp.domain.InvoiceMaturityAmountInfo" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR" />
+        <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="NUMERIC" />
+        <result column="maturity_date" property="maturityDate" jdbcType="DATE" />
+    </resultMap>
+
+    <resultMap id="VoResultMap" type="com.lenovo.otmp.erp.domain.vo.InvoiceMaturityAmountInfoVo" >
+        <result column="amount" property="amount" jdbcType="NUMERIC" />
+        <result column="maturity_date" property="maturityDate" jdbcType="DATE" />
+    </resultMap>
+
+    <insert id="saveBatch">
+        <foreach collection="list" item="item">
+            insert into "otfp_financing"."invoice_maturity_amount"
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    id,
+                </if>
+                <if test="item.supplierCode != null">
+                    supplier_code,
+                </if>
+                <if test="item.status != null">
+                    status,
+                </if>
+                <if test="item.amount != null">
+                    amount,
+                </if>
+                <if test="item.maturityDate != null">
+                    maturity_date,
+                </if>
+                <if test="item.companyCode != null">
+                    company_code,
+                </if>
+                <if test="item.createTime != null">
+                    create_time,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    #{item.id,jdbcType=BIGINT},
+                </if>
+                <if test="item.supplierCode != null">
+                    #{item.supplierCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.status != null">
+                    #{item.status,jdbcType=VARCHAR},
+                </if>
+                <if test="item.amount != null">
+                    #{item.amount,jdbcType=NUMERIC},
+                </if>
+                <if test="item.maturityDate != null">
+                    #{item.maturityDate,jdbcType=DATE},
+                </if>
+                <if test="item.companyCode != null">
+                    #{item.companyCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.createTime != null">
+                    #{item.createTime,jdbcType=TIMESTAMP},
+                </if>
+            </trim>
+            ON CONFLICT ("supplier_code", "maturity_date") DO UPDATE
+            set update_time = now(),
+                company_code = #{item.companyCode,jdbcType=VARCHAR},
+                status = #{item.status,jdbcType=VARCHAR},
+                amount = #{item.amount,jdbcType=NUMERIC}
+            ;
+        </foreach>
+    </insert>
+
+    <select id="findInvoiceBankMaturityAmountInfo" resultMap="VoResultMap">
+        select maturity_date,sum(amount) as amount from (
+        select DISTINCT ima.supplier_code, ima.company_code,ima.amount, ima.maturity_date,ima.status
+        from otfp_financing.invoice_maturity_amount ima
+        join otfp_financing.entity_company_code ecc
+        on ima.company_code = ecc.company_code
+        join otfp_financing.entity_bank_setting ebs on ecc.entity_id = ebs.entity_id
+        join otfp_financing.supplier_unique su on (su.supplier_code = ima.supplier_code
+        and ecc.entity_id = su.entity_id
+        and su.bank_id = ebs.bank_id)
+        where ima.status = '0'
+        and ebs.delete_flag = '0'
+        and su.delete_flag = '0'
+        and ebs.bank_id = #{bankId,jdbcType=VARCHAR}
+        and su.supplier_id = #{supplierId,jdbcType=VARCHAR}
+        ) t
+        where  t.amount &gt; 0
+        GROUP BY maturity_date
+        order by maturity_date
+    </select>
+
+    <select id="findDbInvoiceMaturityAmountInfo" resultMap="BaseResultMap">
+        select id,supplier_code,company_code, amount, maturity_date,status
+        from otfp_financing.invoice_maturity_amount
+        where status = '0'
+        and supplier_code = #{supplierCode,jdbcType=VARCHAR}
+        and company_code = #{companyCode,jdbcType=VARCHAR}
+        order by maturity_date
+    </select>
+
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.bank.mapper.BankCommonResponseHeaderInfoMapper">
+
+    <resultMap type="com.lenovo.otmp.bank.domain.entity.BankCommonResponseHeaderInfoDO"
+               id="BankCommonResponseHeaderInfoResult">
+        <result property="id" column="id"/>
+        <result property="msgId" column="msg_id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="timeStamp" column="time_stamp"/>
+        <result property="channelId" column="channel_id"/>
+        <result property="ctry" column="ctry"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="BankCommonResponseHeaderInfoBankCommonResponseItemInfoResult"
+               type="com.lenovo.otmp.bank.domain.entity.BankCommonResponseHeaderInfoDO"
+               extends="BankCommonResponseHeaderInfoResult">
+        <collection property="bankCommonResponseItemInfoList" notNullColumn="sub_id" javaType="java.util.List"
+                    resultMap="BankCommonResponseItemInfoResult"/>
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.bank.domain.entity.BankCommonResponseItemInfoDO"
+               id="BankCommonResponseItemInfoResult">
+        <result property="id" column="sub_id"/>
+        <result property="headerId" column="sub_header_id"/>
+        <result property="msgId" column="sub_msg_id"/>
+        <result property="responseType" column="sub_response_type"/>
+        <result property="financeReqNo" column="sub_finance_req_no"/>
+        <result property="txnDealRefNo" column="sub_txn_deal_ref_no"/>
+        <result property="txnRefNo" column="sub_txn_ref_no"/>
+        <result property="txnStatus" column="sub_txn_status"/>
+        <result property="txnRejectCode" column="sub_txn_reject_code "/>
+        <result property="txnStatusDescription" column="sub_txn_status_description "/>
+        <result property="partnerCode" column="sub_partner_code"/>
+        <result property="anchorOrgId" column="sub_anchor_org_id"/>
+        <result property="anchorName" column="sub_anchor_name"/>
+        <result property="spokeOrgId" column="sub_spoke_org_id"/>
+        <result property="spokeName" column="sub_spoke_name"/>
+        <result property="spokeErpId" column="sub_spoke_erp_id"/>
+        <result property="financeDate" column="sub_finance_date"/>
+        <result property="txnDate" column="sub_txn_date"/>
+        <result property="updateDate" column="sub_update_date "/>
+        <result property="dueDate" column="sub_due_date"/>
+        <result property="financeFee" column="sub_finance_fee"/>
+        <result property="loanAccount" column="sub_loan_account"/>
+        <result property="tenor" column="sub_tenor"/>
+        <result property="financeAmount" column="sub_finance_amount"/>
+        <result property="rateType" column="sub_rate_type"/>
+        <result property="currency" column="sub_currency"/>
+        <result property="paymentAmt" column="sub_payment_amt "/>
+        <result property="repaymentAmt" column="sub_repayment_amt"/>
+        <result property="loanorinterestRate" column="sub_loanorinterest_rate"/>
+        <result property="interestAmt" column="sub_interest_amt"/>
+        <result property="overdueInterest" column="sub_overdue_interest"/>
+        <result property="remark" column="sub_remark"/>
+        <result property="externalRefNo" column="sub_external_ref_no"/>
+        <result property="instrumentType" column="sub_instrument_type"/>
+        <result property="originalInstrumentAmt" column="sub_original_instrument_amt"/>
+        <result property="originalFinanceAmt" column="sub_original_finance_amt"/>
+        <result property="createTime" column="sub_create_time"/>
+        <result property="createBy" column="sub_create_by"/>
+    </resultMap>
+
+    <sql id="selectBankCommonResponseHeaderInfoVo">
+        select id, msg_id, org_id, time_stamp, channel_id, ctry, status, create_by, create_time, update_by, update_time from otfp_financing.bank_common_response_header_info
+    </sql>
+
+    <select id="selectBankCommonResponseHeaderInfoList"
+            parameterType="com.lenovo.otmp.bank.domain.dto.BankCommonResponseHeaderInfoDTO"
+            resultMap="BankCommonResponseHeaderInfoResult">
+        <include refid="selectBankCommonResponseHeaderInfoVo"/>
+        <where>
+            <if test="msgId != null  and msgId != ''">and msg_id = #{msgId}</if>
+            <if test="orgId != null  and orgId != ''">and org_id = #{orgId}</if>
+            <if test="timeStamp != null ">and time_stamp = #{timeStamp}</if>
+            <if test="channelId != null  and channelId != ''">and channel_id = #{channelId}</if>
+            <if test="ctry != null  and ctry != ''">and ctry = #{ctry}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectBankCommonResponseHeaderInfoById" parameterType="Long"
+            resultMap="BankCommonResponseHeaderInfoBankCommonResponseItemInfoResult">
+        select a.id, a.msg_id, a.org_id, a.time_stamp, a.channel_id, a.ctry, a.status, a.create_by, a.create_time, a.update_by, a.update_time,
+ b.id as sub_id, b.header_id as sub_header_id, b.msg_id as sub_msg_id, b.response_type as sub_response_type, b.finance_req_no as sub_finance_req_no, b.txn_deal_ref_no as sub_txn_deal_ref_no, b.txn_ref_no as sub_txn_ref_no, b.txn_status as sub_txn_status, b.txn_reject_code  as sub_txn_reject_code , b.txn_status_description  as sub_txn_status_description , b.partner_code as sub_partner_code, b.anchor_org_id as sub_anchor_org_id, b.anchor_name as sub_anchor_name, b.spoke_org_id as sub_spoke_org_id, b.spoke_name as sub_spoke_name, b.spoke_erp_id as sub_spoke_erp_id, b.finance_date as sub_finance_date, b.txn_date as sub_txn_date, b.update_date  as sub_update_date , b.due_date as sub_due_date, b.finance_fee as sub_finance_fee, b.loan_account as sub_loan_account, b.tenor as sub_tenor, b.finance_amount as sub_finance_amount, b.rate_type as sub_rate_type, b.currency as sub_currency, b.payment_amt  as sub_payment_amt , b.repayment_amt as sub_repayment_amt, b.loanorinterest_rate as sub_loanorinterest_rate, b.interest_amt as sub_interest_amt, b.overdue_interest as sub_overdue_interest, b.remark as sub_remark, b.external_ref_no as sub_external_ref_no, b.instrument_type as sub_instrument_type, b.original_instrument_amt as sub_original_instrument_amt, b.original_finance_amt as sub_original_finance_amt, b.create_time as sub_create_time, b.create_by as sub_create_by
+        from otfp_financing.bank_common_response_header_info a
+        left join otfp_financing.bank_common_response_item_info b on b.header_id = a.id
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertBankCommonResponseHeaderInfo"
+            parameterType="com.lenovo.otmp.bank.domain.entity.BankCommonResponseHeaderInfoDO">
+        insert into otfp_financing.bank_common_response_header_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="msgId != null">msg_id,</if>
+            <if test="orgId != null">org_id,</if>
+            <if test="timeStamp != null">time_stamp,</if>
+            <if test="channelId != null">channel_id,</if>
+            <if test="ctry != null">ctry,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="msgId != null">#{msgId},</if>
+            <if test="orgId != null">#{orgId},</if>
+            <if test="timeStamp != null">#{timeStamp},</if>
+            <if test="channelId != null">#{channelId},</if>
+            <if test="ctry != null">#{ctry},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBankCommonResponseHeaderInfo"
+            parameterType="com.lenovo.otmp.bank.domain.entity.BankCommonResponseHeaderInfoDO">
+        update otfp_financing.bank_common_response_header_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="msgId != null">msg_id = #{msgId},</if>
+            <if test="orgId != null">org_id = #{orgId},</if>
+            <if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+            <if test="channelId != null">channel_id = #{channelId},</if>
+            <if test="ctry != null">ctry = #{ctry},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBankCommonResponseHeaderInfoById" parameterType="Long">
+        delete from otfp_financing.bank_common_response_header_info where id = #{id}
+    </delete>
+
+    <delete id="deleteBankCommonResponseHeaderInfoByIds" parameterType="String">
+        delete from otfp_financing.bank_common_response_header_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteBankCommonResponseItemInfoByHeaderIds" parameterType="String">
+        delete from otfp_financing.bank_common_response_item_info where header_id in
+        <foreach item="headerId" collection="array" open="(" separator="," close=")">
+            #{headerId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteBankCommonResponseItemInfoByHeaderId" parameterType="Long">
+        delete from bank_common_response_item_info where header_id = #{headerId}
+    </delete>
+
+    <insert id="batchBankCommonResponseItemInfo">
+        insert into otfp_financing.bank_common_response_item_info( id, header_id, msg_id, response_type, finance_req_no,
+        txn_deal_ref_no, txn_ref_no, txn_status, txn_reject_code , txn_status_description , partner_code, anchor_org_id,
+        anchor_name, spoke_org_id, spoke_name, spoke_erp_id, finance_date, txn_date, update_date , due_date,
+        finance_fee, loan_account, tenor, finance_amount, rate_type, currency, payment_amt , repayment_amt,
+        loanorinterest_rate, interest_amt, overdue_interest, remark, external_ref_no, instrument_type,
+        original_instrument_amt, original_finance_amt, create_time, create_by) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.headerId}, #{item.msgId}, #{item.responseType}, #{item.financeReqNo},
+            #{item.txnDealRefNo}, #{item.txnRefNo}, #{item.txnStatus}, #{item.txnRejectCode },
+            #{item.txnStatusDescription }, #{item.partnerCode}, #{item.anchorOrgId}, #{item.anchorName},
+            #{item.spokeOrgId}, #{item.spokeName}, #{item.spokeErpId}, #{item.financeDate}, #{item.txnDate},
+            #{item.updateDate }, #{item.dueDate}, #{item.financeFee}, #{item.loanAccount}, #{item.tenor},
+            #{item.financeAmount}, #{item.rateType}, #{item.currency}, #{item.paymentAmt }, #{item.repaymentAmt},
+            #{item.loanorinterestRate}, #{item.interestAmt}, #{item.overdueInterest}, #{item.remark},
+            #{item.externalRefNo}, #{item.instrumentType}, #{item.originalInstrumentAmt}, #{item.originalFinanceAmt},
+            #{item.createTime}, #{item.createBy})
+        </foreach>
+    </insert>
+</mapper>

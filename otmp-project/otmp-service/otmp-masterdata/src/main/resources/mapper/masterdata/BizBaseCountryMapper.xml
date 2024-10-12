@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseCountryMapper">
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseCountry" id="BizBaseCountryResult">
+        <result property="id" column="id"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="countryName" column="country_name"/>
+        <result property="salesOrgCode" column="sales_org_code"/>
+        <result property="salesOfficeCode" column="sales_office_code"/>
+        <result property="businessGroup" column="business_group"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectBizBaseCountryVo">
+        select id, country_code, country_name, sales_org_code, sales_office_code, business_group, status, remark,
+        create_by, create_time, update_by, update_time from biz_base_country
+    </sql>
+
+    <select id="selectBizBaseCountryList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCountry"
+            resultMap="BizBaseCountryResult">
+        <include refid="selectBizBaseCountryVo"/>
+        <where>
+            <if test="countryCode != null  and countryCode != ''">and country_code Ilike '%'|| #{countryCode}||'%'</if>
+            <if test="countryName != null  and countryName != ''">and country_name Ilike '%'||#{countryName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">and sales_org_code Ilike '%'||
+                #{salesOrgCode}||'%'
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">and sales_office_code Ilike '%'||
+                #{salesOfficeCode}||'%'
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">and business_group = #{businessGroup}</if>
+            and status ='Y'
+            <if test="remark != null  and remark != ''">and remark Ilike '%'|| #{remark}||'%'</if>
+            <if test="createBy != null  and createBy != ''">and create_by Ilike '%'|| #{createBy}||'%'</if>
+
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectCountrylist" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCountry"
+            resultMap="BizBaseCountryResult">
+        select distinct country_code from biz_base_org_office
+        <where>
+            status ='Y' and delete_flag = false
+            <if test="countryCode != null  and countryCode != ''">and country_code Ilike '%'|| #{countryCode}||'%'</if>
+            <if test="countryName != null  and countryName != ''">and country_name Ilike '%'||#{countryName}||'%'</if>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">and sales_org_code Ilike '%'||
+                #{salesOrgCode}||'%'
+            </if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">and sales_office_code Ilike '%'||
+                #{salesOfficeCode}||'%'
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">and business_group = #{businessGroup}</if>
+        </where>
+    </select>
+
+
+    <select id="selectBizBaseCountryById" parameterType="Long" resultMap="BizBaseCountryResult">
+        <include refid="selectBizBaseCountryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseCountry" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCountry"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_country
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="countryCode != null">country_code,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="salesOrgCode != null">sales_org_code,</if>
+            <if test="salesOfficeCode != null">sales_office_code,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="salesOrgCode != null">#{salesOrgCode},</if>
+            <if test="salesOfficeCode != null">#{salesOfficeCode},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseCountry" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseCountry">
+        update biz_base_country
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="salesOrgCode != null">sales_org_code = #{salesOrgCode},</if>
+            <if test="salesOfficeCode != null">sales_office_code = #{salesOfficeCode},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseCountryById" parameterType="Long">
+        delete from biz_base_country where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseCountryByIds" parameterType="String">
+        delete from biz_base_country where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseCountryListCheck" resultMap="BizBaseCountryResult">
+        <include refid="selectBizBaseCountryVo"/>
+        <where>
+            <if test="salesOrgCode != null  and salesOrgCode != ''">and sales_org_code = #{salesOrgCode}</if>
+            <if test="salesOfficeCode != null  and salesOfficeCode != ''">and sales_office_code = #{salesOfficeCode}
+            </if>
+            and status ='Y'
+        </where>
+
+    </select>
+
+    <update id="updateBizBaseCountryByIds">
+        update biz_base_country set status='N',update_time=now() where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getMsDropDownList" resultType="com.lenovo.otmp.masterdata.domain.entity.dto.MsDropDownDTO">
+        SELECT DISTINCT
+        bbc.country_code as countryCode,
+        bbc.country_name as countryName,
+        bbso.region_market_code as regionMarketCode
+        FROM
+        sdms_base.biz_base_country bbc
+        INNER JOIN biz_base_sales_org bbso ON bbso.sales_org_code = bbc.sales_org_code
+        AND bbso.business_group = bbc.business_group
+        <where>
+            <if test="geoCodeList != null and geoCodeList.size()> 0">
+                and bbso.geo_code in
+                <foreach item="id" collection="geoCodeList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="regionCodeList != null and regionCodeList.size()> 0">
+                and bbso.region_market_code in
+                <foreach item="id" collection="regionCodeList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            and bbso.status='Y'
+            and bbc.status='Y'
+        </where>
+    </select>
+    <select id="countrySelect" resultMap="BizBaseCountryResult">
+        SELECT DISTINCT country_code, country_name FROM biz_base_org_office where status='Y' and delete_flag = false
+    </select>
+</mapper>

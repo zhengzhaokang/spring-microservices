@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseApcMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseApcDO" id="BizBaseApcResult">
+        <result property="id"    column="id"    />
+        <result property="apcCode"    column="apc_code"    />
+        <result property="internalName"    column="internal_name"    />
+        <result property="externalName"    column="external_name"    />
+        <result property="mtm"    column="mtm"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="mtmDescription"    column="mtm_description"    />
+    </resultMap>
+
+    <sql id="selectBizBaseApcVo">
+        select id, apc_code, internal_name, external_name, mtm, country_code, status, remark, create_by, create_time, update_by, update_time, mtm_description from biz_base_apc
+    </sql>
+
+    <select id="selectBizBaseApcList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseApcDO" resultMap="BizBaseApcResult">
+        <include refid="selectBizBaseApcVo"/>
+        <where>  
+            <if test="apcCode != null  and apcCode != ''"> and apc_code like '%'||#{apcCode}||'%'</if>
+            <if test="internalName != null  and internalName != ''"> and internal_name Ilike '%'||#{internalName}||'%'</if>
+            <if test="externalName != null  and externalName != ''"> and external_name Ilike '%'||#{externalName}||'%'</if>
+            <if test="mtm != null  and mtm != ''"> and   mtm  Ilike '%'||#{mtm}||'%'</if>
+            <if test="countryCode != null  and countryCode != ''"> and country_code  Ilike '%'||#{countryCode}||'%'</if>
+            and status = 'Y'
+            <if test="remark != null  and remark != ''"> and remark Ilike '%'||#{remark}||'%'</if>
+            <if test="createBy != null  and createBy != ''"> and create_by  Ilike '%'||#{createBy}||'%'</if>
+            <if test="mtmDescription != null  and mtmDescription != ''"> and mtm_description Ilike '%'||#{mtmDescription}||'%'</if>
+        </where>
+    </select>
+    
+    <select id="selectBizBaseApcById" parameterType="Long" resultMap="BizBaseApcResult">
+        <include refid="selectBizBaseApcVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseApc" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseApcDO" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_apc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="apcCode != null">apc_code,</if>
+            <if test="internalName != null">internal_name,</if>
+            <if test="externalName != null">external_name,</if>
+            <if test="mtm != null">mtm,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="mtmDescription != null">mtm_description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="apcCode != null">#{apcCode},</if>
+            <if test="internalName != null">#{internalName},</if>
+            <if test="externalName != null">#{externalName},</if>
+            <if test="mtm != null">#{mtm},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="mtmDescription != null">#{mtmDescription},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizBaseApc" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseApcDO">
+        update biz_base_apc
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="apcCode != null">apc_code = #{apcCode},</if>
+            <if test="internalName != null">internal_name = #{internalName},</if>
+            <if test="externalName != null">external_name = #{externalName},</if>
+            <if test="mtm != null">mtm = #{mtm},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="mtmDescription != null">mtm_description = #{mtmDescription},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseApcById" parameterType="Long">
+        delete from biz_base_apc where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseApcByIds" parameterType="String">
+        delete from biz_base_apc where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

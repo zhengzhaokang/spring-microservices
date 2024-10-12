@@ -1,0 +1,134 @@
+server:
+  port: 8873
+# 日志配置
+logging:
+  level:
+    com.lenovo.tms: debug
+    org.springframework: warn
+
+spring:
+  application:
+    name: ${APPLICATION_NAME:otfp}--${SERVICE_NAME:bank-adpater}${uriSuffix}
+  # 切换配置
+  profiles:
+    active: tst
+  devtools:
+    restart:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: MM/dd/yyyy HH:mm:ss
+    time-zone: GMT+8
+  activiti:
+    check-process-definitions: false
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      label: master
+      discovery:
+        enabled: true
+
+
+feign:
+  hystrix:
+    enabled: true
+
+# MyBatis
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.lenovo.tms
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  #用于mybatis在控制台打印sql日志
+  configuration:
+    logImpl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+mapper:
+  not-empty: true
+  identity: postgresql
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: postgresql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,info,health"
+  endpoint:
+    prometheus:
+      enabled: true
+
+# 不同环境区分
+# 开发环境配置
+---
+spring:
+  profiles: dev
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+#      uri: http://tms-config.t-sy-in.earth.xcloud.lenovo.com
+      uri: http://localhost:8888
+      discovery:
+        enabled: false
+        service-id: otfp-config
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.int}
+    prefer-ip-address: true
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://127.0.0.1:7001/eureka/
+uriSuffix:
+#eureka:
+#  client: #客户端注册进eureka服务列表内
+#    service-url:
+#      defaultZone: http://tms-eureka.t-sy-in.earth.xcloud.lenovo.com/eureka/
+
+# 测试环境配置
+---
+spring:
+  profiles: tst
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+
+# 生产环境配置
+---
+spring:
+  profiles: prod
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: lmp-frankfurt-prod
+      label: master
+      discovery:
+        enabled: true
+        service-id: lmp-config-server
+      headers:
+        SERVICE-AUTHENTICATION: ${lmp.service.token}
+uriSuffix: -prod

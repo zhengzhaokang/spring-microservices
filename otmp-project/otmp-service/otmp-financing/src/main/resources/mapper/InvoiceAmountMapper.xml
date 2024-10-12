@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.InvoiceAmountMapper">
+    <resultMap id="invoiceAmountMap" type="com.lenovo.otmp.financing.domain.entity.InvoiceAmountDo">
+        <result column="company_code" property="companyCode"/>
+        <result column="invoice_type" property="invoiceType"/>
+        <result column="amount" property="amount"/>
+        <result column="count" property="count"/>
+    </resultMap>
+
+    <select id="availableAmount" resultMap="invoiceAmountMap">
+        select
+        fia.invoice_type,
+        fia.company_code,
+        sum(fia.invoice_amount) amount,
+        count(fia.id) count
+        from
+        otfp_financing.finance_invoice_ap fia
+        where
+        <include refid="invoiceCondition"/>
+        and fia.status = 'Waiting'
+        AND fia.delete_flag = false
+        and fia.invoice_type = #{param.invoiceType}
+        group by
+        fia.company_code,fia.invoice_type
+    </select>
+
+    <sql id="invoiceCondition">
+        fia.company_code in (
+        select distinct company_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+        and fia.vendor_code in (
+        select distinct supplier_code from otfp_financing.supplier_company_code scc
+        where scc.supplier_id = #{param.supplierId} and scc.delete_flag = '0')
+    </sql>
+
+    <select id="submittedAmount" resultMap="invoiceAmountMap">
+        select
+        fia.invoice_type,
+        sum(fia.invoice_amount) amount,
+        count(fia.id) count
+        from
+        otfp_financing.finance_batch_invoice fbi
+        left join otfp_financing.finance_invoice_ap fia on
+        fbi.invoice_id = fia.id
+        where
+        <include refid="invoiceCondition"/>
+        and fia.status = 'Financing'
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        group by
+        fia.invoice_type
+    </select>
+
+    <select id="rejectedAmount" resultMap="invoiceAmountMap">
+        select
+        fia.invoice_type,
+        sum(fia.invoice_amount) amount,
+        count(fia.id) count
+        from
+        otfp_financing.finance_batch_invoice fbi
+        left join otfp_financing.finance_invoice_ap fia on
+        fbi.invoice_id = fia.id
+        where
+        <include refid="invoiceCondition"/>
+        and fia.status = 'Rejected'
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        group by
+        fia.invoice_type
+    </select>
+
+    <select id="apRejectedAmount" resultMap="invoiceAmountMap">
+        select
+        fia.invoice_type,
+        sum(fia.invoice_amount) amount,
+        count(fia.id) count
+        from
+        otfp_financing.invoice_ap fia
+        where
+        <include refid="invoiceCondition"/>
+        and fia.status in ('Invalid', 'Expired')
+        group by
+        fia.invoice_type
+    </select>
+
+    <select id="financedAmount" resultMap="invoiceAmountMap">
+        select
+        fia.invoice_type,
+        sum(fia.invoice_amount) amount,
+        count(fia.id) count
+        from
+        otfp_financing.finance_batch_invoice fbi
+        left join otfp_financing.finance_invoice_ap fia on
+        fbi.invoice_id = fia.id
+        where
+        <include refid="invoiceCondition"/>
+        and fia.status = 'Financed'
+        AND fbi.delete_flag = false
+        AND fia.delete_flag = false
+        group by
+        fia.invoice_type
+    </select>
+
+</mapper>

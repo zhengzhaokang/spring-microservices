@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.masterdata.mapper.BizBaseSegmentMapper">
+
+    <resultMap type="com.microservices.otmp.masterdata.domain.BizBaseSegment" id="BizBaseSegmentResult">
+        <result property="id"    column="id"    />
+        <result property="segmentCode"    column="segment_code"    />
+        <result property="segmentName"    column="segment_name"    />
+        <result property="segmentLevel"    column="segment_level"    />
+        <result property="parentSegment"    column="parent_segment"    />
+        <result property="gpnCode"    column="gpn_code"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseSegmentVo">
+        select id, segment_code, segment_name, segment_level, parent_segment, gpn_code, status, remark, business_group, create_by, create_time, update_by, update_time from biz_base_segment
+    </sql>
+
+    <select id="selectBizBaseSegmentList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseSegment" resultMap="BizBaseSegmentResult">
+        <include refid="selectBizBaseSegmentVo"/>
+        <where>
+            <if test="segmentCode != null  and segmentCode != ''"> and segment_code  Ilike '%'||  #{segmentCode}||'%'  </if>
+            <if test="segmentName != null  and segmentName != ''"> and segment_name Ilike '%'||#{segmentName}||'%'</if>
+            <if test="segmentLevel != null  and segmentLevel != ''"> and segment_level  Ilike '%'|| #{segmentLevel}||'%'    </if>
+            <if test="parentSegment != null  and parentSegment != ''"> and parent_segment  Ilike '%'|| #{parentSegment}||'%'    </if>
+            <if test="gpnCode != null  and gpnCode != ''"> and gpn_code  Ilike '%'||#{gpnCode}||'%'   </if>
+            and status ='Y'
+            <if test="remark != null  and remark != ''"> and remark  Ilike '%'|| #{remark}||'%'</if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group  Ilike '%'|| #{businessGroup}||'%'</if>
+            <if test="createBy != null  and createBy != ''"> and create_by  Ilike '%'|| #{createBy}||'%'   </if>
+
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+
+            </if>
+
+        </where>
+        order by id desc
+
+    </select>
+
+    <select id="getGpnCodeList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseSegment" resultMap="BizBaseSegmentResult">
+        select distinct gpn_code from biz_base_segment
+        <where>
+            status ='Y' and gpn_code is not NULL and gpn_code != ''
+            <if test="parentSegment != null  and parentSegment != ''"> and parent_segment  = #{parentSegment}   </if>
+
+        </where>
+    </select>
+
+    <select id="getDropDownList" parameterType="com.microservices.otmp.masterdata.domain.BizBaseDropDownCondition" resultMap="BizBaseSegmentResult">
+        select distinct segment_code, segment_name from biz_base_segment
+        <where>
+            status = 'Y'
+            <if test="tempField != null  and tempField != ''"><choose>
+                <when test=" 1 == tempField.split(',').length"> and segment_level = #{tempField} </when>
+                <otherwise> and segment_level in <foreach collection="tempField.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+
+            <if test="segmentCode != null  and segmentCode != ''"><choose>
+                <when test=" 1 == segmentCode.split(',').length"> and parent_segment = #{segmentCode} </when>
+                <otherwise> and parent_segment in <foreach collection="segmentCode.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+
+
+            <if test="businessGroup != null  and businessGroup != ''"><choose>
+                <when test=" 1 == businessGroup.split(',').length"> and business_group = #{businessGroup} </when>
+                <otherwise> and business_group in <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach> </otherwise></choose></if>
+        </where>
+    </select>
+
+
+    <select id="selectBizBaseSegmentById" parameterType="Long" resultMap="BizBaseSegmentResult">
+        <include refid="selectBizBaseSegmentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseSegment" parameterType="com.microservices.otmp.masterdata.domain.BizBaseSegment" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_segment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="segmentCode != null">segment_code,</if>
+            <if test="segmentName != null">segment_name,</if>
+            <if test="segmentLevel != null">segment_level,</if>
+            <if test="parentSegment != null">parent_segment,</if>
+            <if test="gpnCode != null">gpn_code,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="segmentCode != null">#{segmentCode},</if>
+            <if test="segmentName != null">#{segmentName},</if>
+            <if test="segmentLevel != null">#{segmentLevel},</if>
+            <if test="parentSegment != null">#{parentSegment},</if>
+            <if test="gpnCode != null">#{gpnCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseSegment" parameterType="com.microservices.otmp.masterdata.domain.BizBaseSegment">
+        update biz_base_segment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="segmentCode != null">segment_code = #{segmentCode},</if>
+            <if test="segmentName != null">segment_name = #{segmentName},</if>
+            <if test="segmentLevel != null">segment_level = #{segmentLevel},</if>
+            <if test="parentSegment != null">parent_segment = #{parentSegment},</if>
+            <if test="gpnCode != null">gpn_code = #{gpnCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseSegmentById" parameterType="Long">
+        delete from biz_base_segment where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseSegmentByIds" parameterType="String">
+        delete from biz_base_segment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseSegmentListCheck" resultMap="BizBaseSegmentResult">
+        <include refid="selectBizBaseSegmentVo"/>
+        <where>
+            <if test="segmentCode != null  and segmentCode != ''"> and segment_code = #{segmentCode}</if>
+            and status ='Y'        </where>
+
+    </select>
+
+    <update id="updateBizBaseSegmentByIds">
+        update  biz_base_segment set status='N',update_time=now()   where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </update>
+
+    <select id="toMsSegmentList" resultType="com.microservices.otmp.masterdata.domain.entity.vo.MsSegmentVo">
+        select
+        distinct
+        segment_code as segmentCode,
+        segment_name as segmentName,
+        business_group as businessGroup
+        from biz_base_segment
+        <where>
+            status = 'Y'
+            and segment_level = '1'
+            <if test="businessGroup != null  and  businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length"> and business_group = #{businessGroup} </when>
+                    <otherwise>
+                        and business_group in <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=","> #{item} </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseSegment" resultMap="BizBaseSegmentResult">
+        <include refid="selectBizBaseSegmentVo"/>
+        <where>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="segmentCode != null  and segmentCode != ''"> and segment_code = #{segmentCode}</if>
+            <if test="segmentLevel != null  and segmentLevel != ''"> and segment_level = #{segmentLevel}</if>
+            and status ='Y'
+        </where>
+    </select>
+</mapper>

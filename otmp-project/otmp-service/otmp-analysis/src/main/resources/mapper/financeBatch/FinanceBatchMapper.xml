@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.analysis.mapper.FinanceBatchMapper">
+    
+    <resultMap type="com.lenovo.otmp.analysis.domain.entity.FinanceBatchDO" id="FinanceBatchResult">
+        <result property="id"    column="id"    />
+        <result property="batchNumber"    column="batch_number"    />
+        <result property="submissionDate"    column="submission_date"    />
+        <result property="status"    column="status"    />
+        <result property="discountDate"    column="discount_date"    />
+        <result property="discountAmount"    column="discount_amount"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="maturityDate"    column="maturity_date"    />
+        <result property="submitCurrency"    column="submit_currency"    />
+        <result property="submitAmount"    column="submit_amount"    />
+        <result property="statusDescription"    column="status_description"    />
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="bankId"    column="bank_id"    />
+        <result property="entityId"    column="entity_id"    />
+        <result property="interestRate"    column="interest_rate"    />
+        <result property="tenor"    column="tenor"    />
+        <result property="discount"    column="discount"    />
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.analysis.domain.entity.FinanceBatchInvoiceApDO" id="FinanceBatchInvoiceApResult">
+        <result property="id"    column="id"    />
+        <result property="batchNumber"    column="batch_number"    />
+        <result property="companyCode"    column="company_code"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="invoiceUniqueId"    column="invoice_unique_id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="fiscalYear"    column="fiscal_year"    />
+        <result property="invoiceAdditionalReference"    column="invoice_additional_reference"    />
+        <result property="eccInvoiceNumber"    column="ecc_invoice_number"    />
+        <result property="invoiceIssueDate"    column="invoice_issue_date"    />
+        <result property="invoiceBaselineDate"    column="invoice_baseline_date"    />
+        <result property="invoiceDueDate"    column="invoice_due_date"    />
+        <result property="invoiceCurrency"    column="invoice_currency"    />
+        <result property="invoiceAmount"    column="invoice_amount"    />
+        <result property="typeOfBilling"    column="type_of_billing"    />
+        <result property="enterDate"    column="enter_date"    />
+        <result property="invoicePayDate"    column="invoice_pay_date"    />
+        <result property="invoiceType"    column="invoice_type"    />
+        <result property="invoiceReference"    column="invoice_reference"    />
+        <result property="maturityDate"    column="maturity_date"    />
+        <result property="confirmedMaturityDate"    column="confirmed_maturity_date"    />
+        <result property="status"    column="status"    />
+        <result property="statusUpdateDate" column="status_update_date" />
+        <result property="interestRate" column="interest_rate"/>
+    </resultMap>
+
+    <sql id="selectFinanceBatchVo">
+        select id, batch_number, submission_date, status, discount_date, discount_amount, delete_flag, create_time, create_by, update_time, update_by, maturity_date, submit_currency, submit_amount, status_description, supplier_id, bank_id, entity_id, interest_rate, tenor, discount from otfp_financing.finance_batch
+    </sql>
+
+    <select id="selectFinanceBatchList" parameterType="com.lenovo.otmp.analysis.domain.dto.FinanceBatchDTO" resultMap="FinanceBatchResult">
+        <include refid="selectFinanceBatchVo"/>
+        <where>  
+            <if test="batchNumber != null  and batchNumber != ''"> and batch_number = #{batchNumber}</if>
+            <if test="submissionDate != null "> and submission_date = #{submissionDate}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="discountDate != null "> and discount_date = #{discountDate}</if>
+            <if test="discountAmount != null "> and discount_amount = #{discountAmount}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="maturityDate != null  and maturityDate != ''"> and maturity_date = #{maturityDate}</if>
+            <if test="submitCurrency != null  and submitCurrency != ''"> and submit_currency = #{submitCurrency}</if>
+            <if test="submitAmount != null "> and submit_amount = #{submitAmount}</if>
+            <if test="statusDescription != null  and statusDescription != ''"> and status_description = #{statusDescription}</if>
+            <if test="supplierId != null "> and supplier_id = #{supplierId}</if>
+            <if test="bankId != null  and bankId != ''"> and bank_id = #{bankId}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+            <if test="interestRate != null "> and interest_rate = #{interestRate}</if>
+            <if test="tenor != null  and tenor != ''"> and tenor = #{tenor}</if>
+            <if test="discount != null "> and discount = #{discount}</if>
+            <if test="beginTime != null "> and submission_date>=#{beginTime} </if>
+            <if test="endTime != null "> and #{endTime}>= submission_date </if>
+            <if test="batchNumberList != null and batchNumberList != ''">
+                and batch_number in
+                <foreach collection="batchNumberList.split(',')" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findFinanceBatchInvoiceApList" parameterType="com.lenovo.otmp.analysis.domain.dto.FinanceBatchInvoiceApDTO" resultMap="FinanceBatchInvoiceApResult">
+            select
+                fia.id,
+                fia.company_code,
+                fia.delete_flag,
+                fia.create_time,
+                fia.create_by,
+                fia.update_time,
+                fia.update_by,
+                fia.invoice_unique_id,
+                fia.vendor_code,
+                fia.fiscal_year,
+                fia.invoice_additional_reference,
+                fia.ecc_invoice_number,
+                fia.invoice_issue_date,
+                fia.invoice_baseline_date,
+                fia.invoice_due_date,
+                fia.invoice_currency,
+                fia.invoice_amount,
+                fia.type_of_billing,
+                fia.enter_date,
+                fia.invoice_pay_date,
+                fia.invoice_type,
+                fia.invoice_reference,
+                to_char(fia.maturity_date,
+                'yyyy-mm-dd') maturity_date,
+                fia.status,
+                fia.status_update_date,
+                fia.interest_rate,
+                fia.status_description,
+                to_char(fia.confirmed_maturity_date,
+                'yyyy-mm-dd') confirmed_maturity_date,
+                fbi.batch_number
+            from
+            otfp_financing.finance_batch_invoice fbi
+            left join otfp_financing.finance_invoice_ap fia on
+            fia.invoice_reference = fbi.invoice_reference
+        <where>
+            <if test="batchNumberList != null and batchNumberList != ''">
+                and  fbi.batch_number in
+                <foreach collection="batchNumberList.split(',')" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by fbi.batch_number desc
+
+    </select>
+
+    <select id="selectFinanceBatchById" parameterType="Long" resultMap="FinanceBatchResult">
+        <include refid="selectFinanceBatchVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFinanceBatch" parameterType="com.lenovo.otmp.analysis.domain.entity.FinanceBatchDO">
+        insert into otfp_financing.finance_batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="batchNumber != null">batch_number,</if>
+            <if test="submissionDate != null">submission_date,</if>
+            <if test="status != null">status,</if>
+            <if test="discountDate != null">discount_date,</if>
+            <if test="discountAmount != null">discount_amount,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="maturityDate != null">maturity_date,</if>
+            <if test="submitCurrency != null">submit_currency,</if>
+            <if test="submitAmount != null">submit_amount,</if>
+            <if test="statusDescription != null">status_description,</if>
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="bankId != null">bank_id,</if>
+            <if test="entityId != null">entity_id,</if>
+            <if test="interestRate != null">interest_rate,</if>
+            <if test="tenor != null">tenor,</if>
+            <if test="discount != null">discount,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="batchNumber != null">#{batchNumber},</if>
+            <if test="submissionDate != null">#{submissionDate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="discountDate != null">#{discountDate},</if>
+            <if test="discountAmount != null">#{discountAmount},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="maturityDate != null">#{maturityDate},</if>
+            <if test="submitCurrency != null">#{submitCurrency},</if>
+            <if test="submitAmount != null">#{submitAmount},</if>
+            <if test="statusDescription != null">#{statusDescription},</if>
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="bankId != null">#{bankId},</if>
+            <if test="entityId != null">#{entityId},</if>
+            <if test="interestRate != null">#{interestRate},</if>
+            <if test="tenor != null">#{tenor},</if>
+            <if test="discount != null">#{discount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinanceBatch" parameterType="com.lenovo.otmp.analysis.domain.entity.FinanceBatchDO">
+        update otfp_financing.finance_batch
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchNumber != null">batch_number = #{batchNumber},</if>
+            <if test="submissionDate != null">submission_date = #{submissionDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="discountDate != null">discount_date = #{discountDate},</if>
+            <if test="discountAmount != null">discount_amount = #{discountAmount},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="maturityDate != null">maturity_date = #{maturityDate},</if>
+            <if test="submitCurrency != null">submit_currency = #{submitCurrency},</if>
+            <if test="submitAmount != null">submit_amount = #{submitAmount},</if>
+            <if test="statusDescription != null">status_description = #{statusDescription},</if>
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="bankId != null">bank_id = #{bankId},</if>
+            <if test="entityId != null">entity_id = #{entityId},</if>
+            <if test="interestRate != null">interest_rate = #{interestRate},</if>
+            <if test="tenor != null">tenor = #{tenor},</if>
+            <if test="discount != null">discount = #{discount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFinanceBatchById" parameterType="Long">
+        delete from otfp_financing.finance_batch where id = #{id}
+    </delete>
+
+    <delete id="deleteFinanceBatchByIds" parameterType="String">
+        delete from otfp_financing.finance_batch where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,174 @@
+# 数据源配置
+spring:
+  redis:
+    sentinel:
+      master: sentine127.0.0.1
+      nodes: 127.0.0.1:26379,127.0.0.1:26378,127.0.0.1:26376
+    password: w%zc2wT~%tOl
+    timeout: 6000ms  # 连接超时时长（毫秒）
+    lettuce:
+      pool:
+        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 10      # 连接池中的最大空闲连接
+        min-idle: 5       # 连接池中的最小空闲连接
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.postgresql.Driver
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:postgresql://127.0.0.1:5432/test?currentSchema=public&characterEncodeing=utf8&TimeZone=Asia/Shanghai&stringtype=unspecified
+        username: test
+        password: 123456
+      # 从库数据源
+      slave:
+        #从数据源开关/默认关闭
+        enabled: false
+        url: jdbc:postgresql://127.0.0.1:5432/test?currentSchema=public&characterEncodeing=utf8&TimeZone=Asia/Shanghai&stringtype=unspecified
+        username: test
+        password: 123456
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      webStatFilter:
+        enabled: true
+      statViewServlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow: 127.0.0.1,192.168.1.1/27  # ip白名单 只有当前名单中的ip才能访问 1/27表示ip前27位相同即可
+        deny: 192.168.1.255                 # ip黑名单，禁止访问的地址 优先级高于白名单
+        login-username: druid			 # druid 监控页面登录账号
+        login-password: 123654			 # druid 监控页面登录密码
+        url-pattern: /monitor/druid/*
+        reset-enable: true   # 是否能够重置数据
+      filter:
+        stat:
+          enabled: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          enabled: true       # 启用sql检测功能 ，防止sql注入攻击，sql防火墙启用
+          config:
+            multi-statement-allow: true
+      web-stat-filter:        # web应用 监控配置
+        enabled: true
+        profile-enable: true  # 能够监控单个url调用的sql列表
+        url-pattern: /*       # 监控路径控制  eg: /admin/*
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/vipDruid/*' # 不拦截的路径
+
+
+####################### 服务域名 ####################
+otfp:
+  service:
+    auth:
+      uri: otfp--auth
+    gen:
+      uri: otfp--gen
+    email:
+      uri: otfp--notice
+    download:
+      uri: otfp--download
+    word:
+      uri: otfp--word
+    masterdata:
+      uri: otfp--masterdata
+    system:
+      uri: otfp--system
+    documents:
+      uri: otfp--documents
+
+kafka:
+  topic:
+    msg-remind: otmp-svc.msg-remind.dev
+    system-async-upload: otmp-svc.system-async-upload.dev
+    system-async-upload-heartbeat: otmp-svc.async-upload-heartbeat.dev
+    system-log: otmp-svc.system-log.dev
+  producer:
+    kafkaProducer:
+      acks: all
+      retries: 3
+      batchSize: 106384
+      lingerMs: 1
+      bufferMemory: 33554432
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+      securityProtocol: SASL_SSL
+      sslTruststorePassword: WSO2_sp440
+      saslMechanism: SCRAM-SHA-512
+
+    server:
+      -
+        kafkaFactory: msgKafkaProduceFactory
+        server: 127.0.0.1:9091, 127.0.0.1:9092, 127.0.0.1:9093
+        saslJaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username='kaf-otmp-svc' password='zi9Si5d7';
+
+  consumer:
+    kafkaConsumer:
+      enableLog: false
+      truststoreLocation: classpath:client_truststore.jks
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      securityProtocol: SASL_SSL
+      sslTruststorePassword: WSO2_sp440
+      concurrency: 2
+
+      enableAutoCommit: true
+      autoOffsetReset: latest
+      autoCommitIntervalMs: 1000
+      sessionTimeoutMs: 30000
+      maxPollIntervalMs: 5000
+      saslMechanism: SCRAM-SHA-512
+      saslTruststorePassword: WSO2_sp440
+
+    server:
+      -
+        kafkaFactory: msgKafkaFactory
+        groupId: otmp.finance-system-dev
+        enableAutoCommit: false
+        server: 127.0.0.1:9091, 127.0.0.1:9092, 127.0.0.1:9093
+        saslJaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username='kaf-otmp-svc' password='zi9Si5d7';
+
+      - kafkaFactory: asyncTaskKafkaFactory
+        groupId: otmp-svc
+        enableAutoCommit: false
+        server: 127.0.0.1:9091, 127.0.0.1:9092, 127.0.0.1:9093
+        saslJaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username='kaf-otmp-svc' password='zi9Si5d7';
+
+      -
+        kafkaFactory: sysLogKafkaFactory
+        groupId: otmp.finance-system-dev
+        enableAutoCommit: false
+        server: 127.0.0.1:9091, 127.0.0.1:9092, 127.0.0.1:9093
+        saslJaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username='kaf-otmp-svc' password='zi9Si5d7';
+# 外部topic
+topic:
+  ms:
+    async-task: otmp.asynchronous-report.dev
+
+clearFile: '[{"fileType":"AsyncExport","time":30}]'
+
+#文件上传存储的根目录
+file:
+  data:
+    path: D:/file
+    destInfo: root@127.0.0.1:D:/fileData
+    isSwitch: 0

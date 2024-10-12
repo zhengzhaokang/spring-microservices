@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.EntityBankSettingMapper">
+    <resultMap id="entityMap" type="com.lenovo.otmp.financing.domain.entity.EntityBankSettingDo">
+        <id column="id" property="id"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="bank_limit" property="bankLimit"/>
+        <result column="adhoc_limit" property="adhocLimit"/>
+        <result column="available_limit" property="availableLimit"/>
+        <result column="adhoc_expiry_date" property="adhocExpiryDate"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="entityNameBankSettingMap" extends="entityMap"
+               type="com.lenovo.otmp.financing.domain.entity.EntityNameBankSettingDo">
+        <result column="entity_name" property="entityName"/>
+    </resultMap>
+
+    <resultMap id="entityBankNameGroupMap" type="com.lenovo.otmp.financing.domain.entity.EntityBankNameGroupDo">
+        <id column="id" property="id"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="entity_name" property="entityName"/>
+        <result column="bank_limit" property="bankLimit"/>
+        <result column="available_limit" property="availableLimit"/>
+        <result column="adhoc_limit" property="adhocLimit"/>
+        <result column="adhoc_expiry_date" property="adhocExpiryDate"/>
+    </resultMap>
+
+    <resultMap id="entityBankRelationMap" type="com.lenovo.otmp.financing.domain.entity.EntityBankRelationDo">
+        <id column="id" property="id"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="entity_currency" property="entityCurrency"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="entity_name" property="entityName"/>
+        <result column="bank_currency" property="bankCurrency"/>
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO entity_bank_setting
+        (id,entity_id,bank_id,bank_limit,adhoc_limit,available_limit,
+        adhoc_expiry_date,delete_flag,create_time,create_by,update_time,update_by)
+        VALUES
+        <foreach collection="records" item="item" separator=",">
+            (#{item.id},#{item.entityId},#{item.bankId},#{item.bankLimit},
+            #{item.adhocLimit},#{item.availableLimit},#{item.adhocExpiryDate},#{item.deleteFlag},
+            #{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+    <update id="decreaseLimit">
+        UPDATE entity_bank_setting
+        SET available_limit = available_limit - #{amount}
+        WHERE entity_id = #{entityId}
+        AND bank_id = #{bankId}
+        AND available_limit >= #{amount}
+    </update>
+    <delete id="removeByEntityId">
+        DELETE FROM entity_bank_setting
+        WHERE delete_flag = '1'
+        AND entity_id = #{entityId}
+    </delete>
+
+    <update id="deleteByEntityId">
+        UPDATE entity_bank_setting
+        SET delete_flag = '1'
+        WHERE entity_id = #{entityId}
+        AND delete_flag = '0'
+    </update>
+
+    <update id="deleteByEntityIdAndBankIds">
+        UPDATE entity_bank_setting
+        SET delete_flag = '1'
+        WHERE entity_id = #{entityId}
+        AND delete_flag = '0'
+        AND bank_id IN
+        <foreach collection="bankIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="activeByEntityId">
+        UPDATE entity_bank_setting
+        SET delete_flag = '0'
+        WHERE entity_id = #{entityId}
+        AND delete_flag = '1'
+    </update>
+
+    <select id="entityBankNameGroup" resultMap="entityBankNameGroupMap">
+        SELECT ebs.id,ebs.bank_id,ebs.entity_id,b.bank_name ,e.entity_name,
+            ebs.bank_limit,ebs.available_limit,ebs.adhoc_limit,ebs.adhoc_expiry_date
+        FROM entity_bank_setting ebs
+            INNER JOIN bank b
+        ON ebs.bank_id = b.id
+            INNER JOIN entity e
+        ON ebs.entity_id = e.id
+        WHERE ebs.delete_flag = '0'
+            AND b.delete_flag = '0'
+            AND e.delete_flag = '0'
+    </select>
+
+    <select id="selectEntityNamesByBankId" resultMap="entityNameBankSettingMap">
+        SELECT e.entity_name,ebs.id,ebs.bank_id
+        FROM entity_bank_setting ebs
+        INNER JOIN entity e
+        ON ebs.entity_id = e.id
+        WHERE ebs.delete_flag = '0'
+        AND e.delete_flag = '0'
+        AND ebs.bank_id = #{bankId}
+    </select>
+
+    <select id="selectEntityBankRelation" resultMap="entityBankRelationMap">
+        SELECT ebs.id, e.id AS entity_id,e.entity_name ,e.currency AS entity_currency,
+            b.id AS bank_id ,b.bank_name,b.currency AS bank_currency
+        FROM entity_bank_setting ebs
+        INNER JOIN entity e ON ebs.entity_id = e.id
+        INNER JOIN bank b ON ebs.bank_id = b.id
+        WHERE ebs.delete_flag = '0'
+        AND e.delete_flag ='0'
+        AND b.delete_flag = '0';
+    </select>
+
+    <select id="selectByBankIdAndEntityIds" resultMap="entityMap">
+        SELECT id,entity_id,bank_id,bank_limit,adhoc_limit,adhoc_expiry_date
+        FROM entity_bank_setting
+        WHERE delete_flag = '0'
+        AND bank_id = #{bankId}
+        <if test="entityIds != null and entityIds.size != 0">
+            AND entity_id IN
+            <foreach collection="entityIds" separator="," open="(" close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectTotalBankAmount" resultType="java.lang.Double">
+        SELECT SUM(ebs.bank_limit)
+        FROM entity_bank_setting ebs
+        WHERE ebs.bank_id = #{bankId}
+        AND ebs.delete_flag = '0'
+        AND ebs.entity_id IN
+        (
+            SELECT sbs.entity_id
+            FROM supplier_bank_setting sbs
+            WHERE sbs.supplier_id = #{supplierId}
+            AND sbs.delete_flag = '0'
+            AND sbs.bank_id = #{bankId}
+        )
+    </select>
+
+    <select id="selectBankAmounts" resultMap="entityMap" >
+        SELECT id,entity_id,bank_id,bank_limit,adhoc_limit,available_limit, adhoc_expiry_date
+        FROM entity_bank_setting ebs
+        WHERE ebs.bank_id = #{bankId}
+        AND ebs.delete_flag = '0'
+        AND ebs.entity_id IN
+        (
+        SELECT sbs.entity_id
+        FROM supplier_bank_setting sbs
+        WHERE sbs.supplier_id = #{supplierId}
+        AND sbs.delete_flag = '0'
+        AND sbs.bank_id = #{bankId}
+        )
+    </select>
+
+    <select id="selectGroupTotalBankAmount" resultType="com.lenovo.otmp.financing.domain.entity.BankLimitDo">
+        SELECT ebs.bank_id AS bankId,SUM(ebs.bank_limit) AS limit
+        FROM entity_bank_setting ebs
+        WHERE ebs.delete_flag = '0'
+        <if test="bankIds != null and bankIds.size != 0">
+            AND ebs.bank_id IN
+            <foreach collection="bankIds" separator="," item="bankId" open="(" close=")">
+                #{bankId}
+            </foreach>
+        </if>
+        AND ebs.entity_id IN
+        (
+            SELECT sbs.entity_id
+            FROM supplier_bank_setting sbs
+            WHERE sbs.supplier_id = #{supplierId}
+            AND sbs.delete_flag = '0'
+            <if test="bankIds != null and bankIds.size != 0">
+                AND sbs.bank_id IN
+                <foreach collection="bankIds" separator="," item="bankId" open="(" close=")">
+                    #{bankId}
+                </foreach>
+            </if>
+        )
+        GROUP BY ebs.bank_id
+    </select>
+    <select id="selectAllActive" resultMap="entityMap">
+        SELECT ebs.id,ebs.entity_id,ebs.bank_id,ebs.bank_limit,
+            ebs.adhoc_limit,ebs.available_limit, ebs.adhoc_expiry_date
+        FROM entity_bank_setting ebs
+        INNER JOIN entity e
+        ON ebs.entity_id = e.id
+        INNER JOIN bank b
+        ON ebs.bank_id = b.id
+        WHERE ebs.delete_flag = '0'
+        AND e.delete_flag = '0'
+        AND b.delete_flag = '0'
+    </select>
+    <select id="selectByEntityId" resultMap="entityMap">
+        SELECT id,entity_id,bank_id,ebs.bank_limit,
+            ebs.adhoc_limit,ebs.available_limit, ebs.adhoc_expiry_date
+        FROM entity_bank_setting ebs
+        WHERE ebs.delete_flag = #{delete}
+        AND ebs.entity_id = #{entityId}
+    </select>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.FinanceBatchMapper">
+    <resultMap id="financeBatchMap" type="com.lenovo.otmp.financing.domain.entity.FinanceBatchDo">
+        <id column="id" property="id"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="submission_date" property="submissionDate"/>
+        <result column="discount_date" property="discountDate"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="status" property="status"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="maturity_date" property="maturityDate"/>
+        <result column="submit_currency" property="submitCurrency"/>
+        <result column="submit_amount" property="submitAmount"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="entity_id" property="entityId"/>
+        <result column="interest_rate" property="interestRate"/>
+        <result column="tenor" property="tenor"/>
+        <result column="discount" property="discount"/>
+    </resultMap>
+
+    <resultMap id="financeBatchExportMap" extends="financeBatchMap"
+               type="com.lenovo.otmp.financing.domain.entity.FinanceBatchExportDo">
+        <result column="supplier_name" property="supplierName"/>
+        <result column="entity_name" property="entityName"/>
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO finance_batch
+        (id,batch_number,submission_date,discount_date,discount_amount,
+        status,delete_flag,create_time,create_by,update_time,update_by,maturity_date,submit_currency ,
+        submit_amount,supplier_id,bank_id,entity_id)
+        VALUES
+        <foreach collection="batches" item="item" separator=",">
+            (#{item.id},#{item.batchNumber},#{item.submissionDate},#{item.discountDate},#{item.discountAmount},
+            #{item.status},#{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy},#{item.maturityDate},
+            #{item.submitCurrency},#{item.submitAmount},#{item.supplierId},#{item.bankId},#{item.entityId})
+        </foreach>
+    </insert>
+    <select id="checkBatchDuplicate" resultMap="financeBatchMap">
+        SELECT id,batch_number
+        FROM finance_batch
+        WHERE batch_number IN
+        <foreach collection="batches" separator="," item="item" open="(" close=")">
+            #{item.batchNumber}
+        </foreach>
+        LIMIT 1
+    </select>
+    <select id="selectByBatchNumbers" resultMap="financeBatchExportMap">
+        SELECT fb.id,fb.batch_number,fb.submit_currency,fb.discount,fb.discount_date,
+        fb.maturity_date,fb.tenor,fb.interest_rate,fb.discount_amount,s.supplier_name ,e.entity_name
+        FROM finance_batch fb
+        INNER JOIN supplier s ON fb.supplier_id = s.id
+        INNER JOIN entity e ON fb.entity_id  = e.id
+        WHERE batch_number IN
+        <foreach collection="batchNumbers" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

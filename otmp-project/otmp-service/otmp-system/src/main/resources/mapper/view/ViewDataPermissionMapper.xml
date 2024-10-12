@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microservices.otmp.system.mapper.ViewDataPermissionMapper">
+    
+    <resultMap type="com.microservices.otmp.system.domain.entity.ViewDataPermissionDO" id="ViewDataPermissionResult">
+        <result property="id"    column="id"    />
+        <result property="itCode"    column="it_code"    />
+        <result property="pageKey"    column="page_key"    />
+        <result property="viewType"    column="view_type"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="regionCode"    column="region_code"    />
+        <result property="businessGroup"    column="business_group"    />
+        <result property="paymentMode"    column="payment_mode"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectViewDataPermissionVo">
+        select id, it_code, page_key, view_type, geo_code, region_code, business_group, payment_mode, create_by, create_time, update_by, update_time from view_data_permission
+    </sql>
+
+    <select id="selectViewDataPermissionList" parameterType="com.microservices.otmp.system.domain.ViewDataPermission" resultMap="ViewDataPermissionResult">
+        <include refid="selectViewDataPermissionVo"/>
+        <where>  
+            <if test="itCode != null  and itCode != ''"> and it_code = #{itCode}</if>
+            <if test="pageKey != null  and pageKey != ''"> and page_key = #{pageKey}</if>
+            <if test="viewType != null  and viewType != ''"> and view_type = #{viewType}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="regionCode != null  and regionCode != ''"> and region_code = #{regionCode}</if>
+            <if test="businessGroup != null  and businessGroup != ''"> and business_group = #{businessGroup}</if>
+            <if test="paymentMode != null  and paymentMode != ''"> and payment_mode = #{paymentMode}</if>
+        </where>
+    </select>
+    
+    <select id="selectViewDataPermissionById" parameterType="Integer" resultMap="ViewDataPermissionResult">
+        <include refid="selectViewDataPermissionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertViewDataPermission" parameterType="com.microservices.otmp.system.domain.entity.ViewDataPermissionDO" useGeneratedKeys="true" keyProperty="id">
+        insert into view_data_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itCode != null">it_code,</if>
+            <if test="pageKey != null">page_key,</if>
+            <if test="viewType != null">view_type,</if>
+            <if test="geoCode != null">geo_code,</if>
+            <if test="regionCode != null">region_code,</if>
+            <if test="businessGroup != null">business_group,</if>
+            <if test="paymentMode != null">payment_mode,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itCode != null">#{itCode},</if>
+            <if test="pageKey != null">#{pageKey},</if>
+            <if test="viewType != null">#{viewType},</if>
+            <if test="geoCode != null">#{geoCode},</if>
+            <if test="regionCode != null">#{regionCode},</if>
+            <if test="businessGroup != null">#{businessGroup},</if>
+            <if test="paymentMode != null">#{paymentMode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateViewDataPermission" parameterType="com.microservices.otmp.system.domain.entity.ViewDataPermissionDO">
+        update view_data_permission
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itCode != null">it_code = #{itCode},</if>
+            <if test="pageKey != null">page_key = #{pageKey},</if>
+            <if test="viewType != null">view_type = #{viewType},</if>
+            <if test="geoCode != null">geo_code = #{geoCode},</if>
+            <if test="regionCode != null">region_code = #{regionCode},</if>
+            <if test="businessGroup != null">business_group = #{businessGroup},</if>
+            <if test="paymentMode != null">payment_mode = #{paymentMode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteViewDataPermissionById" parameterType="Integer">
+        delete from view_data_permission where id = #{id}
+    </delete>
+
+    <delete id="deleteViewDataPermissionByIds" parameterType="String">
+        delete from view_data_permission where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

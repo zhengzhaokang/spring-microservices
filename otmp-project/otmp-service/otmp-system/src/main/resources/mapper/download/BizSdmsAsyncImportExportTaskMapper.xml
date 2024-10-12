@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.download.mapper.BizSdmsAsyncImportExportTaskMapper">
+    
+    <resultMap type="com.lenovo.otmp.download.domain.entity.BizSdmsAsyncImportExportTaskDO" id="BizSdmsAsyncImportExportTaskResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="systemModule"    column="system_module"    />
+        <result property="userItCode"    column="user_it_code"    />
+        <result property="priority"    column="priority"    />
+        <result property="requestParam"    column="request_param"    />
+        <result property="actionHandle"    column="action_handle"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="dealTime"    column="deal_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="result"    column="result"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="taskCode"    column="task_code"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="expectDealTime"    column="expect_deal_time"    />
+        <result property="callBackHandle"    column="call_back_handle"    />
+        <result property="fileMd5"    column="file_md5"    />
+        <result property="fileName"    column="file_name"    />
+    </resultMap>
+
+    <sql id="selectBizSdmsAsyncImportExportTaskVo">
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    task_id,
+                    task_name,
+                    system_module,
+                    user_it_code,
+                    priority,
+                    request_param,
+                    action_handle,
+                    status,
+                    create_time,
+                    create_by,
+                    update_by,
+                    update_time,
+                    deal_time,
+                    finish_time,
+                    RESULT,
+                    file_path,
+                    task_code,
+                    task_type,
+                    expect_deal_time,
+                    call_back_handle,
+                    file_md5,
+                    file_name,
+                    COALESCE ( expect_deal_time, create_time ) AS order_time
+                FROM
+                    biz_sdms_async_import_export_task
+            ) AS A
+    </sql>
+
+    <select id="selectBizSdmsAsyncImportExportTaskList" parameterType="com.lenovo.otmp.download.domain.dto.BizSdmsAsyncImportExportTaskDTO" resultMap="BizSdmsAsyncImportExportTaskResult">
+        <include refid="selectBizSdmsAsyncImportExportTaskVo"/>
+        <where>  
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="taskName != null  and taskName != ''"> and task_name Ilike '%'||#{taskName}||'%'</if>
+            <if test="systemModule != null  and systemModule != ''"> and system_module = #{systemModule}</if>
+            <if test="userItCode != null  and userItCode != ''"> and user_it_code = #{userItCode}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="requestParam != null  and requestParam != ''"> and request_param = #{requestParam}</if>
+            <if test="actionHandle != null  and actionHandle != ''"> and action_handle = #{actionHandle}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="dealTime != null "> and deal_time = #{dealTime}</if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="result != null  and result != ''"> and result = #{result}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
+            <if test="taskType != null "> and task_type = #{taskType}</if>
+            <if test="expectDealTime != null "> and expect_deal_time = #{expectDealTime}</if>
+            <if test="callBackHandle != null  and callBackHandle != ''"> and call_back_handle = #{callBackHandle}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
+            <if test="fileMd5 != null  and fileMd5 != ''"> and file_md5 = #{fileMd5}</if>
+           AND now() >= order_time
+        </where>
+        order by  order_time DESC
+    </select>
+
+    <select id="findBizSdmsAsyncImportExportTaskList" parameterType="com.lenovo.otmp.download.domain.dto.BizSdmsAsyncImportExportTaskDTO" resultMap="BizSdmsAsyncImportExportTaskResult">
+        <include refid="selectBizSdmsAsyncImportExportTaskVo"/>
+        <where>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="taskName != null  and taskName != ''"> and task_name Ilike '%'||#{taskName}||'%'</if>
+            <if test="systemModule != null  and systemModule != ''"> and system_module = #{systemModule}</if>
+            <if test="userItCode != null  and userItCode != ''"> and user_it_code = #{userItCode}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="requestParam != null  and requestParam != ''"> and request_param = #{requestParam}</if>
+            <if test="actionHandle != null  and actionHandle != ''"> and action_handle = #{actionHandle}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="dealTime != null "> and deal_time = #{dealTime}</if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="result != null  and result != ''"> and result = #{result}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
+            <if test="taskType != null "> and task_type = #{taskType}</if>
+            <if test="expectDealTime != null "> and expect_deal_time = #{expectDealTime}</if>
+            <if test="callBackHandle != null  and callBackHandle != ''"> and call_back_handle = #{callBackHandle}</if>
+            <if test="fileName != null  and fileName != ''">and file_name = #{fileName}</if>
+            <if test="fileMd5 != null  and fileMd5 != ''">and file_md5 = #{fileMd5}</if>
+        </where>
+        order by order_time DESC
+    </select>
+
+    <select id="selectBizSdmsAsyncImportExportTaskByTaskId" parameterType="Long"
+            resultMap="BizSdmsAsyncImportExportTaskResult">
+        <include refid="selectBizSdmsAsyncImportExportTaskVo"/>
+        where task_id = #{taskId}
+    </select>
+    <select id="listByInit"
+            resultMap="BizSdmsAsyncImportExportTaskResult"><![CDATA[
+        select *
+        from biz_sdms_async_import_export_task
+        where expect_deal_time <= now()
+          and status = '0'
+        union all
+        select *
+        from biz_sdms_async_import_export_task
+        where expect_deal_time <= (NOW() - INTERVAL '5 MINUTE')
+          and status = '-4';
+        ]]></select>
+
+    <insert id="insertBizSdmsAsyncImportExportTask"
+            parameterType="com.lenovo.otmp.download.domain.entity.BizSdmsAsyncImportExportTaskDO">
+        insert into biz_sdms_async_import_export_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="taskName != null">task_name,</if>
+            <if test="systemModule != null">system_module,</if>
+            <if test="userItCode != null">user_it_code,</if>
+            <if test="priority != null">priority,</if>
+            <if test="requestParam != null">request_param,</if>
+            <if test="actionHandle != null">action_handle,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="dealTime != null">deal_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="result != null">result,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="taskCode != null">task_code,</if>
+            <if test="taskType != null">task_type,</if>
+            <if test="expectDealTime != null">expect_deal_time,</if>
+            <if test="callBackHandle != null">call_back_handle,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="fileMd5 != null">file_md5,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="taskName != null">#{taskName},</if>
+            <if test="systemModule != null">#{systemModule},</if>
+            <if test="userItCode != null">#{userItCode},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="requestParam != null">#{requestParam},</if>
+            <if test="actionHandle != null">#{actionHandle},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="dealTime != null">#{dealTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="result != null">#{result},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="taskCode != null">#{taskCode},</if>
+            <if test="taskType != null">#{taskType},</if>
+            <if test="expectDealTime != null">#{expectDealTime},</if>
+            <if test="callBackHandle != null">#{callBackHandle},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="fileMd5 != null">#{fileMd5},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSdmsAsyncImportExportTask" parameterType="com.lenovo.otmp.download.domain.entity.BizSdmsAsyncImportExportTaskDO">
+        update biz_sdms_async_import_export_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null">task_name = #{taskName},</if>
+            <if test="systemModule != null">system_module = #{systemModule},</if>
+            <if test="userItCode != null">user_it_code = #{userItCode},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="requestParam != null">request_param = #{requestParam},</if>
+            <if test="actionHandle != null">action_handle = #{actionHandle},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="dealTime != null">deal_time = #{dealTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="result != null">result = #{result},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="taskCode != null">task_code = #{taskCode},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="expectDealTime != null">expect_deal_time = #{expectDealTime},</if>
+            <if test="callBackHandle != null">call_back_handle = #{callBackHandle},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="fileMd5 != null">file_md5 = #{fileMd5},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+    <update id="updateStatus">
+        update biz_sdms_async_import_export_task
+        set status      = #{status},
+            update_time = now()
+        where task_id = #{id}
+    </update>
+    <update id="updateStatusHasPre">
+        update biz_sdms_async_import_export_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskDO.status != null">status = #{taskDO.status},</if>
+            <if test="taskDO.dealTime != null">deal_time = #{taskDO.dealTime},</if>
+            <if test="taskDO.finishTime != null">finish_time = #{taskDO.finishTime},</if>
+            <if test="taskDO.result != null">result = #{taskDO.result},</if>
+            <if test="taskDO.lastActiveTime != null">last_active_time = #{taskDO.lastActiveTime},</if>
+            update_time = now(),
+        </trim>
+        where task_id = #{taskDO.taskId}
+        and status = #{preStatus}
+    </update>
+
+    <delete id="deleteBizSdmsAsyncImportExportTaskByTaskId" parameterType="Long">
+        delete
+        from biz_sdms_async_import_export_task
+        where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteBizSdmsAsyncImportExportTaskByTaskIds" parameterType="String">
+        delete from biz_sdms_async_import_export_task where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+</mapper>

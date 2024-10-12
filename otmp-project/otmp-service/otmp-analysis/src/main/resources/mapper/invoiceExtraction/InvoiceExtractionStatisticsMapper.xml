@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.analysis.mapper.InvoiceExtractionStatisticsMapper">
+
+    <resultMap type="com.lenovo.otmp.analysis.domain.entity.InvoiceExtractionStatisticsDO"
+               id="InvoiceExtractionStatisticsResult">
+        <result property="id" column="id"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="supplierCode" column="supplier_code"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="allInvoiceCount" column="all_invoice_count"/>
+        <result property="allRejectInvoiceCount" column="all_reject_invoice_count"/>
+        <result property="allCreditMemoInvoiceCount" column="all_credit_memo_invoice_count"/>
+        <result property="allRejectCreditMemoInvoiceCount" column="all_reject_credit_memo_invoice_count"/>
+        <result property="lastUpdateTime" column="last_update_time"/>
+    </resultMap>
+
+    <sql id="selectInvoiceExtractionStatisticsVo">
+        select id, supplier_id, supplier_code, company_code, create_time, create_by, update_time, update_by, all_invoice_count, all_reject_invoice_count, all_credit_memo_invoice_count, all_reject_credit_memo_invoice_count, last_update_time from otfp_analysis.invoice_extraction_statistics
+    </sql>
+
+    <select id="selectInvoiceExtractionStatisticsList"
+            parameterType="com.lenovo.otmp.analysis.domain.dto.InvoiceExtractionStatisticsDTO"
+            resultMap="InvoiceExtractionStatisticsResult">
+        <include refid="selectInvoiceExtractionStatisticsVo"/>
+        <where>
+            <if test="supplierId != null ">and supplier_id = #{supplierId}</if>
+            <if test="supplierCode != null  and supplierCode != ''">and supplier_code = #{supplierCode}</if>
+            <if test="companyCode != null  and companyCode != ''">and company_code = #{companyCode}</if>
+            <if test="allInvoiceCount != null ">and all_invoice_count = #{allInvoiceCount}</if>
+            <if test="allRejectInvoiceCount != null ">and all_reject_invoice_count = #{allRejectInvoiceCount}</if>
+            <if test="allCreditMemoInvoiceCount != null ">and all_credit_memo_invoice_count =
+                #{allCreditMemoInvoiceCount}
+            </if>
+            <if test="allRejectCreditMemoInvoiceCount != null ">and all_reject_credit_memo_invoice_count =
+                #{allRejectCreditMemoInvoiceCount}
+            </if>
+            <if test="lastUpdateTime != null ">and last_update_time = #{lastUpdateTime}</if>
+        </where>
+    </select>
+
+    <select id="findInvoiceExtractionStatisticsList"
+            parameterType="com.lenovo.otmp.analysis.domain.dto.InvoiceExtractionQueryVO"
+            resultMap="InvoiceExtractionStatisticsResult">
+                        select
+                        ies.id,
+                        ies.supplier_id,
+                        ies.supplier_code,
+                        s.supplier_name,
+                        ies.company_code,
+                        ies.create_time,
+                        ies.create_by,
+                        ies.update_time,
+                        ies.update_by,
+                        ies.all_invoice_count,
+                        ies.all_reject_invoice_count,
+                        ies.all_credit_memo_invoice_count,
+                        ies.all_reject_credit_memo_invoice_count,
+                        ies.last_update_time
+                        from
+                        otfp_analysis.invoice_extraction_statistics ies
+                        left join
+                        otfp_financing.supplier s
+                        on
+                        ies.supplier_id = s.id
+                     <where>
+                         s.delete_flag = '0'
+                         and s.status = 2
+                        and ies.last_update_time>=#{startDateTime} and #{endDateTime}>= ies.last_update_time
+                    <if test="supplierId != null ">and ies.supplier_id = #{supplierId}</if>
+                    <if test="supplierCode != null  and supplierCode != ''">and ies.supplier_code = #{supplierCode}</if>
+                    <if test="companyCode != null  and companyCode != ''">and ies.company_code = #{companyCode}</if>
+                </where>
+    </select>
+
+
+    <select id="selectInvoiceExtractionStatisticsById" parameterType="Long"
+            resultMap="InvoiceExtractionStatisticsResult">
+        <include refid="selectInvoiceExtractionStatisticsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertInvoiceExtractionStatistics"
+            parameterType="com.lenovo.otmp.analysis.domain.entity.InvoiceExtractionStatisticsDO">
+        insert into otfp_analysis.invoice_extraction_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="companyCode != null">company_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="allInvoiceCount != null">all_invoice_count,</if>
+            <if test="allRejectInvoiceCount != null">all_reject_invoice_count,</if>
+            <if test="allCreditMemoInvoiceCount != null">all_credit_memo_invoice_count,</if>
+            <if test="allRejectCreditMemoInvoiceCount != null">all_reject_credit_memo_invoice_count,</if>
+            <if test="lastUpdateTime != null">last_update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="companyCode != null">#{companyCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="allInvoiceCount != null">#{allInvoiceCount},</if>
+            <if test="allRejectInvoiceCount != null">#{allRejectInvoiceCount},</if>
+            <if test="allCreditMemoInvoiceCount != null">#{allCreditMemoInvoiceCount},</if>
+            <if test="allRejectCreditMemoInvoiceCount != null">#{allRejectCreditMemoInvoiceCount},</if>
+            <if test="lastUpdateTime != null">#{lastUpdateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateInvoiceExtractionStatistics"
+            parameterType="com.lenovo.otmp.analysis.domain.entity.InvoiceExtractionStatisticsDO">
+        update otfp_analysis.invoice_extraction_statistics
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="companyCode != null">company_code = #{companyCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="allInvoiceCount != null">all_invoice_count = #{allInvoiceCount},</if>
+            <if test="allRejectInvoiceCount != null">all_reject_invoice_count = #{allRejectInvoiceCount},</if>
+            <if test="allCreditMemoInvoiceCount != null">all_credit_memo_invoice_count = #{allCreditMemoInvoiceCount},
+            </if>
+            <if test="allRejectCreditMemoInvoiceCount != null">all_reject_credit_memo_invoice_count =
+                #{allRejectCreditMemoInvoiceCount},
+            </if>
+            <if test="lastUpdateTime != null">last_update_time = #{lastUpdateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInvoiceExtractionStatisticsById" parameterType="Long">
+        delete from otfp_analysis.invoice_extraction_statistics where id = #{id}
+    </delete>
+
+    <delete id="deleteInvoiceExtractionStatisticsByIds" parameterType="String">
+        delete from otfp_analysis.invoice_extraction_statistics where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <insert id="insertInvoiceExtractionStatisticsOfJob"   parameterType="com.lenovo.otmp.analysis.domain.entity.InvoiceExtractionStatisticsDO">
+        delete
+        from
+        otfp_analysis.invoice_extraction_statistics
+        where
+        last_update_time >=
+        to_timestamp( #{beginTime},
+        'YYYY-MM-DD HH24:MI:SS')
+        and to_timestamp(  #{endTime},
+        'YYYY-MM-DD HH24:MI:SS')>=last_update_time;
+        insert
+        into
+        otfp_analysis.invoice_extraction_statistics
+        (id,
+        supplier_id,
+        company_code,
+        supplier_code,
+        last_update_time,
+        create_time,
+        create_by,
+        all_invoice_count,
+        all_reject_invoice_count,
+        all_credit_memo_invoice_count,
+        all_reject_credit_memo_invoice_count)
+        select
+        ceil(random() * 10000000000) as randint,
+        a.supplier_id,
+        a.company_code,
+        a.vendor_code,
+        to_timestamp(a.last_update_time,
+        'YYYY-MM-DD HH24:MI:SS') last_update_time ,
+        now(),
+        'SYSTEM_JOB',
+        coalesce(a.allNum,
+        0) allNum,
+        coalesce(b.allRejNum,
+        0) allRejNum,
+        coalesce(c.cmAllNum,
+        0) cmAllNum,
+        coalesce(d.cmRejNum,
+        0) cmRejNum
+        from
+        (
+        select
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd') last_update_time ,
+        count(1) allNum
+        from
+        otfp_financing.finance_invoice_ap fia
+        left join  (select distinct  supplier_id,supplier_code,delete_flag from otfp_financing.supplier_unique where delete_flag ='0') su on
+        su.supplier_code = fia.vendor_code
+        where
+        su.delete_flag = '0'
+        and coalesce(fia.update_time,
+        fia.create_time) >= to_date( #{beginTime},
+        'YYYY-MM-DD')
+        and to_date(#{beginTime},'YYYY-MM-DD')+1>coalesce(fia.update_time,
+        fia.create_time)
+        group by
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time),
+        'yyyy-mm-dd')
+        ) a
+        left join (
+        select
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd') last_update_time ,
+        count(1) allRejNum
+        from
+         otfp_financing.finance_invoice_ap fia
+        left join  (select distinct  supplier_id,supplier_code,delete_flag from otfp_financing.supplier_unique where delete_flag ='0') su on
+        su.supplier_code = fia.vendor_code
+        where
+        su.delete_flag = '0'
+        and fia.status in ('Invalid')
+        and coalesce(fia.update_time,
+        fia.create_time) >= to_date(#{beginTime},
+        'YYYY-MM-DD')
+        and  to_date(#{beginTime},'YYYY-MM-DD')+1>coalesce(fia.update_time,
+        fia.create_time)
+        group by
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd')
+        )b
+        on
+        (a.supplier_id = b.supplier_id
+        and
+        a.company_code = b.company_code
+        and
+        a.vendor_code = b.vendor_code
+        and
+        a.last_update_time = b.last_update_time
+        )
+        left join (
+        select
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd') last_update_time ,
+        count(1) cmAllNum
+        from
+         otfp_financing.finance_invoice_ap fia
+        left join  (select distinct  supplier_id,supplier_code,delete_flag from otfp_financing.supplier_unique where delete_flag ='0') su on
+        su.supplier_code = fia.vendor_code
+        where
+        su.delete_flag = '0'
+        and fia.invoice_type = 'Credit Memo'
+        and coalesce(fia.update_time,
+        fia.create_time) >= to_date(#{beginTime},
+        'YYYY-MM-DD')
+        and  to_date(#{beginTime},'YYYY-MM-DD')+1>coalesce(fia.update_time,
+        fia.create_time)
+        group by
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd')
+        ) c
+        on
+        (
+        a.supplier_id = c.supplier_id
+        and
+        a.company_code = c.company_code
+        and
+        a.vendor_code = c.vendor_code
+        and
+        a.last_update_time = c.last_update_time
+        )
+        left join (
+        select
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd') last_update_time ,
+        count(1) cmRejNum
+        from
+         otfp_financing.finance_invoice_ap fia
+        left join  (select distinct  supplier_id,supplier_code,delete_flag from otfp_financing.supplier_unique where delete_flag ='0') su on
+        su.supplier_code = fia.vendor_code
+        where
+        su.delete_flag = '0'
+        and fia.invoice_type = 'Credit Memo'
+        and fia.status in ('Invalid')
+        and coalesce(fia.update_time,
+        fia.create_time) >= to_date(#{beginTime},
+        'YYYY-MM-DD')
+        and to_date(#{beginTime},'YYYY-MM-DD')+1>coalesce(fia.update_time,
+        fia.create_time)
+        group by
+        su.supplier_id,
+        fia.company_code,
+        fia.vendor_code,
+        to_char(coalesce(fia.update_time,
+        fia.create_time) ,
+        'yyyy-mm-dd')
+        ) d
+        on
+        (a.supplier_id = d.supplier_id
+        and
+        a.company_code = d.company_code
+        and
+        a.vendor_code = d.vendor_code
+        and
+        a.last_update_time = d.last_update_time
+        );
+    </insert>
+</mapper>

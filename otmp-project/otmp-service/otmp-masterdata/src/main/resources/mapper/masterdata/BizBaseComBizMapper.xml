@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseComBizMapper">
+    
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseComBiz" id="BizBaseComBizResult">
+        <result property="id"    column="id"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="bizTable"    column="biz_table"    />
+        <result property="bizCode"    column="biz_code"    />
+        <result property="bizName"    column="biz_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseBg" id="BizBaseBusinessGroupResult">
+        <result property="id"    column="id"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="bgCode"    column="bg_code"    />
+        <result property="bgName"    column="bg_name"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseBu" id="BizBaseBuResult">
+        <result property="id"    column="id"    />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="buCode"    column="bu_code"    />
+        <result property="buName"    column="bu_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizBaseComBizVo">
+        select id, geo_code, biz_table, biz_code, biz_name, status, remark, create_by, create_time, update_by, update_time from biz_base_com_biz
+    </sql>
+
+
+
+    <select id="getComBiz" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseComBiz" resultMap="BizBaseComBizResult">
+        select biz_table from biz_base_com_biz
+    </select>
+
+    <select id="selectBizBaseDataListCheck" parameterType="com.lenovo.otmp.masterdata.domain.BizBasePaymentMode" resultMap="BizBaseComBizResult">
+        select id,'-' geo_code,
+        biz_code , biz_name,  #{bizBaseComBiz.bizTable} biz_table,
+        status ,remark,create_by,create_time,update_by,update_time from  ${bizTable}
+        <where>
+
+            and status ='Y'
+            <if test="bizBaseComBiz.bizCode != null  and bizBaseComBiz.bizCode != ''"> and biz_code = #{bizBaseComBiz.bizCode}</if>
+            <if test="bizBaseComBiz.ids != null and bizBaseComBiz.ids.size>0">
+                and id in
+                <foreach collection="bizBaseComBiz.ids" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <select id="selectBizBaseDataList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseComBiz" resultMap="BizBaseComBizResult">
+        select id,'-' geo_code,
+        biz_code ,biz_name, #{bizBaseComBiz.bizTable} biz_table,
+        status ,remark,create_by,create_time,update_by,update_time from
+        ${bizBaseComBiz.bizTable}
+        <where>
+            <if test="bizBaseComBiz.bizCode != null  and bizBaseComBiz.bizCode != ''"> and biz_code Ilike '%' || #{bizBaseComBiz.bizCode} || '%'</if>
+            <if test="bizBaseComBiz.status != null  and bizBaseComBiz.status != ''"> and status =#{bizBaseComBiz.status}</if>
+            <if test="bizBaseComBiz.ids != null and bizBaseComBiz.ids.size>0">
+                and id in
+                <foreach collection="bizBaseComBiz.ids" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+
+            <if test="bizBaseComBiz.remark != null  and bizBaseComBiz.remark != ''"> and remark Ilike
+                '%'|| #{bizBaseComBiz.remark}||'%' </if>
+            <if test="bizBaseComBiz.createBy != null  and bizBaseComBiz.createBy != ''"> and create_by Ilike '%'|| #{bizBaseComBiz.createBy}||'%'</if>
+            and status ='Y'
+        </where>
+
+        order by create_time desc
+    </select>
+
+
+    <select id="selectBizBaseComBizList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseComBiz" resultMap="BizBaseComBizResult">
+        select * from
+
+        <if test="bizBaseComBiz.bizTable != null and bizBaseComBiz.bizTable != ''">
+             #{bizBaseComBiz.bizTable}
+        </if>
+        order by create_time desc
+
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="geoCode != null  and geoCode != ''"> and geo_code = #{geoCode}</if>
+            <if test="buCode != null  and buCode != ''"> and bu_code = #{buCode}</if>
+            <if test="buName != null  and buName != ''"> and bu_name like concat('%', #{buName}, '%')</if>
+            <if test="delFlag != null  and delFlag != ''"> and del_flag = #{delFlag}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    
+    <select id="selectBizBaseComBizById" parameterType="Integer" resultMap="BizBaseComBizResult">
+        <include refid="selectBizBaseComBizVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizBaseData">
+
+
+        insert into  ${bizTable}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bizBaseComBiz.bizCode != null  and bizBaseComBiz.bizCode != ''"> biz_code,</if>
+            <if test="bizBaseComBiz.bizName != null  and bizBaseComBiz.bizName != ''"> biz_name,</if>
+
+            <if test="bizBaseComBiz.status != null  and bizBaseComBiz.status != ''">status,</if>
+            <if test="bizBaseComBiz.remark != null  and bizBaseComBiz.remark != ''">remark,</if>
+            <if test="bizBaseComBiz.createBy != null  and bizBaseComBiz.createBy != ''">create_by,</if>
+            <if test="bizBaseComBiz.updateBy != null  and bizBaseComBiz.updateBy != ''">update_by</if>
+            <if test="bizBaseComBiz.createTime != null  ">create_time ,</if>
+            <if test="bizBaseComBiz.updateTime != null  ">update_time ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bizBaseComBiz.bizCode != null  and bizBaseComBiz.bizCode != ''">#{bizBaseComBiz.bizCode},</if>
+            <if test="bizBaseComBiz.bizName != null  and bizBaseComBiz.bizName != ''">#{bizBaseComBiz.bizName},</if>
+            <if test="bizBaseComBiz.status != null  and bizBaseComBiz.status != ''">#{bizBaseComBiz.status},</if>
+            <if test="bizBaseComBiz.remark != null  and bizBaseComBiz.remark != ''">#{bizBaseComBiz.remark},</if>
+            <if test="bizBaseComBiz.createBy != null  and bizBaseComBiz.createBy != ''">#{bizBaseComBiz.createBy},</if>
+            <if test="bizBaseComBiz.updateBy != null  and bizBaseComBiz.updateBy != ''">#{bizBaseComBiz.updateBy},</if>
+            <if test="bizBaseComBiz.createTime != null  "> #{bizBaseComBiz.createTime},</if>
+            <if test="bizBaseComBiz.updateTime != null  "> #{bizBaseComBiz.updateTime},</if>
+        </trim>
+
+    </insert>
+
+
+    <update id="updateBizBaseData" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseBu">
+        update  ${bizTable}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bizBaseComBiz.bizCode != null  and bizBaseComBiz.bizCode != ''">biz_code = #{bizBaseComBiz.bizCode},</if>
+            <if test="bizBaseComBiz.bizName != null  and bizBaseComBiz.bizName != ''">biz_name = #{bizBaseComBiz.bizName},</if>
+            <if test="bizBaseComBiz.status != null  and bizBaseComBiz.status != ''">status = #{bizBaseComBiz.status},</if>
+            <if test="bizBaseComBiz.remark != null  and bizBaseComBiz.remark != ''">remark = #{bizBaseComBiz.remark},</if>
+            <if test="bizBaseComBiz.createBy != null  and bizBaseComBiz.createBy != ''">create_by = #{bizBaseComBiz.createBy},</if>
+            <if test="bizBaseComBiz.updateBy != null  and bizBaseComBiz.updateBy != ''">update_by = #{bizBaseComBiz.updateBy},</if>
+        </trim>
+        where id = #{bizBaseComBiz.id}
+    </update>
+
+
+    <delete id="deleteBizBaseComBizById" parameterType="Integer">
+        delete from biz_base_com_biz where id = #{id}
+    </delete>
+
+    <delete id="deleteBizBaseComBizByIds" parameterType="String">
+        update  ${bizTable} set status='N',update_by=#{loginName},update_time=now() where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

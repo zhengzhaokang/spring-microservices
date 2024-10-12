@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.financing.mapper.SupplierCompanyCodeMapper">
+    <resultMap id="supplierCompanyCodeMap" type="com.lenovo.otmp.financing.domain.entity.SupplierCompanyCodeDo">
+        <id column="id" property="id"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+    <resultMap id="supplierCompanyCodeWithEntityMap" extends="supplierCompanyCodeMap"
+               type="com.lenovo.otmp.financing.domain.entity.SupplierCompanyCodeWithEntityDo">
+        <result column="entity_name" property="entityName"/>
+        <result column="currency" property="currency"/>
+        <result column="region" property="region"/>
+        <result column="register_address" property="registerAddress"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <insert id="insertListWithId">
+        INSERT INTO supplier_company_code
+        ( id,supplier_id,supplier_code,company_code,delete_flag,create_time,create_by,update_time,update_by )
+        VALUES
+        <foreach collection="records" item="item" separator=",">
+            (#{item.id},#{item.supplierId},#{item.supplierCode},#{item.companyCode},#{item.deleteFlag},#{item.createTime},#{item.createBy},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+    <update id="deleteBySupplierId">
+        UPDATE supplier_company_code
+        SET delete_flag = '1'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '0'
+    </update>
+
+    <delete id="removeBySupplierId">
+        DELETE FROM supplier_company_code
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </delete>
+
+    <update id="activeBySupplierId">
+        UPDATE supplier_company_code
+        SET delete_flag = '0'
+        WHERE supplier_id = #{supplierId}
+        AND delete_flag = '1'
+    </update>
+
+    <select id="selectCompanyCodeBySupplier" resultMap="supplierCompanyCodeWithEntityMap">
+        SELECT scc.supplier_id,scc.supplier_code,scc.company_code,e.entity_name
+        FROM supplier s
+        INNER JOIN supplier_company_code scc
+        ON s.id = scc.supplier_id
+        INNER JOIN entity_company_code ecc
+        ON scc.company_code = ecc.company_code
+        INNER JOIN entity e
+        ON ecc.entity_id = e.id
+        WHERE s.id IN
+        <foreach collection="supplierIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+        AND s.delete_flag = '0'
+        AND scc.delete_flag = '0'
+        AND ecc.delete_flag = '0'
+        AND e.delete_flag = '0'
+        GROUP BY scc.supplier_id,scc.supplier_code ,scc.company_code ,e.entity_name
+    </select>
+
+    <select id="selectAllCompanyCodeBySupplier" resultMap="supplierCompanyCodeWithEntityMap">
+        SELECT scc.supplier_id,scc.supplier_code,scc.company_code,e.entity_name
+        FROM supplier s
+        INNER JOIN supplier_company_code scc
+        ON s.id = scc.supplier_id
+        INNER JOIN entity_company_code ecc
+        ON scc.company_code = ecc.company_code
+        INNER JOIN entity e
+        ON ecc.entity_id = e.id
+        WHERE s.id IN
+        <foreach collection="supplierIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+        AND scc.delete_flag = #{deleteFlag}
+        GROUP BY scc.supplier_id,scc.supplier_code ,scc.company_code ,e.entity_name
+    </select>
+
+    <update id="removeSupplierCodeRelation">
+        UPDATE supplier_company_code
+        SET delete_flag = '1'
+        WHERE id IN
+        <foreach collection="codeIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

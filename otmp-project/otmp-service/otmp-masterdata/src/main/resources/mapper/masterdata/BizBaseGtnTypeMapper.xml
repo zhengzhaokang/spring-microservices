@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lenovo.otmp.masterdata.mapper.BizBaseGtnTypeMapper">
+    <resultMap type="com.lenovo.otmp.masterdata.domain.BizBaseGtnType" id="BizBaseGtnTypeResult">
+        <result property="id" column="id"/>
+        <result property="geoCode" column="geo_code"/>
+        <result property="gtnTypeCode" column="gtn_type_code"/>
+        <result property="gtnTypeName" column="gtn_type_name"/>
+        <result property="gtnCategoryCode" column="gtn_category_code"/>
+        <result property="cndnOrderReason" column="cndn_order_reason"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="businessGroup" column="business_group"/>
+    </resultMap>
+
+    <sql id="selectBizBaseGtnTypeVo">
+
+        select id, geo_code, gtn_type_code, gtn_type_name, gtn_category_code, cndn_order_reason, status, remark, create_by,
+               create_time, update_by, update_time, business_group from biz_base_gtn_type
+
+    </sql>
+
+    <select id="selectBizBaseGtnTypeList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseGtnType"
+            resultMap="BizBaseGtnTypeResult">
+        <include refid="selectBizBaseGtnTypeVo"/>
+        <where>
+            <if test="geoCode != null  and  geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="gtnTypeCode != null  and gtnTypeCode != ''">
+                and gtn_type_code Ilike '%'|| #{gtnTypeCode}||'%'
+            </if>
+            <if test="gtnTypeName != null  and gtnTypeName != ''">
+                and gtn_type_code Ilike '%'|| #{gtnTypeName}||'%'
+            </if>
+            <if test="gtnCategoryCode != null  and gtnCategoryCode != ''">
+                and gtn_category_code Ilike '%'||
+                #{gtnCategoryCode}||'%'
+            </if>
+            <if test="cndnOrderReason != null  and cndnOrderReason != ''">
+                and cndn_order_reason Ilike '%'||
+                #{cndnOrderReason}||'%'
+            </if>
+            and status ='Y'
+            <if test="remark != null  and remark != ''">
+                and remark Ilike '%'|| #{remark}||'%'
+            </if>
+            <if test="createBy != null  and createBy != ''">
+                and create_by Ilike '%'|| #{createBy}||'%'
+            </if>
+            <if test="idsList != null and idsList.size>0">
+                and id in
+                <foreach collection="idsList" item="tableId" open="(" separator="," close=")">
+                    #{tableId}
+                </foreach>
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="getDropDownList" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseDropDownCondition"
+            resultMap="BizBaseGtnTypeResult">
+        select distinct gtn_type_code ,gtn_category_code,cndn_order_reason,geo_code,business_group
+        from biz_base_gtn_type
+        <where>
+            status = 'Y'
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="regionMarketCode != null  and regionMarketCode != ''">
+                <choose>
+                    <when test=" 1 == regionMarketCode.split(',').length">
+                        and region_market_code = #{regionMarketCode}
+                    </when>
+                    <otherwise>
+                        and region_market_code in
+                        <foreach collection="regionMarketCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="gtnTypeCode != null  and gtnTypeCode != ''">
+                <choose>
+                    <when test=" 1 == gtnTypeCode.split(',').length">
+                        and gtn_type_code = #{gtnTypeCode}
+                    </when>
+                    <otherwise>
+                        and gtn_type_code in
+                        <foreach collection="gtnTypeCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizBaseGtnTypeById" parameterType="Long" resultMap="BizBaseGtnTypeResult">
+        <include refid="selectBizBaseGtnTypeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizBaseGtnType" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseGtnType"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into biz_base_gtn_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null">
+                geo_code,
+            </if>
+            <if test="gtnTypeCode != null">
+                gtn_type_code,
+            </if>
+            <if test="gtnTypeName != null">
+                gtn_type_name,
+            </if>
+            <if test="gtnCategoryCode != null">
+                gtn_category_code,
+            </if>
+            <if test="cndnOrderReason != null">
+                cndn_order_reason,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="businessGroup != null">
+                business_group,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="geoCode != null">
+                #{geoCode},
+            </if>
+            <if test="gtnTypeCode != null">
+                #{gtnTypeCode},
+            </if>
+            <if test="gtnTypeName != null">
+                #{gtnTypeName},
+            </if>
+            <if test="gtnCategoryCode != null">
+                #{gtnCategoryCode},
+            </if>
+            <if test="cndnOrderReason != null">
+                #{cndnOrderReason},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="businessGroup != null">
+                #{businessGroup},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBizBaseGtnType" parameterType="com.lenovo.otmp.masterdata.domain.BizBaseGtnType">
+        update biz_base_gtn_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="geoCode != null">
+                geo_code = #{geoCode},
+            </if>
+            <if test="gtnTypeCode != null">
+                gtn_type_code = #{gtnTypeCode},
+            </if>
+            <if test="gtnTypeName != null">
+                gtn_type_name = #{gtnTypeName},
+            </if>
+            <if test="gtnCategoryCode != null">
+                gtn_category_code = #{gtnCategoryCode},
+            </if>
+            <if test="cndnOrderReason != null">
+                cndn_order_reason = #{cndnOrderReason},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="businessGroup != null">
+                business_group = #{businessGroup},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizBaseGtnTypeById" parameterType="Long">
+
+        delete from biz_base_gtn_type where id = #{id}
+
+    </delete>
+
+    <delete id="deleteBizBaseGtnTypeByIds" parameterType="String">
+        delete from biz_base_gtn_type where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBizBaseGtnTypeListCheck" resultMap="BizBaseGtnTypeResult">
+        <include refid="selectBizBaseGtnTypeVo"/>
+        <where>
+            <if test="geoCode != null and geoCode != ''">
+                and geo_code = #{geoCode}
+            </if>
+            <if test="gtnTypeCode != null  and gtnTypeCode != ''">
+                and gtn_type_code = #{gtnTypeCode}
+            </if>
+            <if test="gtnTypeName != null  and gtnTypeName != ''">
+                and gtn_type_name = #{gtnTypeName}
+            </if>
+            and status ='Y'
+            <if test="businessGroup != null  and businessGroup != ''">
+                and business_group = #{businessGroup}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateBizBaseGtnTypeIds">
+        update biz_base_gtn_type set status='N',update_time=now() where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="toMsGtnTypeList" resultType="com.lenovo.otmp.masterdata.domain.entity.vo.MsGtnTypeVo">
+        select
+        geo_code as geoCode,
+        gtn_type_code as gtnTypeCode,
+        gtn_category_code as gtnCategoryCode,
+        cndn_order_reason as cndnOrderReason,
+        business_group as businessGroup
+        from
+        biz_base_gtn_type
+        <where>
+            status = 'Y'
+            <if test="geoCode != null  and geoCode != ''">
+                <choose>
+                    <when test=" 1 == geoCode.split(',').length">
+                        and geo_code = #{geoCode}
+                    </when>
+                    <otherwise>
+                        and geo_code in
+                        <foreach collection="geoCode.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="businessGroup != null  and businessGroup != ''">
+                <choose>
+                    <when test=" 1 == businessGroup.split(',').length">
+                        and business_group = #{businessGroup}
+                    </when>
+                    <otherwise>
+                        and business_group in
+                        <foreach collection="businessGroup.split(',')" item="item" open="(" close=")" separator=",">
+                            #{item}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+</mapper>
